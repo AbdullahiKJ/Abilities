@@ -54,12 +54,24 @@ VisualEffect:
       - m_Value: 0.05
         m_Name: Sphere_sphere_radius
         m_Overridden: 1
+      - m_Value: 0.0382172
+        m_Name: radius
+        m_Overridden: 1
+      - m_Value: 5
+        m_Name: lifetime
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array:
       - m_Value: {x: 4.2184677, y: 1.5304238, z: 0.27555236}
         m_Name: Sphere_sphere_transform_position
+        m_Overridden: 1
+      - m_Value: {x: 2.5, y: 2.092117, z: 4.5298266}
+        m_Name: capsuleEnd
+        m_Overridden: 1
+      - m_Value: {x: 2.1418643, y: 2.0704567, z: 4}
+        m_Name: capsuleStart
         m_Overridden: 1
     m_Vector4f:
       m_Array: []

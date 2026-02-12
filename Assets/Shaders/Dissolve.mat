@@ -61,10 +61,22 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Radius: 0.1
+    - _Radius0: 0.1
+    - _Radius1: 0.1
+    - _Radius2: 0.1
+    - _Radius3: 0.1
     m_Colors:
     - _EdgeColor: {r: 1, g: 0.8581352, b: 0, a: 1}
-    - _EntryPosition: {r: 0, g: 2.76, b: 6, a: 0}
-    - _ExitPosition: {r: -1.19, g: 2, b: 4, a: 0}
+    - _EntryPosition: {r: 0, g: 2, b: 4, a: 0}
+    - _EntryPosition0: {r: 0, g: 0, b: 0, a: 0}
+    - _EntryPosition1: {r: 0, g: 0, b: 0, a: 0}
+    - _EntryPosition2: {r: 0, g: 0, b: 0, a: 0}
+    - _EntryPosition3: {r: 0, g: 0, b: 0, a: 0}
+    - _ExitPosition: {r: 0, g: 3, b: 6, a: 0}
+    - _ExitPosition0: {r: 0, g: 0, b: 0, a: 0}
+    - _ExitPosition1: {r: 0, g: 0, b: 0, a: 0}
+    - _ExitPosition2: {r: 0, g: 0, b: 0, a: 0}
+    - _ExitPosition3: {r: 0, g: 0, b: 0, a: 0}
     - _HitPosition: {r: 0, g: 2.14, b: 4.89, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

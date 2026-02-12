@@ -12,6 +12,7 @@ public class InputReader : MonoBehaviour
     public event System.Action JumpPressed;
     public event System.Action PunchPressed;
     public event System.Action KickPressed;
+    public event System.Action ShootPressed;
 
     private void Awake()
     {
@@ -24,6 +25,7 @@ public class InputReader : MonoBehaviour
         controls.Player.Jump.performed += ctx => JumpPressed?.Invoke();
         controls.Player.Punch.performed += ctx => PunchPressed?.Invoke();
         controls.Player.Kick.performed += ctx => KickPressed?.Invoke();
+        controls.Player.Shoot.performed += ctx => ShootPressed?.Invoke();
     }
 
     private void OnEnable()
