@@ -1,3 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+Assets/Models/marine.fbx filter=lfs diff=lfs merge=lfs -text
 assets/models/marine.fbx filter=lfs diff=lfs merge=lfs -text
