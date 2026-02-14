@@ -30,6 +30,13 @@ public class AnimationController : MonoBehaviour
         Vector2 move = movement != null ? input.MoveInput : Vector2.zero;
         animator.SetFloat("MoveInput", move.sqrMagnitude);
 
+        // Aim check
+        if (input.canAim)
+        {
+            float aim = input.AimInput;
+            animator.SetFloat("IsAiming", aim);
+        }
+
         // Grounded / airborne
         animator.SetBool("IsGrounded", state.CurrentState == StateMachine.PlayerState.Grounded);
     }
@@ -37,7 +44,6 @@ public class AnimationController : MonoBehaviour
     private void UpdateState()
     {
         animator.SetBool("IsAttacking", state.CurrentState == StateMachine.PlayerState.Attacking);
-        animator.SetBool("IsSwinging", state.CurrentState == StateMachine.PlayerState.Swinging);
     }
 
     // These can be called by CombatController if you want animation events
