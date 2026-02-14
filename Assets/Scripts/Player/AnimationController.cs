@@ -106,18 +106,18 @@ public class AnimationController : MonoBehaviour
         jumpHash = Animator.StringToHash(jump);
 
         if (!parameterNames.Contains(moveInput))
-            Debug.LogWarning($"Animator missing parameter: {moveInput}", this);
+            Debug.LogWarning($"Animator missing parameter: {moveInput} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(moveX))
-            Debug.LogWarning($"Animator missing parameter: {moveX}", this);
+            Debug.LogWarning($"Animator missing parameter: {moveX} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(moveY))
-            Debug.LogWarning($"Animator missing parameter: {moveY}", this);
+            Debug.LogWarning($"Animator missing parameter: {moveY} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(isAiming))
-            Debug.LogWarning($"Animator missing parameter: {isAiming}", this);
+            Debug.LogWarning($"Animator missing parameter: {isAiming} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(isGrounded))
-            Debug.LogWarning($"Animator missing parameter: {isGrounded}", this);
+            Debug.LogWarning($"Animator missing parameter: {isGrounded} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(isAttacking))
-            Debug.LogWarning($"Animator missing parameter: {isAttacking}", this);
+            Debug.LogWarning($"Animator missing parameter: {isAttacking} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(jump))
-            Debug.LogWarning($"Animator missing parameter: {jump}", this);
+            Debug.LogWarning($"Animator missing parameter: {jump} on {this.gameObject.name}", this);
     }
 }
