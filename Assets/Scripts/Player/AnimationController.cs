@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -8,6 +9,25 @@ public class AnimationController : MonoBehaviour
     private StateMachine state;
     private CombatController combat;
     private InputReader input;
+    private List<string> parameterNames = new List<string>();
+
+    // Parameter names
+    public string moveInput = "MoveInput";
+    public string moveX = "MoveX";
+    public string moveY = "MoveY";
+    public string isAiming = "IsAiming";
+    public string isGrounded = "IsGrounded";
+    public string isAttacking = "IsAttacking";
+    public string jump = "Jump";
+
+    // Parameter hashes
+    private int moveInputHash;
+    private int moveXHash;
+    private int moveYHash;
+    private int isAimingHash;
+    private int isGroundedHash;
+    private int isAttackingHash;
+    private int jumpHash;
 
     private void Awake()
     {
@@ -16,6 +36,8 @@ public class AnimationController : MonoBehaviour
         state = GetComponent<StateMachine>();
         combat = GetComponent<CombatController>();
         input = GetComponent<InputReader>();
+
+        ValidateParameters();
     }
 
     private void Update()
@@ -28,22 +50,24 @@ public class AnimationController : MonoBehaviour
     {
         // Movement blend
         Vector2 move = movement != null ? input.MoveInput : Vector2.zero;
-        animator.SetFloat("MoveInput", move.sqrMagnitude);
+        animator.SetFloat(moveInputHash, move.sqrMagnitude);
+        animator.SetFloat(moveXHash, move.sqrMagnitude);
+        animator.SetFloat(moveYHash, move.sqrMagnitude);
 
         // Aim check
         if (input.canAim)
         {
             float aim = input.AimInput;
-            animator.SetFloat("IsAiming", aim);
+            animator.SetFloat(isAimingHash, aim);
         }
 
         // Grounded / airborne
-        animator.SetBool("IsGrounded", state.CurrentState == StateMachine.PlayerState.Grounded);
+        animator.SetBool(isGroundedHash, state.CurrentState == StateMachine.PlayerState.Grounded);
     }
 
     private void UpdateState()
     {
-        animator.SetBool("IsAttacking", state.CurrentState == StateMachine.PlayerState.Attacking);
+        animator.SetBool(isAttackingHash, state.CurrentState == StateMachine.PlayerState.Attacking);
     }
 
     // These can be called by CombatController if you want animation events
@@ -64,6 +88,36 @@ public class AnimationController : MonoBehaviour
 
     public void PlayJumpAnim()
     {
-        animator.SetTrigger("Jump");
+        animator.SetTrigger(jumpHash);
+    }
+
+    // Create parameter hashes and check if they exist within the animator
+    private void ValidateParameters()
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+            parameterNames.Add(param.name);
+
+        moveInputHash = Animator.StringToHash(moveInput);
+        moveXHash = Animator.StringToHash(moveX);
+        moveYHash = Animator.StringToHash(moveY);
+        isAimingHash = Animator.StringToHash(isAiming);
+        isGroundedHash = Animator.StringToHash(isGrounded);
+        isAttackingHash = Animator.StringToHash(isAttacking);
+        jumpHash = Animator.StringToHash(jump);
+
+        if (!parameterNames.Contains(moveInput))
+            Debug.LogWarning($"Animator missing parameter: {moveInput}", this);
+        if (!parameterNames.Contains(moveX))
+            Debug.LogWarning($"Animator missing parameter: {moveX}", this);
+        if (!parameterNames.Contains(moveY))
+            Debug.LogWarning($"Animator missing parameter: {moveY}", this);
+        if (!parameterNames.Contains(isAiming))
+            Debug.LogWarning($"Animator missing parameter: {isAiming}", this);
+        if (!parameterNames.Contains(isGrounded))
+            Debug.LogWarning($"Animator missing parameter: {isGrounded}", this);
+        if (!parameterNames.Contains(isAttacking))
+            Debug.LogWarning($"Animator missing parameter: {isAttacking}", this);
+        if (!parameterNames.Contains(jump))
+            Debug.LogWarning($"Animator missing parameter: {jump}", this);
     }
 }
