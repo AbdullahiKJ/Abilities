@@ -31,11 +31,25 @@ public class MovementController : MonoBehaviour
     {
         Vector3 move = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
 
-        if (move.sqrMagnitude > 0.01f)
+        // Face the camera when aiming
+        if (input.canAim && input.AimInput == 1f)
         {
-            // Rotate toward movement direction relative to the camera
-            Quaternion targetRot = Quaternion.LookRotation(move);
+            Vector3 camForward = cam.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+
+            Quaternion targetRot = Quaternion.LookRotation(camForward);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+        }
+        // Rotate towards the move direction otherwise
+        else
+        {
+            if (move.sqrMagnitude > 0.01f)
+            {
+                // Rotate toward movement direction relative to the camera
+                Quaternion targetRot = Quaternion.LookRotation(move);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            }
         }
 
         characterController.Move(moveSpeed * Time.deltaTime * move);
