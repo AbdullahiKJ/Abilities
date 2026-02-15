@@ -7,7 +7,6 @@ public class StateMachine : MonoBehaviour
         Grounded,
         Airborne,
         Attacking,
-        Swinging
     }
 
     public PlayerState CurrentState { get; private set; }
@@ -31,10 +30,5 @@ public class StateMachine : MonoBehaviour
     public void SetAttacking(bool attacking)
     {
         CurrentState = attacking ? PlayerState.Attacking : PlayerState.Grounded;
-    }
-
-    public void SetSwinging(bool swinging)
-    {
-        CurrentState = swinging ? PlayerState.Swinging : PlayerState.Grounded;
     }
 }

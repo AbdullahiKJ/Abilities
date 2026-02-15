@@ -19,6 +19,7 @@ public class AnimationController : MonoBehaviour
     public string isGrounded = "IsGrounded";
     public string isAttacking = "IsAttacking";
     public string jump = "Jump";
+    public string shoot = "Shoot";
 
     // Parameter hashes
     private int moveInputHash;
@@ -28,6 +29,7 @@ public class AnimationController : MonoBehaviour
     private int isGroundedHash;
     private int isAttackingHash;
     private int jumpHash;
+    private int shootHash;
 
     private void Awake()
     {
@@ -91,6 +93,11 @@ public class AnimationController : MonoBehaviour
         animator.SetTrigger(jumpHash);
     }
 
+    public void PlayShootAnim()
+    {
+        animator.SetTrigger(shootHash);
+    }
+
     // Create parameter hashes and check if they exist within the animator
     private void ValidateParameters()
     {
@@ -104,6 +111,7 @@ public class AnimationController : MonoBehaviour
         isGroundedHash = Animator.StringToHash(isGrounded);
         isAttackingHash = Animator.StringToHash(isAttacking);
         jumpHash = Animator.StringToHash(jump);
+        shootHash = Animator.StringToHash(shoot);
 
         if (!parameterNames.Contains(moveInput))
             Debug.LogWarning($"Animator missing parameter: {moveInput} on {this.gameObject.name}", this);
@@ -119,5 +127,7 @@ public class AnimationController : MonoBehaviour
             Debug.LogWarning($"Animator missing parameter: {isAttacking} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(jump))
             Debug.LogWarning($"Animator missing parameter: {jump} on {this.gameObject.name}", this);
+        if (!parameterNames.Contains(shoot))
+            Debug.LogWarning($"Animator missing parameter: {shoot} on {this.gameObject.name}", this);
     }
 }

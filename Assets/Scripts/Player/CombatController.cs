@@ -1,17 +1,20 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class CombatController : MonoBehaviour
 {
-    public float gatlingTimeWindow = 0.5f;
-    public int gatlingThreshold = 3;
-
     private InputReader input;
     private StateMachine state;
     private AnimationController anim;
     private Animator animator;
+    private Camera cam;
 
-    private List<float> recentPunchTimes = new List<float>();
+    // Shoot settings
+    [SerializeField] float fireRate;
+    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] float maxAimDistance = 50f;
+    [SerializeField] Transform gunTip;
+    private float lastFireTime;
+    Vector3 screenCenter;
 
     private void Awake()
     {
@@ -19,58 +22,32 @@ public class CombatController : MonoBehaviour
         state = GetComponent<StateMachine>();
         anim = GetComponent<AnimationController>();
         animator = GetComponent<Animator>();
+        cam = Camera.main;
+
+        screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
     }
 
     private void OnEnable()
     {
         input.PunchPressed += OnPunch;
-        input.KickPressed += OnKick;
+        input.ShootPressed += TryFire;
     }
 
     private void OnDisable()
     {
         input.PunchPressed -= OnPunch;
-        input.KickPressed -= OnKick;
+        input.ShootPressed -= TryFire;
     }
 
     private void OnPunch()
     {
-        if (state.CurrentState == StateMachine.PlayerState.Swinging)
-            return;
-
-        recentPunchTimes.Add(Time.time);
-
-        // Remove old inputs
-        recentPunchTimes.RemoveAll(t => Time.time - t > gatlingTimeWindow);
-
-        if (recentPunchTimes.Count >= gatlingThreshold)
-        {
-            TriggerGatling();
-        }
-        else
-        {
-            TriggerBasicPunch();
-        }
-    }
-
-    private void OnKick()
-    {
-        if (state.CurrentState == StateMachine.PlayerState.Swinging)
-            return;
-
-        TriggerKick();
+        TriggerBasicPunch();
     }
 
     // Animation events
     public void OnPunchAnimationEvent()
     {
-        animator.SetLayerWeight(1, 0f);
-    }
-    public void OnGatlingAnimationEvent()
-    {
-    }
-    public void OnKickAnimationEvent()
-    {
+
     }
 
     // Attack triggers
@@ -84,25 +61,29 @@ public class CombatController : MonoBehaviour
         Invoke(nameof(EndAttack), 0.4f);
     }
 
-    private void TriggerGatling()
+    private void TryFire()
     {
-        if (state.CurrentState == StateMachine.PlayerState.Attacking)
+        if (Time.time < lastFireTime + fireRate || input.AimInput < 1f || !input.canAim)
             return;
 
+        lastFireTime = Time.time;
         state.SetAttacking(true);
-        anim.PlayGatlingAnim();
-        Invoke(nameof(EndAttack), 1.2f);
+        anim.PlayShootAnim();
+
+        // Fire the projectile
+        Ray aimRay = cam.ScreenPointToRay(screenCenter);
+        Vector3 targetPoint;
+
+        if (Physics.Raycast(aimRay, out RaycastHit hit, maxAimDistance))
+            targetPoint = hit.point;
+        else
+            targetPoint = aimRay.origin + aimRay.direction * maxAimDistance;
+
+        Vector3 fireDirection = (targetPoint - gunTip.position).normalized;
+        GameObject bullet = Instantiate(bulletPrefab, gunTip.position, Quaternion.LookRotation(fireDirection));
+        bullet.GetComponent<Bullet>().Fire(fireDirection);
     }
 
-    private void TriggerKick()
-    {
-        if (state.CurrentState == StateMachine.PlayerState.Attacking)
-            return;
-
-        state.SetAttacking(true);
-        anim.PlayKickAnim();
-        Invoke(nameof(EndAttack), 0.5f);
-    }
 
     private void EndAttack()
     {
