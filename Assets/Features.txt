@@ -1,0 +1,59 @@
+-------Sand-based character
+
+Intangibility System
+	Body turns to sand on impact
+	Projectile pass-through with displacement
+	Procedural hole cutouts
+	Auto reformation
+
+Sand Spear / Projectile Attack
+	Piercing projectile
+	Spiral spear tip shape
+	Leaves temporary hole in sand body?
+
+Sandstorm (AoE Ability)
+	Rotating particle field
+	Pull force toward center
+    Sand tornado visuals + field of sand grains surrounding it
+
+Desert Coffin (Grab Ability)
+	Enemy trapped in sand
+	Compression effect
+	Burst finish
+
+Sandstorm sprint (Mobility Ability)
+    Small sand tornado that replaces the bottom half of the character
+    Increased Mobility
+    Knock over enemies
+
+Dash dissolve (Mobility Ability)
+    Disable collider
+    Convert mesh to sand particles
+    Displace particles to new position
+
+--------Lightning character
+
+Lightning Intangibility
+	Body becomes electricity
+	Holes or distortion ripple
+
+Lightning Dash
+	Instant relocation
+	Afterimage
+	Ground scorch decal
+
+Targeted Lightning Strike
+	Raycast to target
+	Vertical bolt VFX
+
+Area Thunderstorm
+	Sky-based attack
+	Random strike positions
+	Telegraph indicators before impact
+
+--------Basic character
+
+Regular Weapons that you can switch between
+    Rifle
+    Sword
+    Spear

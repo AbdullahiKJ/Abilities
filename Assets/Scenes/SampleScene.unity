@@ -208,7 +208,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.06459249, y: -0.0000000061593775, z: 3.9868198e-10, w: 0.99791175}
-  m_LocalPosition: {x: 8.0811825, y: 2.28, z: 6.7192717}
+  m_LocalPosition: {x: -2.0909998, y: 2.28, z: -5.378}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -558,7 +558,7 @@ Transform:
   m_GameObject: {fileID: 506593869}
   serializedVersion: 2
   m_LocalRotation: {x: 0.06459247, y: -0.000000006159376, z: 3.986817e-10, w: 0.99791175}
-  m_LocalPosition: {x: 8.0811825, y: 2.28, z: 6.7192717}
+  m_LocalPosition: {x: -2.0909998, y: 2.28, z: -5.378}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1151,7 +1151,7 @@ Transform:
   m_GameObject: {fileID: 1312425540}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.061182, y: 1.53, z: 11.319272}
+  m_LocalPosition: {x: -2.1109998, y: 1.53, z: -0.778}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1733,8 +1733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6859ccc212b413291d0bef2786a5ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitSystem
-  bulletRadiuses: {x: 0.1, y: 0.3}
-  maxRayDistance: 50
+  radiusMultiplier: {x: 1.1, y: 1.5}
   vfxPrefab: {fileID: 7196732114088808679, guid: 930adc792ac3a4fdc8e4fc2199482bb8, type: 3}
   lifetime: 5
   delayMultiplier: 0.2
@@ -1748,7 +1747,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.5921826
+      value: -2.58
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1756,7 +1755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.977272
+      value: -0.12
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2942,6 +2941,7 @@ GameObject:
   - component: {fileID: 2006462699}
   - component: {fileID: 2006462698}
   - component: {fileID: 2006462697}
+  - component: {fileID: 2006462700}
   m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
@@ -3042,6 +3042,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2006462695}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2006462700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006462695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6859ccc212b413291d0bef2786a5ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitSystem
+  radiusMultiplier: {x: 1.1, y: 1.5}
+  vfxPrefab: {fileID: 7196732114088808679, guid: 930adc792ac3a4fdc8e4fc2199482bb8, type: 3}
+  lifetime: 5
+  delayMultiplier: 0.2
 --- !u!1 &2104200305
 GameObject:
   m_ObjectHideFlags: 0

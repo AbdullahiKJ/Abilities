@@ -35,6 +35,10 @@ public class InputReader : MonoBehaviour
         controls.Player.Punch.performed += ctx => PunchPressed?.Invoke();
         controls.Player.Kick.performed += ctx => KickPressed?.Invoke();
         controls.Player.Shoot.performed += ctx => ShootPressed?.Invoke();
+
+        // Lock and hide the mouse
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void OnEnable()
