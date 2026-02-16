@@ -21,15 +21,26 @@ Desert Coffin (Grab Ability)
 	Compression effect
 	Burst finish
 
-Sandstorm sprint (Mobility Ability)
+Mobility Abilities
+
+Sandstorm sprint
     Small sand tornado that replaces the bottom half of the character
     Increased Mobility
     Knock over enemies
 
-Dash dissolve (Mobility Ability)
+Dash dissolve
     Disable collider
     Convert mesh to sand particles
     Displace particles to new position
+
+Dispersal
+    Similar to the dash dissolve
+    Enter a state of high speed movement while completely intagible
+
+Stealth
+    Similar to dash and Dispersal
+    Split into sand, stay low and close to the Ground
+    Combine with stealth takedowns
 
 --------Lightning character
 
