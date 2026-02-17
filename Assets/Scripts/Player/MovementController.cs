@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(CharacterController))]
 public class MovementController : MonoBehaviour
@@ -13,6 +14,14 @@ public class MovementController : MonoBehaviour
 
     private Vector3 velocity;
     public float gravity = -9.81f;
+    bool canMove = true;
+
+    [Header("Dash Settings")]
+    public SkinnedMeshRenderer skinnedMeshRenderer;
+    public GameObject dashPrefab;
+    public float dashDuration = 2f;
+    public float dashDistance = 4f;
+
 
     private void Awake()
     {
@@ -21,9 +30,20 @@ public class MovementController : MonoBehaviour
         cam = Camera.main;
     }
 
+    private void OnEnable()
+    {
+        input.DashPressed += TriggerDash;
+    }
+
+    private void OnDisable()
+    {
+        input.DashPressed -= TriggerDash;
+    }
+
     private void Update()
     {
-        Move();
+        if (canMove)
+            Move();
         ApplyGravity();
     }
 
@@ -70,5 +90,38 @@ public class MovementController : MonoBehaviour
     public void AddVerticalVelocity(float amount)
     {
         velocity.y = amount;
+    }
+
+    private void TriggerDash()
+    {
+        // Determine the dash direction (dash backwards if there is no move input)
+        Vector3 direction;
+        if (input.MoveInput.magnitude > 0.05f)
+            direction = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
+        else
+            direction = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(0, 0, -1);
+
+        // Instantiate the prefab, destroy after it's duration has elapsed
+        GameObject prefabInstance = Instantiate(dashPrefab, transform.position, Quaternion.identity);
+        Destroy(prefabInstance, dashDuration);
+        VisualEffect vfx = prefabInstance.GetComponent<VisualEffect>();
+
+        // Set the vfx properties
+        vfx.SetFloat("lifetime", dashDuration);
+        vfx.SetVector3("dashDirection", direction);
+        vfx.SetFloat("dashDistance", dashDistance);
+        vfx.SetSkinnedMeshRenderer("skinnedMesh", skinnedMeshRenderer);
+
+        // Move the player to the position
+        characterController.Move(direction * dashDistance);
+
+        // Temporarily disable movement
+        canMove = false;
+        Invoke(nameof(EnableMovement), dashDuration);
+    }
+
+    private void EnableMovement()
+    {
+        canMove = true;
     }
 }

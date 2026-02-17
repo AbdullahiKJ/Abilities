@@ -964,7 +964,7 @@ MonoBehaviour:
   characterArray:
   - {fileID: 1393632209}
   - {fileID: 1304196145}
-  currentChar: 1
+  currentChar: 0
   cam: {fileID: 506593872}
   camTargetName: CameraTarget
 --- !u!1 &832575517
@@ -1539,6 +1539,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!137 &1393632211 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5822821947120931875, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
+  m_PrefabInstance: {fileID: 1393632208}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1393632212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1546,7 +1551,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a6c53b18ab964ea2b55a5add6d3c037, type: 3}
   m_Name: 
@@ -1566,7 +1571,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbf9e2150449f44c18b032b297ae5ba1, type: 3}
   m_Name: 
@@ -1578,7 +1583,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 788b366d2c801432388903066257ffc0, type: 3}
   m_Name: 
@@ -1594,7 +1599,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9724a8514c5f24f33865bc2ee6a2eab0, type: 3}
   m_Name: 
@@ -1607,7 +1612,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 809b73ff8f7654387b28430014a00246, type: 3}
   m_Name: 
@@ -1615,6 +1620,10 @@ MonoBehaviour:
   moveSpeed: 6
   rotationSpeed: 10
   gravity: -9.81
+  skinnedMeshRenderer: {fileID: 1393632211}
+  dashPrefab: {fileID: 1677380123689576852, guid: 9e511e64d710d47fab0b13320b7b2e13, type: 3}
+  dashDuration: 2
+  dashDistance: 4
 --- !u!114 &1393632218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1622,7 +1631,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3cab0394bd0b43e3bae5ff8dffc2771, type: 3}
   m_Name: 
@@ -1636,7 +1645,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -1728,7 +1737,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393632209}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf6859ccc212b413291d0bef2786a5ea, type: 3}
   m_Name: 
@@ -2463,7 +2472,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a6c53b18ab964ea2b55a5add6d3c037, type: 3}
   m_Name: 
@@ -2483,7 +2492,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbf9e2150449f44c18b032b297ae5ba1, type: 3}
   m_Name: 
@@ -2495,7 +2504,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 788b366d2c801432388903066257ffc0, type: 3}
   m_Name: 
@@ -2511,7 +2520,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9724a8514c5f24f33865bc2ee6a2eab0, type: 3}
   m_Name: 
@@ -2524,7 +2533,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 809b73ff8f7654387b28430014a00246, type: 3}
   m_Name: 
@@ -2532,6 +2541,10 @@ MonoBehaviour:
   moveSpeed: 6
   rotationSpeed: 10
   gravity: -9.81
+  skinnedMeshRenderer: {fileID: 0}
+  dashPrefab: {fileID: 0}
+  dashDuration: 0
+  dashDistance: 0
 --- !u!114 &1577095179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2539,7 +2552,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3cab0394bd0b43e3bae5ff8dffc2771, type: 3}
   m_Name: 
@@ -2553,7 +2566,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 

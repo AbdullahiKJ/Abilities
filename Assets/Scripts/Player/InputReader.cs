@@ -19,6 +19,7 @@ public class InputReader : MonoBehaviour
     public event System.Action PunchPressed;
     public event System.Action KickPressed;
     public event System.Action ShootPressed;
+    public event System.Action DashPressed;
 
     private void Awake()
     {
@@ -35,6 +36,7 @@ public class InputReader : MonoBehaviour
         controls.Player.Punch.performed += ctx => PunchPressed?.Invoke();
         controls.Player.Kick.performed += ctx => KickPressed?.Invoke();
         controls.Player.Shoot.performed += ctx => ShootPressed?.Invoke();
+        controls.Player.Dash.performed += ctx => DashPressed?.Invoke();
 
         // Lock and hide the mouse
         Cursor.lockState = CursorLockMode.Locked;
