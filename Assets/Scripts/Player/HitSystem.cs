@@ -1,22 +1,22 @@
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class HitSystem : MonoBehaviour
 {
     public Vector2 radiusMultiplier = new Vector2(1.1f, 1.5f);
-    public GameObject vfxPrefab;
     public float lifetime = 5f;
     public float delayMultiplier = 0.2f;
     private int holeCount = 0;
     private int maxHole = 4;
     private Renderer rd;
     private MaterialPropertyBlock block;
+    private VFXController vfx;
 
     void Start()
     {
         rd = GetComponent<Renderer>();
         block = new MaterialPropertyBlock();
+        vfx = GetComponent<VFXController>();
     }
 
     public void OnEnter(Bullet bullet)
@@ -36,14 +36,7 @@ public class HitSystem : MonoBehaviour
         rd.SetPropertyBlock(block);
 
         // Instantiate the vfx prefab and assign graph properties
-        GameObject prefab = Instantiate(vfxPrefab, Vector3.zero, Quaternion.identity);
-        Destroy(prefab, lifetime);
-        VisualEffect vfx = prefab.GetComponent<VisualEffect>();
-
-        vfx.SetFloat("lifetime", lifetime);
-        vfx.SetFloat("radius", radius);
-        vfx.SetVector3("capsuleStart", entryPoint);
-        vfx.SetVector3("capsuleEnd", exitPoint);
+        vfx.CreateHitVFX(lifetime, radius, entryPoint, exitPoint);
 
         // Interpolate the radius size
         int index = holeCount;

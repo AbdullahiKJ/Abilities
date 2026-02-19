@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.VFX;
 
 [RequireComponent(typeof(CharacterController))]
 public class MovementController : MonoBehaviour
@@ -11,14 +10,13 @@ public class MovementController : MonoBehaviour
     private CharacterController characterController;
     private InputReader input;
     private Camera cam;
+    private VFXController vfx;
 
     private Vector3 velocity;
     public float gravity = -9.81f;
     bool canMove = true;
 
     [Header("Dash Settings")]
-    public SkinnedMeshRenderer skinnedMeshRenderer;
-    public GameObject dashPrefab;
     public float dashDuration = 2f;
     public float dashDistance = 4f;
 
@@ -28,6 +26,7 @@ public class MovementController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         input = GetComponent<InputReader>();
         cam = Camera.main;
+        vfx = GetComponent<VFXController>();
     }
 
     private void OnEnable()
@@ -102,15 +101,7 @@ public class MovementController : MonoBehaviour
             direction = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(0, 0, -1);
 
         // Instantiate the prefab, destroy after it's duration has elapsed
-        GameObject prefabInstance = Instantiate(dashPrefab, transform.position, Quaternion.identity);
-        Destroy(prefabInstance, dashDuration);
-        VisualEffect vfx = prefabInstance.GetComponent<VisualEffect>();
-
-        // Set the vfx properties
-        vfx.SetFloat("lifetime", dashDuration);
-        vfx.SetVector3("dashDirection", direction);
-        vfx.SetFloat("dashDistance", dashDistance);
-        vfx.SetSkinnedMeshRenderer("skinnedMesh", skinnedMeshRenderer);
+        vfx.CreateDashVFX(dashDuration, direction, dashDistance);
 
         // Move the player to the position
         characterController.Move(direction * dashDistance);
