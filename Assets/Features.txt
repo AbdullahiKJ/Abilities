@@ -28,12 +28,12 @@ Sandstorm sprint
     Increased Mobility
     Knock over enemies
 
-Dash dissolve
+Dodge dissolve
     Disable collider
     Convert mesh to sand particles
     Displace particles to new position
 
-Dispersal
+Dash Dispersal
     Similar to the dash dissolve
     Enter a state of high speed movement while completely intagible
 

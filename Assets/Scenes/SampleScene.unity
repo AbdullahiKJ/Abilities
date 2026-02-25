@@ -1079,7 +1079,7 @@ Transform:
   m_GameObject: {fileID: 743608334}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.1, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1537,6 +1537,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1393632221}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &1392299882 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7813590141776298306, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
+  m_PrefabInstance: {fileID: 1393632208}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1393632208
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1741,11 +1746,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 809b73ff8f7654387b28430014a00246, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  moveSpeed: 6
+  regularSpeed: 6
+  dashSpeed: 12
   rotationSpeed: 10
   gravity: -9.81
-  dashDuration: 2
-  dashDistance: 4
+  dodgeDuration: 2
+  dodgeDistance: 4
 --- !u!114 &1393632218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1880,8 +1886,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VFXController
   hitPrefab: {fileID: 7196732114088808679, guid: 930adc792ac3a4fdc8e4fc2199482bb8, type: 3}
-  dashPrefab: {fileID: 1677380123689576852, guid: 9e511e64d710d47fab0b13320b7b2e13, type: 3}
-  skinnedMeshRenderer: {fileID: 1393632211}
+  dodgePrefab: {fileID: 1677380123689576852, guid: 9e511e64d710d47fab0b13320b7b2e13, type: 3}
+  dashPrefab: {fileID: 9114505762781709767, guid: b17a739a529074eaab4ab99a49d75ee8, type: 3}
+  surfaceRenderer: {fileID: 1393632211}
+  jointRenderer: {fileID: 1392299882}
+  idleVFX: {fileID: 1335123093}
+  sphereVFX: {fileID: 743608336}
+  sphereVFXRadius: 0.2
+  reformDuration: 0.5
+  alphaDelayProp: 0.75
 --- !u!1001 &1577095172
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2674,11 +2687,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 809b73ff8f7654387b28430014a00246, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  moveSpeed: 6
+  regularSpeed: 6
+  dashSpeed: 12
   rotationSpeed: 10
   gravity: -9.81
-  dashDuration: 0
-  dashDistance: 0
+  dodgeDuration: 2
+  dodgeDistance: 4
 --- !u!114 &1577095179
 MonoBehaviour:
   m_ObjectHideFlags: 0

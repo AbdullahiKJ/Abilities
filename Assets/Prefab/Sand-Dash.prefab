@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1677380123689576852
+--- !u!1 &4068781302885139909
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2647268342255093245}
-  - component: {fileID: 2353176885777099168}
-  - component: {fileID: 3601916358861428599}
+  - component: {fileID: 4741544034813178908}
+  m_Layer: 0
+  m_Name: Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4741544034813178908
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4068781302885139909}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4074533279327468694}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9114505762781709767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4074533279327468694}
+  - component: {fileID: 1471893116009725258}
+  - component: {fileID: 8270650783576614227}
+  - component: {fileID: 5859012458123312014}
+  - component: {fileID: 5604309174020025662}
   m_Layer: 0
   m_Name: Sand-Dash
   m_TagString: Untagged
@@ -18,30 +51,31 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2647268342255093245
+--- !u!4 &4074533279327468694
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677380123689576852}
+  m_GameObject: {fileID: 9114505762781709767}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 9.21, y: 2.31, z: 2.4684768}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4741544034813178908}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!2083052967 &2353176885777099168
+--- !u!2083052967 &1471893116009725258
 VisualEffect:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677380123689576852}
+  m_GameObject: {fileID: 9114505762781709767}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: c5d5f368844bd45d287b254ccd4d5e07, type: 3}
+  m_Asset: {fileID: 8926484042661614526, guid: 32d60c367263e4924a1670a217a3007b, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -51,18 +85,42 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 2
-        m_Name: lifetime
+      - m_Value: 0.2
+        m_Name: radius
         m_Overridden: 1
-      - m_Value: 4
-        m_Name: dashDistance
+      - m_Value: 250
+        m_Name: maxForce
+        m_Overridden: 1
+      - m_Value: 100
+        m_Name: minSpeed
+        m_Overridden: 1
+      - m_Value: 150
+        m_Name: maxSpeed
+        m_Overridden: 1
+      - m_Value: 0.5
+        m_Name: drag
+        m_Overridden: 1
+      - m_Value: 10
+        m_Name: initialVelocity
+        m_Overridden: 1
+      - m_Value: 150
+        m_Name: stiffness
+        m_Overridden: 1
+      - m_Value: 0.75
+        m_Name: alphaReformDelay
         m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array:
-      - m_Value: {x: 1, y: 0, z: 0}
-        m_Name: dashDirection
+      - m_Value: {x: -0, y: 0, z: 0}
+        m_Name: sphereTransform_angles
+        m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 0}
+        m_Name: sphereTransform_position
+        m_Overridden: 1
+      - m_Value: {x: 1, y: 1, z: 1}
+        m_Name: sphereTransform_scale
         m_Overridden: 1
     m_Vector4f:
       m_Array: []
@@ -83,14 +141,14 @@ VisualEffect:
         m_Overridden: 1
     m_Bool:
       m_Array: []
---- !u!73398921 &3601916358861428599
+--- !u!73398921 &8270650783576614227
 VFXRenderer:
   serializedVersion: 1
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677380123689576852}
+  m_GameObject: {fileID: 9114505762781709767}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -130,3 +188,35 @@ VFXRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
+--- !u!114 &5859012458123312014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9114505762781709767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdafc37f32b176349b1684c4455b98e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.VisualEffectGraph.Runtime::UnityEngine.VFX.Utility.VFXPropertyBinder
+  m_ExecuteInEditor: 1
+  m_Bindings:
+  - {fileID: 5604309174020025662}
+  m_VisualEffect: {fileID: 1471893116009725258}
+--- !u!114 &5604309174020025662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9114505762781709767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fdfea1f838247c40921a07afedde962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.VisualEffectGraph.Runtime::UnityEngine.VFX.Utility.VFXTransformBinder
+  Space: 0
+  m_Property:
+    m_Name: sphereTransform
+  Target: {fileID: 4741544034813178908}
