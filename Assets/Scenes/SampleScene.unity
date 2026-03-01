@@ -1558,7 +1558,7 @@ VFXRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 743608334}
   m_Enabled: 1
-  m_CastShadows: 0
+  m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -2472,6 +2472,9 @@ MonoBehaviour:
   bulletPrefab: {fileID: 0}
   maxAimDistance: 50
   gunTip: {fileID: 0}
+  wallPrefab: {fileID: 7362322736002100795, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
+  wallPlacementPrefab: {fileID: 3802950292524776360, guid: b2e875169b19c4ad591c86cce7a0ecd4, type: 3}
+  wallOffset: 5
 --- !u!114 &1393632216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3655,6 +3658,9 @@ MonoBehaviour:
   bulletPrefab: {fileID: 5235465196015904803, guid: 2975ea863bc4f4231b64644a50aacb6c, type: 3}
   maxAimDistance: 50
   gunTip: {fileID: 1776074093}
+  wallPrefab: {fileID: 0}
+  wallPlacementPrefab: {fileID: 0}
+  wallOffset: 5
 --- !u!114 &1577095177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4694,63 +4700,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &7328567882660881253
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5.82
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7362322736002100795, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: m_Name
-      value: Sand-Wall
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -4763,4 +4712,3 @@ SceneRoots:
   - {fileID: 1577095172}
   - {fileID: 1666336655}
   - {fileID: 1751726731}
-  - {fileID: 7328567882660881253}

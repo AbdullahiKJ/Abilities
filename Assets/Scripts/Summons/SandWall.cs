@@ -22,12 +22,11 @@ public class SandWall : MonoBehaviour
     [SerializeField] GameObject destructionVFXPrefab;
     [SerializeField] float destructionVFXLifetime = 3f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
         // Ensure the wall mesh starts at the correct position
         wallMesh.transform.localPosition = startPosition;
-        Invoke(nameof(RaiseVFX), 1f);
+        RaiseVFX();
     }
 
     void RaiseVFX()

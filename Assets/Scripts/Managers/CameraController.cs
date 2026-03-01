@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] int normalPriority = 10;
     [SerializeField] int aimPriority = 5;
     public bool IsAiming { get; private set; }
+    bool marineCharacterActive;
 
     void Start()
     {
@@ -19,6 +20,7 @@ public class CameraController : MonoBehaviour
 
         // Get the current playable character
         input = playerManager.characterArray[playerManager.currentChar].GetComponent<InputReader>();
+        marineCharacterActive = playerManager.currentChar == 1;
     }
 
     void Update()
@@ -26,7 +28,7 @@ public class CameraController : MonoBehaviour
         IsAiming = input.AimInput > 0.5f;
 
         // Update the aim cam priority
-        if (IsAiming)
+        if (IsAiming && marineCharacterActive)
         {
             aimCam.Priority.Value = normalPriority + 1;
         }
