@@ -48,6 +48,8 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _cutOffHeight: 0.3
+    - _fadeHeight: 0.5
     - _normalTiling: 17.09
     - _tileSpeed: 0.02
     - _tiling: 1

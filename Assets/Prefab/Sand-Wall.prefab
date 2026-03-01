@@ -52,8 +52,10 @@ MonoBehaviour:
   riseVFXLifetime: 2.5
   wallMesh: {fileID: 555179153380614865}
   wallLifetime: 5
-  hitVFX: {fileID: 0}
-  destructionVFX: {fileID: 0}
+  hitVFXPrefab: {fileID: 0}
+  fallVFXPrefab: {fileID: 6119200109393284478, guid: 45f86dbb99ef744f7b32d3bc365a026d, type: 3}
+  destructionVFXPrefab: {fileID: 7153415722196965738, guid: 14ca4ae1c3d0f490db5d04e16790b309, type: 3}
+  destructionVFXLifetime: 3
 --- !u!1001 &825581149747748736
 PrefabInstance:
   m_ObjectHideFlags: 0

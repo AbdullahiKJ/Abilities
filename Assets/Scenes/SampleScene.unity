@@ -4702,10 +4702,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 312723055960367198, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
-      propertyPath: fallVFXPrefab
-      value: 
-      objectReference: {fileID: 6119200109393284478, guid: 45f86dbb99ef744f7b32d3bc365a026d, type: 3}
     - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4716,7 +4712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -15
+      value: 5.82
       objectReference: {fileID: 0}
     - target: {fileID: 3328511634244627610, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
       propertyPath: m_LocalRotation.w

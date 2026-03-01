@@ -16,13 +16,17 @@ public class SandWall : MonoBehaviour
     [SerializeField] float wallLifetime = 5f;
     [SerializeField] GameObject hitVFXPrefab;
     [SerializeField] GameObject fallVFXPrefab;
+    GameObject fallVFXInstance;
 
     [Header("Wall Destruction Settings")]
-    [SerializeField] VisualEffect destructionVFX;
+    [SerializeField] GameObject destructionVFXPrefab;
+    [SerializeField] float destructionVFXLifetime = 3f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Ensure the wall mesh starts at the correct position
+        wallMesh.transform.localPosition = startPosition;
         Invoke(nameof(RaiseVFX), 1f);
     }
 
@@ -38,8 +42,34 @@ public class SandWall : MonoBehaviour
 
     void RaiseWall()
     {
-        // Move the wall mesh to the start position and animate it to the end position
-        wallMesh.transform.localPosition = startPosition;
-        wallMesh.transform.DOLocalMove(endPosition, riseDuration);
+        // Start the fall VFX
+        fallVFXInstance = Instantiate(fallVFXPrefab, transform.position, Quaternion.identity);
+
+        // Animate the wall transform to the end position
+        wallMesh.transform.DOLocalMove(endPosition, riseDuration).OnComplete(() =>
+        {
+            // After the wall has risen, start the lifetime timer
+            Invoke(nameof(DestroyWall), wallLifetime);
+        });
+    }
+
+    void DestroyWall()
+    {
+        // Hide the wall mesh
+        wallMesh.SetActive(false);
+
+        // Destroy the fall VFX if it exists
+        if (fallVFXInstance != null)
+        {
+            Destroy(fallVFXInstance);
+        }
+
+        // Play the destruction VFX
+        GameObject destructionVFXInstance = Instantiate(destructionVFXPrefab, transform.position, Quaternion.identity);
+        destructionVFXInstance.GetComponent<VisualEffect>().SetFloat("lifetime", destructionVFXLifetime);
+
+        // Destroy the wall after the VFX has played
+        Destroy(destructionVFXInstance, destructionVFXLifetime);
+        Destroy(gameObject, destructionVFXLifetime);
     }
 }
