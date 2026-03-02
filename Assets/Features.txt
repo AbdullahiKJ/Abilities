@@ -1,10 +1,17 @@
 -------Sand-based character
 
-Intangibility System
+Intangibility System✅
 	Body turns to sand on impact
 	Projectile pass-through with displacement
 	Procedural hole cutouts
 	Auto reformation
+
+Basic Combat
+
+Sand Blade Primary (X)
+	Three sand blades move forward with swing
+
+
 
 Sand Spear / Projectile Attack
 	Piercing projectile
@@ -21,6 +28,9 @@ Desert Coffin (Grab Ability)
 	Compression effect
 	Burst finish
 
+Sand Wall (Devensive Ability)
+	Create a defensive wall that blocks projectiles for a period
+
 Mobility Abilities
 
 Sandstorm sprint
@@ -28,12 +38,12 @@ Sandstorm sprint
     Increased Mobility
     Knock over enemies
 
-Dodge dissolve
+Dodge dissolve✅
     Disable collider
     Convert mesh to sand particles
     Displace particles to new position
 
-Dash Dispersal
+Dash Dispersal✅
     Similar to the dash dissolve
     Enter a state of high speed movement while completely intagible
 
@@ -41,26 +51,6 @@ Stealth
     Similar to dash and Dispersal
     Split into sand, stay low and close to the Ground
     Combine with stealth takedowns
-
---------Lightning character
-
-Lightning Intangibility
-	Body becomes electricity
-	Holes or distortion ripple
-
-Lightning Dash
-	Instant relocation
-	Afterimage
-	Ground scorch decal
-
-Targeted Lightning Strike
-	Raycast to target
-	Vertical bolt VFX
-
-Area Thunderstorm
-	Sky-based attack
-	Random strike positions
-	Telegraph indicators before impact
 
 --------Basic character
 
