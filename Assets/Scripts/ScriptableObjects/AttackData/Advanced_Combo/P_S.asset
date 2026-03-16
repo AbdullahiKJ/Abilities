@@ -10,15 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 517c5611be5ab4a7b946cc5bbacb0a4b, type: 3}
-  m_Name: Primary
+  m_Name: P_S
   m_EditorClassIdentifier: Assembly-CSharp::AttackData
-  animationName: Light_1
+  animationName: L_H
   crossFadeDuration: 0.1
   comboWindowOpen: 0.6
   comboWindowClose: 0.9
   canBeInterrupted: 0
-  nextAttacks:
-  - inputType: 0
-    nextAttack: {fileID: 11400000, guid: 37a1c994f8a864f258cced619ecf2b5e, type: 2}
-  - inputType: 1
-    nextAttack: {fileID: 11400000, guid: 7d9ed855ad107466abf064f8b6fd8790, type: 2}
+  nextAttacks: []
