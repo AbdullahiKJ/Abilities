@@ -15,6 +15,7 @@ public class CombatController : MonoBehaviour
     [SerializeField] Transform gunTip;
     private float lastFireTime;
     Vector3 screenCenter;
+    bool isAiming;
 
     [Header("Wall Settings")]
     [SerializeField] GameObject wallPrefab;
@@ -22,7 +23,12 @@ public class CombatController : MonoBehaviour
     GameObject wallInstance;
     GameObject wallPlacementInstance;
     [SerializeField] float wallOffset = 5f;
-    bool isAiming;
+
+    [Header("Combo Settings")]
+    [SerializeField] AttackData rootPrimaryAttack;
+    private AttackData currentAttack;
+    private AttackData queuedAttack;
+    private bool comboWindowOpen;
 
     private void Awake()
     {
@@ -38,68 +44,85 @@ public class CombatController : MonoBehaviour
     void Update()
     {
         isAiming = input.AimInput > 0.5f;
-        if (isAiming)
-        {
-            // Calculate wall placement position
-            Vector3 camForward = cam.transform.forward;
-            camForward.y = 0f;
-            camForward.Normalize();
-            Vector3 wallPos = transform.position + camForward * wallOffset;
+        PlaceWallPreview(isAiming);
 
-            // Create the wall placement prefab if it doesn't exist
-            if (wallPlacementInstance == null)
-            {
-                wallPlacementInstance = Instantiate(wallPlacementPrefab, wallPos, Quaternion.LookRotation(camForward));
-            }
-            // Move the wall placement prefab to the new position and rotate it to face the camera
-            else
-            {
-                wallPlacementInstance.transform.position = wallPos;
-                wallPlacementInstance.transform.rotation = Quaternion.LookRotation(camForward);
-            }
-        }
-        else
+        if (currentAttack == null)
+            return;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        float normalizedTime = state.normalizedTime % 1f;
+
+        comboWindowOpen =
+            normalizedTime >= currentAttack.comboWindowOpen &&
+            normalizedTime <= currentAttack.comboWindowClose;
+
+        if (normalizedTime >= 1f)
         {
-            // Destroy the wall placement prefab if it exists
-            if (wallPlacementInstance != null)
-            {
-                Destroy(wallPlacementInstance);
-            }
+            OnAttackFinished();
         }
     }
 
     private void OnEnable()
     {
-        input.PunchPressed += OnPunch;
+        input.PrimaryPressed += OnPrimary;
         input.ShootPressed += TryFire;
     }
 
     private void OnDisable()
     {
-        input.PunchPressed -= OnPunch;
+        input.PrimaryPressed -= OnPrimary;
         input.ShootPressed -= TryFire;
     }
 
-    private void OnPunch()
+    private void OnPrimary()
     {
-        TriggerBasicPunch();
-    }
+        // Update player state
+        state.SetAttacking(true);
 
-    // Animation events
-    public void OnPunchAnimationEvent()
-    {
+        if (currentAttack == null)
+        {
+            StartAttack(rootPrimaryAttack); // first attack in combo
+            return;
+        }
 
-    }
-
-    // Attack triggers
-    private void TriggerBasicPunch()
-    {
-        if (state.CurrentState == StateMachine.PlayerState.Attacking)
+        if (!comboWindowOpen)
             return;
 
-        state.SetAttacking(true);
-        anim.PlayPunchAnim();
-        Invoke(nameof(EndAttack), 0.4f);
+        QueueNextAttack(InputType.Primary);
+    }
+
+
+    public void OpenComboWindow()
+    {
+        comboWindowOpen = true;
+    }
+
+    public void CloseComboWindow()
+    {
+        comboWindowOpen = false;
+    }
+
+    private void QueueNextAttack(InputType input)
+    {
+        foreach (var link in currentAttack.nextAttacks)
+        {
+            if (link.inputType == input)
+            {
+                queuedAttack = link.nextAttack;
+                return;
+            }
+        }
+    }
+
+    private void StartAttack(AttackData attack)
+    {
+        currentAttack = attack;
+        comboWindowOpen = false;
+        animator.CrossFade(
+            attack.animationName,
+            attack.crossFadeDuration
+        );
     }
 
     private void TryFire()
@@ -140,10 +163,50 @@ public class CombatController : MonoBehaviour
         }
     }
 
-
-    private void EndAttack()
+    public void OnAttackFinished()
     {
         state.SetAttacking(false);
-        animator.SetLayerWeight(1, 1f);
+        comboWindowOpen = false;
+        if (queuedAttack != null)
+        {
+            StartAttack(queuedAttack);
+            queuedAttack = null;
+        }
+        else
+        {
+            currentAttack = null;
+        }
+    }
+
+    void PlaceWallPreview(bool isAiming)
+    {
+        if (isAiming)
+        {
+            // Calculate wall placement position
+            Vector3 camForward = cam.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            Vector3 wallPos = transform.position + camForward * wallOffset;
+
+            // Create the wall placement prefab if it doesn't exist
+            if (wallPlacementInstance == null)
+            {
+                wallPlacementInstance = Instantiate(wallPlacementPrefab, wallPos, Quaternion.LookRotation(camForward));
+            }
+            // Move the wall placement prefab to the new position and rotate it to face the camera
+            else
+            {
+                wallPlacementInstance.transform.position = wallPos;
+                wallPlacementInstance.transform.rotation = Quaternion.LookRotation(camForward);
+            }
+        }
+        else
+        {
+            // Destroy the wall placement prefab if it exists
+            if (wallPlacementInstance != null)
+            {
+                Destroy(wallPlacementInstance);
+            }
+        }
     }
 }

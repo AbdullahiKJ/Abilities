@@ -16,8 +16,8 @@ public class InputReader : MonoBehaviour
 
     // Events other systems can subscribe to
     public event System.Action JumpPressed;
-    public event System.Action PunchPressed;
-    public event System.Action KickPressed;
+    public event System.Action PrimaryPressed;
+    public event System.Action SecondaryPressed;
     public event System.Action ShootPressed;
     public event System.Action DodgePressed;
     public event System.Action DashPressed;
@@ -35,8 +35,8 @@ public class InputReader : MonoBehaviour
         controls.Player.Aim.canceled += ctx => DOTween.To(() => AimInput, (x) => AimInput = x, 0f, aimTransition);
 
         controls.Player.Jump.performed += ctx => JumpPressed?.Invoke();
-        controls.Player.Punch.performed += ctx => PunchPressed?.Invoke();
-        controls.Player.Kick.performed += ctx => KickPressed?.Invoke();
+        controls.Player.Primary.performed += ctx => PrimaryPressed?.Invoke();
+        controls.Player.Secondary.performed += ctx => SecondaryPressed?.Invoke();
         controls.Player.Shoot.performed += ctx => ShootPressed?.Invoke();
         controls.Player.Dodge.performed += ctx => DodgePressed?.Invoke();
 

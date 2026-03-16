@@ -72,22 +72,7 @@ public class AnimationController : MonoBehaviour
         animator.SetBool(isAttackingHash, state.CurrentState == StateMachine.PlayerState.Attacking);
     }
 
-    // These can be called by CombatController if you want animation events
-    public void PlayPunchAnim()
-    {
-        animator.SetTrigger("Punch");
-    }
-
-    public void PlayKickAnim()
-    {
-        animator.SetTrigger("Kick");
-    }
-
-    public void PlayGatlingAnim()
-    {
-        animator.SetTrigger("Gatling");
-    }
-
+    // These are called by CombatController and other scripts for animation events
     public void PlayJumpAnim()
     {
         animator.SetTrigger(jumpHash);
