@@ -4,18 +4,8 @@ public class CombatController : MonoBehaviour
 {
     private InputReader input;
     private StateMachine state;
-    private AnimationController anim;
     private Animator animator;
     private Camera cam;
-
-    [Header("Shoot settings")]
-    [SerializeField] float fireRate;
-    [SerializeField] GameObject bulletPrefab;
-    [SerializeField] float maxAimDistance = 50f;
-    [SerializeField] Transform gunTip;
-    private float lastFireTime;
-    Vector3 screenCenter;
-    bool isAiming;
 
     [Header("Wall Settings")]
     [SerializeField] GameObject wallPrefab;
@@ -23,9 +13,15 @@ public class CombatController : MonoBehaviour
     GameObject wallInstance;
     GameObject wallPlacementInstance;
     [SerializeField] float wallOffset = 5f;
+    bool isAiming;
 
     [Header("Combo Settings")]
     [SerializeField] AttackData rootPrimaryAttack;
+    [SerializeField] AttackData rootSecondaryAttack;
+    [Tooltip("Duration after the attack animations ends during which the player can still buffer the next attack in the combo")]
+    [SerializeField] float extraComboWindow = 0.5f;
+    private float comboBufferTimer;
+    private bool bufferActive = false;
     private AttackData currentAttack;
     private AttackData queuedAttack;
     private bool comboWindowOpen;
@@ -34,11 +30,8 @@ public class CombatController : MonoBehaviour
     {
         input = GetComponent<InputReader>();
         state = GetComponent<StateMachine>();
-        anim = GetComponent<AnimationController>();
         animator = GetComponent<Animator>();
         cam = Camera.main;
-
-        screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
     }
 
     void Update()
@@ -49,49 +42,57 @@ public class CombatController : MonoBehaviour
         if (currentAttack == null)
             return;
 
-        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-
-        float normalizedTime = state.normalizedTime % 1f;
-
-        comboWindowOpen =
-            normalizedTime >= currentAttack.comboWindowOpen &&
-            normalizedTime <= currentAttack.comboWindowClose;
-
-        if (normalizedTime >= 1f)
+        if (bufferActive)
         {
-            OnAttackFinished();
+            comboBufferTimer -= Time.deltaTime;
+            CheckQueue();
+
+            if (comboBufferTimer <= 0f)
+            {
+                bufferActive = false;
+                comboWindowOpen = false;
+                currentAttack = null;
+            }
         }
     }
 
     private void OnEnable()
     {
         input.PrimaryPressed += OnPrimary;
+        input.SecondaryPressed += OnSecondary;
         input.ShootPressed += TryFire;
     }
 
     private void OnDisable()
     {
         input.PrimaryPressed -= OnPrimary;
+        input.SecondaryPressed -= OnSecondary;
         input.ShootPressed -= TryFire;
+    }
+
+    private void OnAttack(InputType inputType)
+    {
+        if (currentAttack == null)
+        {
+            StartAttack(inputType == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack); // first attack in combo
+            return;
+        }
+
+        if (!comboWindowOpen && !bufferActive)
+            return;
+
+        QueueNextAttack(inputType);
     }
 
     private void OnPrimary()
     {
-        // Update player state
-        state.SetAttacking(true);
-
-        if (currentAttack == null)
-        {
-            StartAttack(rootPrimaryAttack); // first attack in combo
-            return;
-        }
-
-        if (!comboWindowOpen)
-            return;
-
-        QueueNextAttack(InputType.Primary);
+        OnAttack(InputType.Primary);
     }
 
+    private void OnSecondary()
+    {
+        OnAttack(InputType.Secondary);
+    }
 
     public void OpenComboWindow()
     {
@@ -101,6 +102,7 @@ public class CombatController : MonoBehaviour
     public void CloseComboWindow()
     {
         comboWindowOpen = false;
+        CheckQueue();
     }
 
     private void QueueNextAttack(InputType input)
@@ -113,12 +115,20 @@ public class CombatController : MonoBehaviour
                 return;
             }
         }
+
+        StartAttack(input == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack); // first attack in combo
+        return;
     }
 
     private void StartAttack(AttackData attack)
     {
+        // Update player state
+        state.SetAttacking(true);
+
         currentAttack = attack;
+        queuedAttack = null;
         comboWindowOpen = false;
+
         animator.CrossFade(
             attack.animationName,
             attack.crossFadeDuration
@@ -127,54 +137,33 @@ public class CombatController : MonoBehaviour
 
     private void TryFire()
     {
-        // Placing Wall logic
-        if (!input.canAim)
+        if (wallInstance == null && isAiming)
         {
-            if (wallInstance == null && isAiming)
-            {
-                Vector3 camForward = cam.transform.forward;
-                camForward.y = 0f;
-                camForward.Normalize();
-                Vector3 spawnPos = transform.position + camForward * wallOffset;
-                wallInstance = Instantiate(wallPrefab, spawnPos, Quaternion.LookRotation(camForward));
-            }
-        }
-        else if (Time.time < lastFireTime + fireRate || input.AimInput < 1f)
-            return;
-        // Shooting logic
-        else
-        {
-            lastFireTime = Time.time;
-            state.SetAttacking(true);
-            anim.PlayShootAnim();
-
-            // Fire the projectile
-            Ray aimRay = cam.ScreenPointToRay(screenCenter);
-            Vector3 targetPoint;
-
-            if (Physics.Raycast(aimRay, out RaycastHit hit, maxAimDistance))
-                targetPoint = hit.point;
-            else
-                targetPoint = aimRay.origin + aimRay.direction * maxAimDistance;
-
-            Vector3 fireDirection = (targetPoint - gunTip.position).normalized;
-            GameObject bullet = Instantiate(bulletPrefab, gunTip.position, Quaternion.LookRotation(fireDirection));
-            bullet.GetComponent<Bullet>().Fire(fireDirection);
+            Vector3 camForward = cam.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            Vector3 spawnPos = transform.position + camForward * wallOffset;
+            wallInstance = Instantiate(wallPrefab, spawnPos, Quaternion.LookRotation(camForward));
         }
     }
 
     public void OnAttackFinished()
     {
         state.SetAttacking(false);
-        comboWindowOpen = false;
+
+        bufferActive = true;
+        comboBufferTimer = extraComboWindow;
+
+        CheckQueue();
+    }
+
+    void CheckQueue()
+    {
         if (queuedAttack != null)
         {
             StartAttack(queuedAttack);
             queuedAttack = null;
-        }
-        else
-        {
-            currentAttack = null;
+            bufferActive = false;
         }
     }
 

@@ -28,6 +28,10 @@ public class VFXController : MonoBehaviour
 
     void Start()
     {
+        // Enable the base vfx game objects
+        idleVFX.gameObject.SetActive(true);
+        sphereVFX.gameObject.SetActive(true);
+
         // Play the idle vfx and Stop the sphere vfx
         idleVFX.Play();
         sphereVFX.Stop();
@@ -85,6 +89,10 @@ public class VFXController : MonoBehaviour
 
     public void StopDashVFX()
     {
+        // Exit early if the dash prefab instance doesn't exist
+        if(dashPrefabInstance == null)
+            return;
+
         // Increase the reform amount over time
         VisualEffect vfx = dashPrefabInstance.GetComponent<VisualEffect>();
         DOTween.To(

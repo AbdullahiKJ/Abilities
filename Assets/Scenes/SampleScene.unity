@@ -1548,7 +1548,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!73398921 &743608335
 VFXRenderer:
   serializedVersion: 1
@@ -1557,7 +1557,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 743608334}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2187,7 +2187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!73398921 &1335123092
 VFXRenderer:
   serializedVersion: 1
@@ -2196,7 +2196,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1335123091}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -3092,14 +3092,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 788b366d2c801432388903066257ffc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatController
-  fireRate: 0
-  bulletPrefab: {fileID: 0}
-  maxAimDistance: 50
-  gunTip: {fileID: 0}
   wallPrefab: {fileID: 7362322736002100795, guid: 16c9825b255dd4600bd793c273406e0a, type: 3}
   wallPlacementPrefab: {fileID: 3802950292524776360, guid: b2e875169b19c4ad591c86cce7a0ecd4, type: 3}
   wallOffset: 5
   rootPrimaryAttack: {fileID: 11400000, guid: 381bc32cb5b4d48228e0ac2dade4cb59, type: 2}
+  rootSecondaryAttack: {fileID: 11400000, guid: c891e5a5a3ed04fafa2d3c34d82c5c32, type: 2}
+  extraComboWindow: 1
+  comboBufferTimer: 0
+  bufferActive: 0
+  currentAttack: {fileID: 0}
+  queuedAttack: {fileID: 0}
+  comboWindowOpen: 0
 --- !u!114 &1393632216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4279,14 +4282,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 788b366d2c801432388903066257ffc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatController
-  fireRate: 0.5
-  bulletPrefab: {fileID: 5235465196015904803, guid: 2975ea863bc4f4231b64644a50aacb6c, type: 3}
-  maxAimDistance: 50
-  gunTip: {fileID: 1776074093}
   wallPrefab: {fileID: 0}
   wallPlacementPrefab: {fileID: 0}
   wallOffset: 5
   rootPrimaryAttack: {fileID: 0}
+  rootSecondaryAttack: {fileID: 0}
+  extraComboWindow: 0.1
+  comboBufferTimer: 0
+  bufferActive: 0
+  currentAttack: {fileID: 0}
+  queuedAttack: {fileID: 0}
+  comboWindowOpen: 0
 --- !u!114 &1577095177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4752,11 +4758,6 @@ PrefabInstance:
 --- !u!4 &1776074092 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1709849256630245519, guid: 91ae9411a4d02cf41964a3f538884b64, type: 3}
-  m_PrefabInstance: {fileID: 1776074091}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1776074093 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2381524629507730791, guid: 91ae9411a4d02cf41964a3f538884b64, type: 3}
   m_PrefabInstance: {fileID: 1776074091}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1924546847
