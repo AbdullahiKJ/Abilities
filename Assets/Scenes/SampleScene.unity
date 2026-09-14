@@ -3098,11 +3098,6 @@ MonoBehaviour:
   rootPrimaryAttack: {fileID: 11400000, guid: 381bc32cb5b4d48228e0ac2dade4cb59, type: 2}
   rootSecondaryAttack: {fileID: 11400000, guid: c891e5a5a3ed04fafa2d3c34d82c5c32, type: 2}
   extraComboWindow: 1
-  comboBufferTimer: 0
-  bufferActive: 0
-  currentAttack: {fileID: 0}
-  queuedAttack: {fileID: 0}
-  comboWindowOpen: 0
 --- !u!114 &1393632216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4288,11 +4283,6 @@ MonoBehaviour:
   rootPrimaryAttack: {fileID: 0}
   rootSecondaryAttack: {fileID: 0}
   extraComboWindow: 0.1
-  comboBufferTimer: 0
-  bufferActive: 0
-  currentAttack: {fileID: 0}
-  queuedAttack: {fileID: 0}
-  comboWindowOpen: 0
 --- !u!114 &1577095177
 MonoBehaviour:
   m_ObjectHideFlags: 0
