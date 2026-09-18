@@ -20,11 +20,10 @@ public class CombatController : MonoBehaviour
     [SerializeField] AttackData rootSecondaryAttack;
     [Tooltip("Duration after the attack animations ends during which the player can still buffer the next attack in the combo")]
     [SerializeField] float extraComboWindow = 0.5f;
-    private float comboBufferTimer;
-    private bool bufferActive = false;
     private AttackData currentAttack;
-    private AttackData queuedAttack;
     private bool comboWindowOpen;
+    private bool bufferActive = false;
+    private float comboBufferTimer;
 
     private void Awake()
     {
@@ -40,21 +39,19 @@ public class CombatController : MonoBehaviour
         isAiming = input.AimInput > 0.5f;
         PlaceWallPreview(isAiming);
 
-        if (currentAttack == null)
+        if (!bufferActive)
             return;
 
-        if (bufferActive)
-        {
-            comboBufferTimer -= Time.deltaTime;
-            CheckQueue();
+        comboBufferTimer -= Time.deltaTime;
 
-            if (comboBufferTimer <= 0f)
-            {
-                bufferActive = false;
-                comboWindowOpen = false;
-                currentAttack = null;
-            }
+        if (comboBufferTimer <= 0f)
+        {
+            bufferActive = false;
+            comboWindowOpen = false;
+            currentAttack = null;
+            comboBufferTimer = extraComboWindow;
         }
+
     }
 
     private void OnEnable()
@@ -73,10 +70,6 @@ public class CombatController : MonoBehaviour
 
     private void OnAttack(InputType inputType)
     {
-        // Exit early if the player is in the air
-        if (state.CurrentState == StateMachine.PlayerState.Airborne)
-            return;
-
         if (currentAttack == null)
         {
             StartAttack(inputType == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack); // first attack in combo
@@ -100,15 +93,25 @@ public class CombatController : MonoBehaviour
         OnAttack(InputType.Secondary);
     }
 
+    // Animation callback for opening the combo window
     public void OpenComboWindow()
     {
         comboWindowOpen = true;
     }
 
+    // Animation callback for closing the combo window
     public void CloseComboWindow()
     {
         comboWindowOpen = false;
-        CheckQueue();
+    }
+
+    // Animation callback for ending the animation and activating the buffer
+    public void OnAttackFinished()
+    {
+        state.SetAttacking(false);
+
+        bufferActive = true;
+        comboBufferTimer = extraComboWindow;
     }
 
     private void QueueNextAttack(InputType input)
@@ -117,7 +120,7 @@ public class CombatController : MonoBehaviour
         {
             if (link.inputType == input)
             {
-                queuedAttack = link.nextAttack;
+                StartAttack(link.nextAttack);
                 return;
             }
         }
@@ -133,8 +136,10 @@ public class CombatController : MonoBehaviour
         state.SetAttacking(true);
 
         currentAttack = attack;
-        queuedAttack = null;
+
         comboWindowOpen = false;
+        bufferActive = false;
+        comboBufferTimer = 0f;
 
         animator.CrossFade(
             attack.animationName,
@@ -152,26 +157,6 @@ public class CombatController : MonoBehaviour
             camForward.Normalize();
             Vector3 spawnPos = transform.position + camForward * wallOffset;
             wallInstance = Instantiate(wallPrefab, spawnPos, Quaternion.LookRotation(camForward));
-        }
-    }
-
-    public void OnAttackFinished()
-    {
-        state.SetAttacking(false);
-
-        bufferActive = true;
-        comboBufferTimer = extraComboWindow;
-
-        CheckQueue();
-    }
-
-    void CheckQueue()
-    {
-        if (queuedAttack != null)
-        {
-            StartAttack(queuedAttack);
-            queuedAttack = null;
-            bufferActive = false;
         }
     }
 

@@ -2,33 +2,21 @@ using UnityEngine;
 
 public class StateMachine : MonoBehaviour
 {
-    public enum PlayerState
+    public enum ActionState
     {
-        Grounded,
-        Airborne,
-        Attacking,
+        None,
+        Attacking
     }
 
-    public PlayerState CurrentState { get; private set; }
-
-    private CharacterController cc;
+    public ActionState CurrentActionState { get; private set; }
 
     private void Awake()
     {
-        cc = GetComponent<CharacterController>();
-        CurrentState = PlayerState.Grounded;
-    }
-
-    private void Update()
-    {
-        if (!cc.isGrounded)
-            CurrentState = PlayerState.Airborne;
-        else if (CurrentState != PlayerState.Attacking)
-            CurrentState = PlayerState.Grounded;
+        CurrentActionState = ActionState.None;
     }
 
     public void SetAttacking(bool attacking)
     {
-        CurrentState = attacking ? PlayerState.Attacking : PlayerState.Grounded;
+        CurrentActionState = attacking ? ActionState.Attacking : ActionState.None;
     }
 }

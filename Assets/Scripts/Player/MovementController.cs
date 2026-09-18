@@ -14,6 +14,7 @@ public class MovementController : MonoBehaviour
     private InputReader input;
     private Camera cam;
     private VFXController vfx;
+    private StateMachine state;
 
     // Movement parameters
     private Vector3 velocity;
@@ -31,6 +32,7 @@ public class MovementController : MonoBehaviour
         input = GetComponent<InputReader>();
         cam = Camera.main;
         vfx = GetComponent<VFXController>();
+        state = GetComponent<StateMachine>();
 
         // Set move speed
         moveSpeed = regularSpeed;
@@ -54,7 +56,9 @@ public class MovementController : MonoBehaviour
 
     private void Update()
     {
-        if (canMove)
+        // Move if allowed and the current state is not attacking
+        bool isAttacking = state.CurrentActionState != StateMachine.ActionState.Attacking;
+        if (canMove && isAttacking)
             Move();
         ApplyGravity();
     }

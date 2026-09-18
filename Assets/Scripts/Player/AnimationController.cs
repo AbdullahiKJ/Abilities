@@ -16,7 +16,6 @@ public class AnimationController : MonoBehaviour
     public string moveX = "MoveX";
     public string moveY = "MoveY";
     public string isAiming = "IsAiming";
-    public string isGrounded = "IsGrounded";
     public string isAttacking = "IsAttacking";
     public string shoot = "Shoot";
 
@@ -25,7 +24,6 @@ public class AnimationController : MonoBehaviour
     private int moveXHash;
     private int moveYHash;
     private int isAimingHash;
-    private int isGroundedHash;
     private int isAttackingHash;
     private int shootHash;
 
@@ -60,14 +58,11 @@ public class AnimationController : MonoBehaviour
             float aim = input.AimInput;
             animator.SetFloat(isAimingHash, aim);
         }
-
-        // Grounded / airborne
-        animator.SetBool(isGroundedHash, state.CurrentState == StateMachine.PlayerState.Grounded);
     }
 
     private void UpdateAttackState()
     {
-        animator.SetBool(isAttackingHash, state.CurrentState == StateMachine.PlayerState.Attacking);
+        animator.SetBool(isAttackingHash, state.CurrentActionState == StateMachine.ActionState.Attacking);
     }
 
     // These are called by CombatController and other scripts for animation events
@@ -86,7 +81,6 @@ public class AnimationController : MonoBehaviour
         moveXHash = Animator.StringToHash(moveX);
         moveYHash = Animator.StringToHash(moveY);
         isAimingHash = Animator.StringToHash(isAiming);
-        isGroundedHash = Animator.StringToHash(isGrounded);
         isAttackingHash = Animator.StringToHash(isAttacking);
         shootHash = Animator.StringToHash(shoot);
 
@@ -99,8 +93,6 @@ public class AnimationController : MonoBehaviour
             Debug.LogWarning($"Animator missing parameter: {moveY} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(isAiming))
             Debug.LogWarning($"Animator missing parameter: {isAiming} on {this.gameObject.name}", this);
-        if (!parameterNames.Contains(isGrounded))
-            Debug.LogWarning($"Animator missing parameter: {isGrounded} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(isAttacking))
             Debug.LogWarning($"Animator missing parameter: {isAttacking} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(shoot))
