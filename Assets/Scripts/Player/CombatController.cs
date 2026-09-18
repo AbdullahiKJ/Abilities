@@ -73,6 +73,10 @@ public class CombatController : MonoBehaviour
 
     private void OnAttack(InputType inputType)
     {
+        // Exit early if the player is in the air
+        if (state.CurrentState == StateMachine.PlayerState.Airborne)
+            return;
+
         if (currentAttack == null)
         {
             StartAttack(inputType == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack); // first attack in combo

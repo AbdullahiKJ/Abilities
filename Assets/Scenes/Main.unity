@@ -2932,9 +2932,6 @@ PrefabInstance:
       addedObject: {fileID: 1393632217}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1393632216}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1393632215}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
       insertIndex: -1
@@ -3031,19 +3028,6 @@ MonoBehaviour:
   rootPrimaryAttack: {fileID: 11400000, guid: 381bc32cb5b4d48228e0ac2dade4cb59, type: 2}
   rootSecondaryAttack: {fileID: 11400000, guid: c891e5a5a3ed04fafa2d3c34d82c5c32, type: 2}
   extraComboWindow: 1
---- !u!114 &1393632216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1393632209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9724a8514c5f24f33865bc2ee6a2eab0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::JumpController
-  jumpForce: 6
 --- !u!114 &1393632217
 MonoBehaviour:
   m_ObjectHideFlags: 0

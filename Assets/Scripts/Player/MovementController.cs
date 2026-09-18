@@ -98,12 +98,6 @@ public class MovementController : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    // Called by JumpController
-    public void AddVerticalVelocity(float amount)
-    {
-        velocity.y = amount;
-    }
-
     private void TriggerDodge()
     {
         // Determine the dash direction (dash backwards if there is no move input)
