@@ -45,7 +45,7 @@ public class AnimationController : MonoBehaviour
     private void Update()
     {
         UpdateLocomotion();
-        UpdateState();
+        UpdateAttackState();
     }
 
     private void UpdateLocomotion()
@@ -53,8 +53,8 @@ public class AnimationController : MonoBehaviour
         // Movement blend
         Vector2 move = movement != null ? input.MoveInput : Vector2.zero;
         animator.SetFloat(moveInputHash, move.sqrMagnitude);
-        animator.SetFloat(moveXHash, move.sqrMagnitude);
-        animator.SetFloat(moveYHash, move.sqrMagnitude);
+        animator.SetFloat(moveXHash, move.x);
+        animator.SetFloat(moveYHash, move.y);
 
         // Aim check
         if (input.canAim)
@@ -67,7 +67,7 @@ public class AnimationController : MonoBehaviour
         animator.SetBool(isGroundedHash, state.CurrentState == StateMachine.PlayerState.Grounded);
     }
 
-    private void UpdateState()
+    private void UpdateAttackState()
     {
         animator.SetBool(isAttackingHash, state.CurrentState == StateMachine.PlayerState.Attacking);
     }
@@ -98,6 +98,7 @@ public class AnimationController : MonoBehaviour
         jumpHash = Animator.StringToHash(jump);
         shootHash = Animator.StringToHash(shoot);
 
+        // Debug missing parameters
         if (!parameterNames.Contains(moveInput))
             Debug.LogWarning($"Animator missing parameter: {moveInput} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(moveX))

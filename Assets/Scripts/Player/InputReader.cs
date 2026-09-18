@@ -12,6 +12,7 @@ public class InputReader : MonoBehaviour
     public float aimTransition = 0.2f;
 
     // Actions that the character can perform
+    // todo: remove if not implemented
     public bool canAim;
 
     // Events other systems can subscribe to
@@ -28,18 +29,23 @@ public class InputReader : MonoBehaviour
         controls = new PlayerControls();
 
         // Assign callbacks to player controls
+
+        // Update the move input based on input and reset upon cancellation
         controls.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
         controls.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
 
+        // Smoothly transition in and out of the aim state
         controls.Player.Aim.performed += ctx => DOTween.To(() => AimInput, (x) => AimInput = x, 1f, aimTransition);
         controls.Player.Aim.canceled += ctx => DOTween.To(() => AimInput, (x) => AimInput = x, 0f, aimTransition);
 
+        // Assign events to each input that can be subscribed to by other scripts
         controls.Player.Jump.performed += ctx => JumpPressed?.Invoke();
         controls.Player.Primary.performed += ctx => PrimaryPressed?.Invoke();
         controls.Player.Secondary.performed += ctx => SecondaryPressed?.Invoke();
         controls.Player.Shoot.performed += ctx => ShootPressed?.Invoke();
         controls.Player.Dodge.performed += ctx => DodgePressed?.Invoke();
 
+        // Assign two events for pressing and releasing the dash input
         controls.Player.Dash.performed += ctx => DashPressed?.Invoke();
         controls.Player.Dash.canceled += ctx => DashReleased?.Invoke();
 

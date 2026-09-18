@@ -9,11 +9,13 @@ public class MovementController : MonoBehaviour
     private float moveSpeed;
     public float rotationSpeed = 10f;
 
+    // External scripts/objects
     private CharacterController characterController;
     private InputReader input;
     private Camera cam;
     private VFXController vfx;
 
+    // Movement parameters
     private Vector3 velocity;
     public float gravity = -9.81f;
     bool canMove = true;
@@ -34,6 +36,7 @@ public class MovementController : MonoBehaviour
         moveSpeed = regularSpeed;
     }
 
+    // Subscribe to dodge and dash inputs
     private void OnEnable()
     {
         input.DodgePressed += TriggerDodge;
@@ -41,6 +44,7 @@ public class MovementController : MonoBehaviour
         input.DashReleased += CancelDash;
     }
 
+    // unsubscribe to dodge and dash inputs
     private void OnDisable()
     {
         input.DodgePressed -= TriggerDodge;
@@ -87,7 +91,7 @@ public class MovementController : MonoBehaviour
     {
         if (characterController.isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // small downward force to keep grounded
+            velocity.y = -2f; // apply a small downward force to keep grounded
         }
 
         velocity.y += gravity * Time.deltaTime;

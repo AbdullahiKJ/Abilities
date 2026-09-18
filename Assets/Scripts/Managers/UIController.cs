@@ -7,13 +7,15 @@ public class UIController : MonoBehaviour
     [SerializeField] string keyboardTag = "Keyboard";
     [SerializeField] string controllerTag = "Controller";
     [SerializeField] PlayerInput input;
-    [SerializeField] string controlerScheme = "Controller";
+    [SerializeField] string controllerScheme = "Controller";
 
     void Start()
     {
         // Check if the controller scheme is active and set the corresponding UI elements
         List<GameObject> taggedChildren = new List<GameObject>();
-        GetChildrenWithTag(gameObject, input.currentControlScheme == controlerScheme ? keyboardTag : controllerTag, taggedChildren);
+
+        // Get the game objects for the inactive scheme and disable them
+        GetChildrenWithTag(gameObject, input.currentControlScheme == controllerScheme ? keyboardTag : controllerTag, taggedChildren);
         foreach (GameObject button in taggedChildren)
         {
             button.SetActive(false);

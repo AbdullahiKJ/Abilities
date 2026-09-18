@@ -79,6 +79,7 @@ public class VFXController : MonoBehaviour
         sphereVFX.Play();
 
         // Hide the skinned mesh renderers
+        // todo: smoothly fade away before hiding
         surfaceRenderer.enabled = false;
         jointRenderer.enabled = false;
 
@@ -110,6 +111,7 @@ public class VFXController : MonoBehaviour
         ).OnComplete(() =>
         {
             // Show the skinned mesh renderers
+            // todo: smoothly fade in
             surfaceRenderer.enabled = true;
             jointRenderer.enabled = true;
 

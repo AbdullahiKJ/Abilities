@@ -36,6 +36,7 @@ public class CombatController : MonoBehaviour
 
     void Update()
     {
+        // Show the wall placement preview if aiming
         isAiming = input.AimInput > 0.5f;
         PlaceWallPreview(isAiming);
 
@@ -78,6 +79,7 @@ public class CombatController : MonoBehaviour
             return;
         }
 
+        // Ignore the input if the combo window and buffer zone are inactive
         if (!comboWindowOpen && !bufferActive)
             return;
 
@@ -116,7 +118,8 @@ public class CombatController : MonoBehaviour
             }
         }
 
-        StartAttack(input == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack); // first attack in combo
+        // Reset to the first attack in the combo
+        StartAttack(input == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack);
         return;
     }
 
@@ -137,6 +140,7 @@ public class CombatController : MonoBehaviour
 
     private void TryFire()
     {
+        // Place the wall instance
         if (wallInstance == null && isAiming)
         {
             Vector3 camForward = cam.transform.forward;
