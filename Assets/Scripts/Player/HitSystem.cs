@@ -11,42 +11,52 @@ public class HitSystem : MonoBehaviour
     private Renderer rd;
     private MaterialPropertyBlock block;
     private VFXController vfx;
+    private Tween[] holeTweens = new Tween[4];
+    private int[] entryIDs = new int[4];
+    private int[] exitIDs = new int[4];
+    private int[] radiusIDs = new int[4];
 
-    void Start()
+    void Awake()
     {
         rd = GetComponent<Renderer>();
         block = new MaterialPropertyBlock();
         vfx = GetComponent<VFXController>();
-    }
 
-    public void OnEnter(Bullet bullet)
-    {
-        // todo: check if this passes through or hits
+        for (int i = 0; i < maxHole; i++)
+        {
+            entryIDs[i] = Shader.PropertyToID($"_EntryPosition{i}");
+            exitIDs[i] = Shader.PropertyToID($"_ExitPosition{i}");
+            radiusIDs[i] = Shader.PropertyToID($"_Radius{i}");
+        }
     }
 
     public void OnExit(Vector3 entryPoint, Vector3 exitPoint, float bulletRadius)
     {
+        int index = holeCount;
+
+        // Kill whatever was previously controlling this slot.
+        holeTweens[index]?.Kill();
+
         rd.GetPropertyBlock(block);
 
         float radius = bulletRadius * Random.Range(radiusMultiplier.x, radiusMultiplier.y);
 
-        block.SetVector($"_EntryPosition{holeCount}", entryPoint);
-        block.SetVector($"_ExitPosition{holeCount}", exitPoint);
-        block.SetFloat($"_Radius{holeCount}", radius);
+        block.SetVector(entryIDs[index], entryPoint);
+        block.SetVector(exitIDs[index], exitPoint);
+        block.SetFloat(radiusIDs[index], radius);
         rd.SetPropertyBlock(block);
 
         // Instantiate the vfx prefab and assign graph properties
         vfx.CreateHitVFX(lifetime, radius, entryPoint, exitPoint);
 
         // Interpolate the radius size
-        int index = holeCount;
-        DOTween.To(
+        holeTweens[index] = DOTween.To(
             () => radius,
             x =>
             {
                 radius = x;
                 rd.GetPropertyBlock(block);
-                block.SetFloat($"_Radius{index}", radius);
+                block.SetFloat(radiusIDs[index], radius);
                 rd.SetPropertyBlock(block);
             },
             0f,
@@ -54,8 +64,6 @@ public class HitSystem : MonoBehaviour
         ).SetDelay(lifetime * delayMultiplier);
 
         // Update the hole count
-        holeCount++;
-        if (holeCount == maxHole)
-            holeCount = 0;
+        holeCount = (holeCount + 1) % maxHole;
     }
 }

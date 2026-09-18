@@ -29,15 +29,22 @@ public class VFXController : MonoBehaviour
     void Start()
     {
         // Enable the base vfx game objects
-        idleVFX.gameObject.SetActive(true);
-        sphereVFX.gameObject.SetActive(true);
+        if (idleVFX)
+            idleVFX.gameObject.SetActive(true);
+        if (sphereVFX)
+            sphereVFX.gameObject.SetActive(true);
 
-        // Play the idle vfx and Stop the sphere vfx
-        idleVFX.Play();
-        sphereVFX.Stop();
+        // Play the idle vfx 
+        if (idleVFX)
+            idleVFX.Play();
 
-        // Set the float property on the sphere vfx
-        sphereVFX.SetFloat("radius", sphereVFXRadius);
+        if (sphereVFX)
+        {
+            // Stop the sphere vfx
+            sphereVFX.Stop();
+            // Set the float property on the sphere vfx
+            sphereVFX.SetFloat("radius", sphereVFXRadius);
+        }
     }
     public void CreateHitVFX(float lifetime, float radius, Vector3 entryPoint, Vector3 exitPoint)
     {
@@ -90,7 +97,7 @@ public class VFXController : MonoBehaviour
     public void StopDashVFX()
     {
         // Exit early if the dash prefab instance doesn't exist
-        if(dashPrefabInstance == null)
+        if (dashPrefabInstance == null)
             return;
 
         // Increase the reform amount over time

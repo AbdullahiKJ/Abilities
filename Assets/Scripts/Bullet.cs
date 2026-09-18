@@ -7,10 +7,40 @@ public class Bullet : MonoBehaviour
     public float radius = 0.2f;
     private Vector3 direction;
     private Vector3 entryPoint;
+    private Vector3 previousPosition;
 
-    private void Update()
+    private void Awake()
     {
-        transform.position += direction * speed * Time.deltaTime;
+        previousPosition = transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + direction * speed * Time.fixedDeltaTime;
+
+        Vector3 movement = endPosition - startPosition;
+
+        if (movement.sqrMagnitude > 0f)
+        {
+            if (Physics.SphereCast(
+                previousPosition,
+                radius,
+                movement.normalized,
+                out RaycastHit hit,
+                movement.magnitude
+                ))
+            {
+                HitSystem hitSystem = hit.collider.gameObject.GetComponent<HitSystem>();
+                if (hitSystem != null)
+                {
+                    Vector3 bulletCenterAtHit = hit.point + hit.normal * radius;
+                    entryPoint = bulletCenterAtHit;
+                }
+            }
+        }
+
+        transform.position = endPosition;
     }
 
     // Set the movement direction and start lifetime timer
@@ -24,9 +54,6 @@ public class Bullet : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         entryPoint = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-        HitSystem hit = other.GetComponent<HitSystem>();
-        if (hit != null)
-            hit.OnEnter(this);
     }
 
     private void OnTriggerExit(Collider other)
