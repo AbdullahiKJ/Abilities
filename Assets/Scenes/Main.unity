@@ -345,6 +345,11 @@ MonoBehaviour:
   playerManager: {fileID: 627841470}
   normalPriority: 10
   aimPriority: 5
+--- !u!4 &369656106 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2381524629507730791, guid: 91ae9411a4d02cf41964a3f538884b64, type: 3}
+  m_PrefabInstance: {fileID: 1776074091}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,7 +376,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
@@ -423,7 +428,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -1251,6 +1256,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1610,6 +1616,7 @@ VisualEffect:
   m_StartSeed: 0
   m_ResetSeedOnPlay: 1
   m_AllowInstancing: 1
+  m_ReleaseInstanceOnDisable: 0
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
@@ -2249,6 +2256,7 @@ VisualEffect:
   m_StartSeed: 0
   m_ResetSeedOnPlay: 1
   m_AllowInstancing: 1
+  m_ReleaseInstanceOnDisable: 0
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
@@ -2668,6 +2676,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
       propertyPath: m_Name
       value: SandPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1092408308860062549, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4220,13 +4232,13 @@ PrefabInstance:
       addedObject: {fileID: 1577095177}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1577095176}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1577095175}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1577095174}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1577095183}
   m_SourcePrefab: {fileID: 100100000, guid: 10c348ba7962743c8bf5b27236231123, type: 3}
 --- !u!4 &1577095173 stripped
 Transform:
@@ -4240,7 +4252,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a6c53b18ab964ea2b55a5add6d3c037, type: 3}
   m_Name: 
@@ -4260,29 +4272,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbf9e2150449f44c18b032b297ae5ba1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StateMachine
---- !u!114 &1577095176
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 788b366d2c801432388903066257ffc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatController
-  wallPrefab: {fileID: 0}
-  wallPlacementPrefab: {fileID: 0}
-  wallOffset: 5
-  rootPrimaryAttack: {fileID: 0}
-  rootSecondaryAttack: {fileID: 0}
-  extraComboWindow: 0.1
 --- !u!114 &1577095177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4290,7 +4284,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9724a8514c5f24f33865bc2ee6a2eab0, type: 3}
   m_Name: 
@@ -4303,7 +4297,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 809b73ff8f7654387b28430014a00246, type: 3}
   m_Name: 
@@ -4321,7 +4315,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3cab0394bd0b43e3bae5ff8dffc2771, type: 3}
   m_Name: 
@@ -4335,7 +4329,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304196145}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -4405,6 +4399,22 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.98, z: 0}
+--- !u!114 &1577095183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304196145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4b0ec6280ef4f5eaf7a8fba99d0363, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunCombatController
+  cam: {fileID: 0}
+  bulletPrefab: {fileID: 5235465196015904803, guid: 23e4e64ce029a4138a5fb337f169e765, type: 3}
+  maxAimDistance: 50
+  gunTip: {fileID: 369656106}
 --- !u!1 &1622566467
 GameObject:
   m_ObjectHideFlags: 0
