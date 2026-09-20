@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34400312358724c6ea6a5fe6d7c1397f, type: 3}
+  m_Name: Shield
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: Shield
+  weaponPrefab: {fileID: 6205588760890265545, guid: c17013b2c088347f2b58cc2733c4279a, type: 3}
+  twoHanded: 0
+  sandMaterial: {fileID: 2100000, guid: a4b8c9674e34848ea970b6a86a71769e, type: 2}
+  formationVFX: {fileID: 0}
+  dissolveVFX: {fileID: 0}
+  formationDuration: 0.2
+  dissolveDuration: 0.15

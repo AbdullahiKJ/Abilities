@@ -17,6 +17,7 @@ MonoBehaviour:
   comboWindowOpen: 0.6
   comboWindowClose: 0.9
   canBeInterrupted: 0
+  weapon: {fileID: 11400000, guid: 0b5eaaca91ea441f584cfb7a53fc5e35, type: 2}
   nextAttacks:
   - inputType: 0
     nextAttack: {fileID: 11400000, guid: dd39855648ed14ec7806072731446dff, type: 2}
