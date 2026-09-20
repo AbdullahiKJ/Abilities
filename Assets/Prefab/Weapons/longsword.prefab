@@ -64,10 +64,26 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7849268929617644440, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a4b8c9674e34848ea970b6a86a71769e, type: 2}
+    - target: {fileID: -3477821731311062464, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a4b8c9674e34848ea970b6a86a71769e, type: 2}
     - target: {fileID: 919132149155446097, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
       propertyPath: m_Name
       value: longsword
       objectReference: {fileID: 0}
+    - target: {fileID: 3816654056258493912, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a4b8c9674e34848ea970b6a86a71769e, type: 2}
+    - target: {fileID: 8736054615233459941, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a4b8c9674e34848ea970b6a86a71769e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
