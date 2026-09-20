@@ -6,6 +6,7 @@ public class CombatController : MonoBehaviour
     private StateMachine state;
     private Animator animator;
     private Camera cam;
+    private WeaponController weapon;
 
     [Header("Wall Settings")]
     [SerializeField] GameObject wallPrefab;
@@ -30,6 +31,7 @@ public class CombatController : MonoBehaviour
         input = GetComponent<InputReader>();
         state = GetComponent<StateMachine>();
         animator = GetComponent<Animator>();
+        weapon = GetComponent<WeaponController>();
         cam = Camera.main;
     }
 
@@ -112,6 +114,18 @@ public class CombatController : MonoBehaviour
 
         bufferActive = true;
         comboBufferTimer = extraComboWindow;
+    }
+
+    // Animation callback for adding weapons
+    public void ShowWeapon()
+    {
+        weapon.BeginWeaponAnimation(currentAttack.weapon);
+    }
+
+    // Animation callback for removing weapons
+    public void HideWeapon()
+    {
+        weapon.FinishWeaponAnimation();
     }
 
     private void QueueNextAttack(InputType input)

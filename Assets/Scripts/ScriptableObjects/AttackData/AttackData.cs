@@ -14,6 +14,9 @@ public class AttackData : ScriptableObject
     [Header("Cancel")]
     public bool canBeInterrupted;
 
+    [Header("Weapon Data")]
+    public WeaponData weapon;
+
     [Header("Combo Branches")]
     public AttackLink[] nextAttacks;
 }
