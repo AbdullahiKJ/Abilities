@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34400312358724c6ea6a5fe6d7c1397f, type: 3}
   m_Name: DualSwords
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  weaponName: Dual Swords
+  weaponName: DualSwords
   weaponPrefab: {fileID: 6012005113629967910, guid: 2c9267443637747b2bdf6f4f26b66cab, type: 3}
   twoHanded: 1
-  sandMaterial: {fileID: 2100000, guid: a4b8c9674e34848ea970b6a86a71769e, type: 2}
   formationVFX: {fileID: 0}
   dissolveVFX: {fileID: 0}
   formationDuration: 0.2

@@ -8,11 +8,10 @@ public class WeaponData : ScriptableObject
 
     [Header("Visual")]
     public GameObject weaponPrefab;
-    public bool twoHanded;
 
     [Header("VFX")]
-    public VisualEffect formationVFX;
-    public VisualEffect dissolveVFX;
+    public GameObject formationVFXPrefab;
+    public GameObject dissolveVFXPrefab;
 
     [Header("Timing")]
     public float formationDuration = 0.2f;

@@ -1558,7 +1558,7 @@ VFXRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 743608334}
   m_Enabled: 0
-  m_CastShadows: 0
+  m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -3251,6 +3251,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponController
   leftHandSocket: {fileID: 1290217829}
   rightHandSocket: {fileID: 1788069381}
+  swordLeftPrefab: {fileID: 6012005113629967910, guid: cdd2651f3ccf34562a620173f16bcd31, type: 3}
+  swordRightPrefab: {fileID: 6012005113629967910, guid: 2c9267443637747b2bdf6f4f26b66cab, type: 3}
+  longswordPrefab: {fileID: 8330784888210439858, guid: 25338548b10f94cec837fc748aaefd21, type: 3}
+  shieldPrefab: {fileID: 6205588760890265545, guid: c17013b2c088347f2b58cc2733c4279a, type: 3}
+  spearPrefab: {fileID: 1291853847571477889, guid: 27d67f9fa0fd34ea69f6d26621294d99, type: 3}
 --- !u!1 &1412173098
 GameObject:
   m_ObjectHideFlags: 0
