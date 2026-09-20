@@ -17,34 +17,51 @@ public class WeaponController : MonoBehaviour
 
         // Start sand formation VFX
 
-        // Assign the weapon material
-        MeshRenderer rd = currentWeapon.GetComponent<MeshRenderer>();
-        rd.material = data.sandMaterial;
+        // Get all mesh renderers on the object and set the materials on each renderer
+        MeshRenderer[] rdList = currentWeapon.GetComponentsInChildren<MeshRenderer>();
+        foreach (MeshRenderer rd in rdList)
+        {
+            Material[] materials = rd.materials;
 
-        // Set the alpha to 0 and start the alpha fade in
-        rd.material.SetFloat("_alpha", 0);
-        DOTween.To(
-            () => rd.material.GetFloat("_alpha"),
-            x => rd.material.SetFloat("_alpha", x),
-            1,
-            data.formationDuration
-        );
+            for (int i = 0; i < materials.Length; i++)
+            {
+                Material material = materials[i];
+
+                // Set the initial alpha to 0 and start the fade in
+                material.SetFloat("_alpha", 0f);
+
+                material.DOFloat(
+                    1f,
+                    "_alpha",
+                    data.formationDuration
+                );
+            }
+        }
     }
 
     public void FinishWeaponAnimation()
     {
         // Start dissolve VFX
 
-        // Get the mesh renderer
-        MeshRenderer rd = currentWeapon.GetComponent<MeshRenderer>();
+        // Get all mesh renderers on the object
+        MeshRenderer[] rdList = currentWeapon.GetComponentsInChildren<MeshRenderer>();
 
-        // Start the alpha fade out
-        DOTween.To(
-            () => rd.material.GetFloat("_alpha"),
-            x => rd.material.SetFloat("_alpha", x),
-            0,
-            currentWeaponData.formationDuration
-        );
+        foreach (MeshRenderer rd in rdList)
+        {
+            Material[] materials = rd.materials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                Material material = materials[i];
+
+                // Start the alpha fade out
+                material.DOFloat(
+                    0f,
+                    "_alpha",
+                    currentWeaponData.formationDuration
+                );
+            }
+        }
     }
 
     private void Equip(WeaponData data)

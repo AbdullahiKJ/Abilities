@@ -9,7 +9,6 @@ public class WeaponData : ScriptableObject
     [Header("Visual")]
     public GameObject weaponPrefab;
     public bool twoHanded;
-    public Material sandMaterial;
 
     [Header("VFX")]
     public VisualEffect formationVFX;
