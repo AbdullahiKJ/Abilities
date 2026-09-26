@@ -51,9 +51,6 @@ public class WeaponController : MonoBehaviour
         // Set the active weapon instance
         Equip(data);
 
-        // Start sand formation VFX
-        StartVFX(currentWeaponData, true);
-
         // Get all mesh renderers on the weapons and set the materials on each renderer
         foreach (GameObject weapon in currentWeapons)
         {
@@ -101,9 +98,6 @@ public class WeaponController : MonoBehaviour
 
     public void FinishWeaponAnimation()
     {
-        // Start dissolve VFX
-        StartVFX(currentWeaponData, false);
-
         // Get all mesh renderers on the weapons
         foreach (GameObject weapon in currentWeapons)
         {
@@ -226,25 +220,5 @@ public class WeaponController : MonoBehaviour
                 break;
         }
         return weaponTrans;
-    }
-
-    void StartVFX(WeaponData data, bool isForming)
-    {
-        // todo: remove once implemented
-        return;
-
-        List<Transform> weaponTrans = GetWeaponPos(currentWeaponData);
-        // Create vfx at each transform
-        foreach (Transform transform in weaponTrans)
-        {
-            GameObject vfxPrefab = isForming
-                ? data.formationVFXPrefab
-                : data.dissolveVFXPrefab;
-
-            GameObject instance = Instantiate(vfxPrefab, transform);
-            VisualEffect vfx = instance.GetComponent<VisualEffect>();
-
-            // todo: assign necessary information such as meshes and transforms
-        }
     }
 }

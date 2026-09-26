@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.VFX;
 
 [CreateAssetMenu(menuName = "Combat/Weapon")]
 public class WeaponData : ScriptableObject
@@ -8,10 +7,6 @@ public class WeaponData : ScriptableObject
 
     [Header("Visual")]
     public GameObject weaponPrefab;
-
-    [Header("VFX")]
-    public GameObject formationVFXPrefab;
-    public GameObject dissolveVFXPrefab;
 
     [Header("Timing")]
     public float formationDuration = 0.2f;
