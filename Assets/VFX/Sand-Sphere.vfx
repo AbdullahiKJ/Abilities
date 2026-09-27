@@ -254,7 +254,7 @@ MonoBehaviour:
   - {fileID: 114780028408030698}
   - {fileID: 8926484042661614539}
   dataType: 0
-  capacity: 200
+  capacity: 2000
   stripCapacity: 16
   particlePerStripCount: 16
   needsComputeBounds: 0
@@ -577,7 +577,7 @@ VisualEffectResource:
   m_Infos:
     m_RendererSettings:
       motionVectorGenerationMode: 0
-      shadowCastingMode: 1
+      shadowCastingMode: 0
     m_CullingFlags: 3
     m_UpdateMode: 0
     m_PreWarmDeltaTime: 0.05
@@ -800,7 +800,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.01
+      m_SerializableObject: 0.001
     m_Space: -1
   m_Property:
     name: A
@@ -834,7 +834,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.025
+      m_SerializableObject: 0.007
     m_Space: -1
   m_Property:
     name: B
@@ -950,7 +950,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Gradient, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"colorKeys":[{"color":{"r":1.0,"g":0.9060748815536499,"b":0.0,"a":1.0},"time":0.0},{"color":{"r":1.0,"g":0.4656814634799957,"b":0.0,"a":1.0},"time":0.5507591366767883},{"color":{"r":0.4716981053352356,"g":0.09115331619977951,"b":0.002224996453151107,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}],"gradientMode":0}'
+      m_SerializableObject: '{"colorKeys":[{"color":{"r":0.2924528121948242,"g":0.176675483584404,"b":0.03468441963195801,"a":1.0},"time":0.0},{"color":{"r":0.37735849618911745,"g":0.27913564443588259,"b":0.15867364406585694,"a":1.0},"time":0.330006867647171},{"color":{"r":1.0,"g":0.4840107262134552,"b":0.1185983419418335,"a":1.0},"time":0.6599984765052795},{"color":{"r":0.9150943160057068,"g":0.6124036908149719,"b":0.23802317678928376,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}],"gradientMode":0}'
     m_Space: -1
   m_Property:
     name: Color
