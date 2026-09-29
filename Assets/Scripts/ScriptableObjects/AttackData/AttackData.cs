@@ -19,6 +19,16 @@ public class AttackData : ScriptableObject
 
     [Header("Combo Branches")]
     public AttackLink[] nextAttacks;
+
+    [Header("Terrain Deformation")]
+    public bool createDepression;
+    public float depth;
+    public float radius;
+    public float duration;
+    public bool createOnEnd;
+
+    [Header("VFX")]
+    public bool playFormationVFX;
 }
 
 [System.Serializable]

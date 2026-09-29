@@ -3434,6 +3434,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponController
   leftHandSocket: {fileID: 1290217829}
   rightHandSocket: {fileID: 1788069381}
+  deformationManager: {fileID: 1037786736}
   swordLeftPrefab: {fileID: 6012005113629967910, guid: cdd2651f3ccf34562a620173f16bcd31, type: 3}
   swordRightPrefab: {fileID: 6012005113629967910, guid: 2c9267443637747b2bdf6f4f26b66cab, type: 3}
   longswordPrefab: {fileID: 8330784888210439858, guid: 25338548b10f94cec837fc748aaefd21, type: 3}

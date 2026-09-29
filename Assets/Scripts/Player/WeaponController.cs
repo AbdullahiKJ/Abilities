@@ -8,6 +8,10 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private Transform leftHandSocket;
 
     [SerializeField] private Transform rightHandSocket;
+
+    [Header("Deformation")]
+    [SerializeField] SandDeformationManager deformationManager;
+
     private List<GameObject> currentWeapons = new List<GameObject>();
     private WeaponData currentWeaponData;
     [Header("Weapon Prefabs")]
@@ -38,13 +42,21 @@ public class WeaponController : MonoBehaviour
         SetWeaponStates(false);
     }
 
-    public void BeginWeaponAnimation(WeaponData data)
+    public void BeginWeaponAnimation(WeaponData data, AttackData attackData)
     {
-        // Kill all tweens before starting a new attack
-        foreach (GameObject weapon in currentWeapons)
-        {
-            KillWeaponTweens(weapon);
-        }
+        // Create terrain deformation
+        if (attackData.createDepression)
+            deformationManager.CreateDepression(transform.position, attackData.radius, attackData.depth, attackData.duration);
+
+        // Play VFX
+        if (attackData.playFormationVFX)
+            // todo: play vfx
+
+            // Kill all tweens before starting a new attack
+            foreach (GameObject weapon in currentWeapons)
+            {
+                KillWeaponTweens(weapon);
+            }
 
         currentWeaponData = data;
 

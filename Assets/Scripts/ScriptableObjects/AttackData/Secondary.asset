@@ -23,3 +23,9 @@ MonoBehaviour:
     nextAttack: {fileID: 11400000, guid: 0d02ab2b79c754159966c40ebfb5ed46, type: 2}
   - inputType: 1
     nextAttack: {fileID: 11400000, guid: dbd5ba10af6b147a5acf864219734c4c, type: 2}
+  createDepression: 1
+  depth: 0.3
+  radius: 3
+  duration: 0.25
+  createOnEnd: 0
+  playFormationVFX: 0

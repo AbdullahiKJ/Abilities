@@ -119,7 +119,7 @@ public class CombatController : MonoBehaviour
     // Animation callback for adding weapons
     public void ShowWeapon()
     {
-        weapon.BeginWeaponAnimation(currentAttack.weapon);
+        weapon.BeginWeaponAnimation(currentAttack.weapon, currentAttack);
     }
 
     // Animation callback for removing weapons

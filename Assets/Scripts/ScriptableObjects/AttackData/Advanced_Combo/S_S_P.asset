@@ -19,3 +19,9 @@ MonoBehaviour:
   canBeInterrupted: 0
   weapon: {fileID: 11400000, guid: ba56a1053f5f446f4b3ffd8e1a0e7fe1, type: 2}
   nextAttacks: []
+  createDepression: 1
+  depth: 0.2
+  radius: 4
+  duration: 0.25
+  createOnEnd: 0
+  playFormationVFX: 0
