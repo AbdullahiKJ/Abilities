@@ -3420,6 +3420,7 @@ MonoBehaviour:
   sphereVFXRadius: 0.2
   reformDuration: 0.5
   alphaDelayProp: 0.75
+  formationPrefab: {fileID: 7120900692316331681, guid: 91a9aba09e8f54a349c61822737a3bd8, type: 3}
 --- !u!114 &1393632224
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class WeaponController : MonoBehaviour
 {
@@ -26,8 +25,9 @@ public class WeaponController : MonoBehaviour
     private GameObject shieldInstance;
     private GameObject spearInstance;
 
-    // Tweem dictionary
+    // Tween dictionary
     private readonly Dictionary<GameObject, Tween> weaponTweens = new();
+    private VFXController vfxController;
 
     void Awake()
     {
@@ -40,6 +40,8 @@ public class WeaponController : MonoBehaviour
 
         // Set all weapon instances to inactive
         SetWeaponStates(false);
+
+        vfxController = GetComponent<VFXController>();
     }
 
     public void BeginWeaponAnimation(WeaponData data, AttackData attackData)
@@ -48,20 +50,20 @@ public class WeaponController : MonoBehaviour
         if (attackData.createDepression)
             deformationManager.CreateDepression(transform.position, attackData.radius, attackData.depth, attackData.duration);
 
-        // Play VFX
-        if (attackData.playFormationVFX)
-            // todo: play vfx
-
-            // Kill all tweens before starting a new attack
-            foreach (GameObject weapon in currentWeapons)
-            {
-                KillWeaponTweens(weapon);
-            }
+        // Kill all tweens before starting a new attack
+        foreach (GameObject weapon in currentWeapons)
+        {
+            KillWeaponTweens(weapon);
+        }
 
         currentWeaponData = data;
 
         // Set the active weapon instance
         Equip(data);
+
+        // Play VFX
+        if (attackData.playFormationVFX)
+            vfxController.PlayWeaponFormationVFX(currentWeapons[0].transform, data);
 
         // Get all mesh renderers on the weapons and set the materials on each renderer
         foreach (GameObject weapon in currentWeapons)

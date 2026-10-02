@@ -26,6 +26,9 @@ public class VFXController : MonoBehaviour
     [Tooltip("Proportion of the reform duration at which alpha starts decreasing")]
     [SerializeField] float alphaDelayProp = 0.75f;
 
+    [Header("Weapon Formation")]
+    [SerializeField] GameObject formationPrefab;
+
     void Start()
     {
         // Enable the base vfx game objects
@@ -125,5 +128,22 @@ public class VFXController : MonoBehaviour
             if (dashPrefabChild != null)
                 Destroy(dashPrefabChild);
         });
+    }
+
+    public void PlayWeaponFormationVFX(Transform parent, WeaponData data)
+    {
+        // Create the vfx instance
+        GameObject instance = Instantiate(formationPrefab, parent);
+
+        // Assign the vfx settings
+        VisualEffect vfx = instance.GetComponent<VisualEffect>();
+        vfx.SetFloat("formationDuration", data.formationDuration);
+        Mesh mesh = parent.gameObject.GetComponentInChildren<Mesh>();
+        vfx.SetMesh("mesh", mesh);
+        Vector3 spawnPos = parent.position - Vector3.one * 5f;
+        vfx.SetVector3("position", spawnPos);
+
+        // Destroy the instance at the end of its lifetime
+        Destroy(instance, data.formationDuration);
     }
 }

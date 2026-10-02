@@ -28,4 +28,4 @@ MonoBehaviour:
   radius: 2
   duration: 0.25
   createOnEnd: 0
-  playFormationVFX: 0
+  playFormationVFX: 1
