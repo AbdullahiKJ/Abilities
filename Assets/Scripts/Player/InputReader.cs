@@ -11,18 +11,14 @@ public class InputReader : MonoBehaviour
     public float AimInput { get; private set; }
     public float aimTransition = 0.2f;
 
-    // Actions that the character can perform
-    // todo: remove if not implemented
-    public bool canAim;
-
     // Events other systems can subscribe to
     public event System.Action JumpPressed;
     public event System.Action PrimaryPressed;
     public event System.Action SecondaryPressed;
-    public event System.Action ShootPressed;
+    public event System.Action ConstructPressed;
     public event System.Action DodgePressed;
-    public event System.Action DashPressed;
-    public event System.Action DashReleased;
+    public event System.Action ShiftPressed;
+    public event System.Action ShiftReleased;
 
     private void Awake()
     {
@@ -42,12 +38,12 @@ public class InputReader : MonoBehaviour
         controls.Player.Jump.performed += ctx => JumpPressed?.Invoke();
         controls.Player.Primary.performed += ctx => PrimaryPressed?.Invoke();
         controls.Player.Secondary.performed += ctx => SecondaryPressed?.Invoke();
-        controls.Player.Shoot.performed += ctx => ShootPressed?.Invoke();
+        controls.Player.Construct.performed += ctx => ConstructPressed?.Invoke();
         controls.Player.Dodge.performed += ctx => DodgePressed?.Invoke();
 
         // Assign two events for pressing and releasing the dash input
-        controls.Player.Dash.performed += ctx => DashPressed?.Invoke();
-        controls.Player.Dash.canceled += ctx => DashReleased?.Invoke();
+        controls.Player.Shift.performed += ctx => ShiftPressed?.Invoke();
+        controls.Player.Shift.canceled += ctx => ShiftReleased?.Invoke();
 
         // Lock and hide the mouse
         Cursor.lockState = CursorLockMode.Locked;

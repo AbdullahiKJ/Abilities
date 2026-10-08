@@ -53,11 +53,8 @@ public class AnimationController : MonoBehaviour
         animator.SetFloat(moveYHash, move.y);
 
         // Aim check
-        if (input.canAim)
-        {
-            float aim = input.AimInput;
-            animator.SetFloat(isAimingHash, aim);
-        }
+        float aim = input.AimInput;
+        animator.SetFloat(isAimingHash, aim);
     }
 
     private void UpdateAttackState()

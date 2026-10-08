@@ -60,14 +60,14 @@ public class CombatController : MonoBehaviour
     {
         input.PrimaryPressed += OnPrimary;
         input.SecondaryPressed += OnSecondary;
-        input.ShootPressed += TryFire;
+        input.ConstructPressed += TryConstruct;
     }
 
     private void OnDisable()
     {
         input.PrimaryPressed -= OnPrimary;
         input.SecondaryPressed -= OnSecondary;
-        input.ShootPressed -= TryFire;
+        input.ConstructPressed -= TryConstruct;
     }
 
     private void OnAttack(InputType inputType)
@@ -161,7 +161,7 @@ public class CombatController : MonoBehaviour
         );
     }
 
-    private void TryFire()
+    private void TryConstruct()
     {
         // Place the wall instance
         if (wallInstance == null && isAiming)

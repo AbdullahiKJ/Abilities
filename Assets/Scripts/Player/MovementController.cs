@@ -42,16 +42,16 @@ public class MovementController : MonoBehaviour
     private void OnEnable()
     {
         input.DodgePressed += TriggerDodge;
-        input.DashPressed += TriggerDash;
-        input.DashReleased += CancelDash;
+        input.ShiftPressed += TriggerShift;
+        input.ShiftReleased += CancelShift;
     }
 
     // unsubscribe to dodge and dash inputs
     private void OnDisable()
     {
         input.DodgePressed -= TriggerDodge;
-        input.DashPressed -= TriggerDash;
-        input.DashReleased -= CancelDash;
+        input.ShiftPressed -= TriggerShift;
+        input.ShiftReleased -= CancelShift;
     }
 
     private void Update()
@@ -68,7 +68,7 @@ public class MovementController : MonoBehaviour
         Vector3 move = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
 
         // Face the camera when aiming
-        if (input.canAim && input.AimInput == 1f)
+        if (input.AimInput == 1f)
         {
             Vector3 camForward = cam.transform.forward;
             camForward.y = 0f;
@@ -122,13 +122,13 @@ public class MovementController : MonoBehaviour
         Invoke(nameof(EnableMovement), dodgeDuration);
     }
 
-    private void TriggerDash()
+    private void TriggerShift()
     {
         vfx.StartDashVFX();
         moveSpeed = dashSpeed;
     }
 
-    private void CancelDash()
+    private void CancelShift()
     {
         vfx.StopDashVFX();
         moveSpeed = regularSpeed;
