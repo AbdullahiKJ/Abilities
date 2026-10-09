@@ -36,6 +36,7 @@ public class AbilityController : MonoBehaviour
         input.AimStarted += BeginZipAim;
         input.AimReleased += ExecuteZip;
         input.SpecialPressed += ActivateSpecial;
+        input.ConstructSelectionPressed += HandleConstructSelection;
     }
 
     private void OnDisable()
@@ -44,16 +45,19 @@ public class AbilityController : MonoBehaviour
         input.AimStarted -= BeginZipAim;
         input.AimReleased -= ExecuteZip;
         input.SpecialPressed -= ActivateSpecial;
+        input.ConstructSelectionPressed -= HandleConstructSelection;
     }
 
-    public void SelectShield()
+    private void HandleConstructSelection(int direction)
     {
-        selectedConstruct = ConstructType.Shield;
-    }
-
-    public void SelectSpikes()
-    {
-        selectedConstruct = ConstructType.Spikes;
+        if (direction < 0)
+        {
+            selectedConstruct = ConstructType.Shield;
+        }
+        else if (direction > 0)
+        {
+            selectedConstruct = ConstructType.Spikes;
+        }
     }
 
     public void ActivateConstruct()

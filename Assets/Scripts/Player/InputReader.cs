@@ -26,6 +26,7 @@ public class InputReader : MonoBehaviour
     public event System.Action AimStarted;
     public event System.Action AimReleased;
     public event System.Action SpecialPressed;
+    public event System.Action<int> ConstructSelectionPressed;
 
     private void Awake()
     {
@@ -56,6 +57,16 @@ public class InputReader : MonoBehaviour
         // Assign two events for pressing and releasing the dash input
         controls.Player.Shift.performed += ctx => ShiftPressed?.Invoke();
         controls.Player.Shift.canceled += ctx => ShiftReleased?.Invoke();
+
+        // Assign the select construct input to an event and pass the value
+        controls.Player.SelectConstruct.performed += ctx =>
+        {
+            float value = ctx.ReadValue<float>();
+
+            int direction = value > 0f ? 1 : -1;
+
+            ConstructSelectionPressed?.Invoke(direction);
+        };
 
         // Lock and hide the mouse
         Cursor.lockState = CursorLockMode.Locked;
