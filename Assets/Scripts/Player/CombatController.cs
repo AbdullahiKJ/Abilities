@@ -5,16 +5,7 @@ public class CombatController : MonoBehaviour
     private InputReader input;
     private StateMachine state;
     private Animator animator;
-    private Camera cam;
     private WeaponController weapon;
-
-    [Header("Wall Settings")]
-    [SerializeField] GameObject wallPrefab;
-    [SerializeField] GameObject wallPlacementPrefab;
-    GameObject wallInstance;
-    GameObject wallPlacementInstance;
-    [SerializeField] float wallOffset = 5f;
-    bool isAiming;
 
     [Header("Combo Settings")]
     [SerializeField] AttackData rootPrimaryAttack;
@@ -32,15 +23,10 @@ public class CombatController : MonoBehaviour
         state = GetComponent<StateMachine>();
         animator = GetComponent<Animator>();
         weapon = GetComponent<WeaponController>();
-        cam = Camera.main;
     }
 
     void Update()
     {
-        // Show the wall placement preview if aiming
-        isAiming = input.AimInput > 0.5f;
-        PlaceWallPreview(isAiming);
-
         if (!bufferActive)
             return;
 
@@ -60,14 +46,12 @@ public class CombatController : MonoBehaviour
     {
         input.PrimaryPressed += OnPrimary;
         input.SecondaryPressed += OnSecondary;
-        input.ConstructPressed += TryConstruct;
     }
 
     private void OnDisable()
     {
         input.PrimaryPressed -= OnPrimary;
         input.SecondaryPressed -= OnSecondary;
-        input.ConstructPressed -= TryConstruct;
     }
 
     private void OnAttack(InputType inputType)
@@ -159,50 +143,5 @@ public class CombatController : MonoBehaviour
             attack.animationName,
             attack.crossFadeDuration
         );
-    }
-
-    private void TryConstruct()
-    {
-        // Place the wall instance
-        if (wallInstance == null && isAiming)
-        {
-            Vector3 camForward = cam.transform.forward;
-            camForward.y = 0f;
-            camForward.Normalize();
-            Vector3 spawnPos = transform.position + camForward * wallOffset;
-            wallInstance = Instantiate(wallPrefab, spawnPos, Quaternion.LookRotation(camForward));
-        }
-    }
-
-    void PlaceWallPreview(bool isAiming)
-    {
-        if (isAiming)
-        {
-            // Calculate wall placement position
-            Vector3 camForward = cam.transform.forward;
-            camForward.y = 0f;
-            camForward.Normalize();
-            Vector3 wallPos = transform.position + camForward * wallOffset;
-
-            // Create the wall placement prefab if it doesn't exist
-            if (wallPlacementInstance == null)
-            {
-                wallPlacementInstance = Instantiate(wallPlacementPrefab, wallPos, Quaternion.LookRotation(camForward));
-            }
-            // Move the wall placement prefab to the new position and rotate it to face the camera
-            else
-            {
-                wallPlacementInstance.transform.position = wallPos;
-                wallPlacementInstance.transform.rotation = Quaternion.LookRotation(camForward);
-            }
-        }
-        else
-        {
-            // Destroy the wall placement prefab if it exists
-            if (wallPlacementInstance != null)
-            {
-                Destroy(wallPlacementInstance);
-            }
-        }
     }
 }

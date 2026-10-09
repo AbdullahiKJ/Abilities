@@ -41,7 +41,6 @@ public class MovementController : MonoBehaviour
     // Subscribe to dodge and dash inputs
     private void OnEnable()
     {
-        input.DodgePressed += TriggerDodge;
         input.ShiftPressed += TriggerShift;
         input.ShiftReleased += CancelShift;
     }
@@ -49,7 +48,6 @@ public class MovementController : MonoBehaviour
     // unsubscribe to dodge and dash inputs
     private void OnDisable()
     {
-        input.DodgePressed -= TriggerDodge;
         input.ShiftPressed -= TriggerShift;
         input.ShiftReleased -= CancelShift;
     }
@@ -102,7 +100,7 @@ public class MovementController : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    private void TriggerDodge()
+    public void TriggerDodge()
     {
         // Determine the dash direction (dash backwards if there is no move input)
         Vector3 direction;

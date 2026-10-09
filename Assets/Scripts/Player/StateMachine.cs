@@ -19,4 +19,25 @@ public class StateMachine : MonoBehaviour
     {
         CurrentActionState = attacking ? ActionState.Attacking : ActionState.None;
     }
+
+    // todo: change to free and add other states
+    public bool IsFree => CurrentActionState == ActionState.None;
+
+    public bool TryEnterState(ActionState newState)
+    {
+        if (!IsFree)
+            return false;
+
+        CurrentActionState = newState;
+
+        return true;
+    }
+
+    public void ExitState(ActionState state)
+    {
+        if (CurrentActionState == state)
+        {
+            CurrentActionState = ActionState.None;
+        }
+    }
 }
