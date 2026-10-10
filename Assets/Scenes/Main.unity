@@ -245,7 +245,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.06459249, y: -0.0000000061593775, z: 3.9868198e-10, w: 0.99791175}
+  m_LocalRotation: {x: 0.06459247, y: -0.000000006159376, z: 3.986817e-10, w: 0.99791175}
   m_LocalPosition: {x: -2.0909998, y: 2.28, z: -5.378}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -342,9 +342,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   normalCam: {fileID: 506593872}
   aimCam: {fileID: 1312425544}
-  playerManager: {fileID: 627841470}
   normalPriority: 10
   aimPriority: 5
+  camTargetName: CameraTarget
+  player: {fileID: 1393632209}
+  cams:
+  - {fileID: 506593872}
+  - {fileID: 1312425544}
 --- !u!4 &333288647 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
@@ -798,7 +802,7 @@ MonoBehaviour:
     AmplitudeGain: 1
     FrequencyGain: 1
     Duration: 1
-    m_NoiseOffsets: {x: 0, y: 0, z: 0}
+    m_NoiseOffsets: {x: -387.0112, y: -501.46387, z: -362.77783}
 --- !u!1 &520552858
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,55 +1286,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1 &627841468
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 627841469}
-  - component: {fileID: 627841470}
-  m_Layer: 0
-  m_Name: CharacterManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &627841469
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627841468}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &627841470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627841468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76932e8ed586b481594f5b625bb29f21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
-  characterArray:
-  - {fileID: 1393632209}
-  currentChar: 0
-  cam: {fileID: 506593872}
-  camTargetName: CameraTarget
 --- !u!1 &638060872
 GameObject:
   m_ObjectHideFlags: 0
@@ -2169,7 +2124,7 @@ Transform:
   m_GameObject: {fileID: 1312425540}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.1109998, y: 1.53, z: -0.778}
+  m_LocalPosition: {x: 0.35572857, y: 1.5305481, z: -1.9898893}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2188,7 +2143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
   Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: -0.02, y: -0.5, z: 1.6}
+  ShoulderOffset: {x: 0.05, y: -0.5, z: 0}
   VerticalArmLength: 0.4
   CameraSide: 1
   CameraDistance: 2
@@ -2221,8 +2176,8 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 0}
-    LookAtTarget: {fileID: 0}
+    TrackingTarget: {fileID: 1924546848}
+    LookAtTarget: {fileID: 1924546848}
     CustomLookAtTarget: 1
   Lens:
     FieldOfView: 60.000004
@@ -4979,7 +4934,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1622566468}
   - {fileID: 875890383}
-  - {fileID: 627841469}
   - {fileID: 2104200306}
   - {fileID: 1393632208}
   - {fileID: 1666336655}

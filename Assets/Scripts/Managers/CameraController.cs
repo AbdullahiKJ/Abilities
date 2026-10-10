@@ -5,12 +5,13 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] CinemachineCamera normalCam;
     [SerializeField] CinemachineCamera aimCam;
-    [SerializeField] PlayerManager playerManager;
     private InputReader input;
     [SerializeField] int normalPriority = 10;
     [SerializeField] int aimPriority = 5;
     public bool IsAiming { get; private set; }
-    bool marineCharacterActive;
+    [SerializeField] string camTargetName = "CameraTarget";
+    [SerializeField] GameObject player;
+    [SerializeField] CinemachineCamera[] cams;
 
     void Start()
     {
@@ -18,17 +19,22 @@ public class CameraController : MonoBehaviour
         normalCam.Priority.Value = normalPriority;
         aimCam.Priority.Value = aimPriority;
 
-        // Get the current playable character
-        input = playerManager.characterArray[playerManager.currentChar].GetComponent<InputReader>();
-        marineCharacterActive = playerManager.currentChar == 1;
+        // Get the input reader script
+        input = player.GetComponent<InputReader>();
+
+        // Assign the look and follow target
+        Transform target = player.transform.Find(camTargetName);
+        foreach (var cam in cams)
+        {
+            cam.Follow = target;
+            cam.LookAt = target;
+        }
     }
 
     void Update()
     {
-        IsAiming = input.AimInput > 0.5f;
-
         // Update the aim cam priority
-        if (IsAiming && marineCharacterActive)
+        if (input.AimInput > 0.5f)
         {
             aimCam.Priority.Value = normalPriority + 1;
         }
