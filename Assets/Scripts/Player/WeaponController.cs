@@ -61,9 +61,10 @@ public class WeaponController : MonoBehaviour
         // Set the active weapon instance
         Equip(data);
 
+        // todo: finish or remove this later
         // Play VFX
-        if (attackData.playFormationVFX)
-            vfxController.PlayWeaponFormationVFX(currentWeapons[0].transform, data);
+        // if (attackData.playFormationVFX)
+        // vfxController.PlayWeaponFormationVFX(currentWeapons[0].transform, data);
 
         // Get all mesh renderers on the weapons and set the materials on each renderer
         foreach (GameObject weapon in currentWeapons)

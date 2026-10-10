@@ -4,24 +4,33 @@ public class StateMachine : MonoBehaviour
 {
     public enum ActionState
     {
-        None,
-        Attacking
+        Free,
+        Attacking,
+        Dodging,
+        Aiming,
+        Zipping,
     }
+
+    // States       Movement    Attack      Dodge 
+    // Free         Yes         Yes         Yes
+    // Attacking    No          X           No
+    // Dodging      No          No          X
+    // Aiming       Yes         No          No
+    // Zipping      No          No          No
 
     public ActionState CurrentActionState { get; private set; }
 
     private void Awake()
     {
-        CurrentActionState = ActionState.None;
+        CurrentActionState = ActionState.Free;
     }
 
     public void SetAttacking(bool attacking)
     {
-        CurrentActionState = attacking ? ActionState.Attacking : ActionState.None;
+        CurrentActionState = attacking ? ActionState.Attacking : ActionState.Free;
     }
 
-    // todo: change to free and add other states
-    public bool IsFree => CurrentActionState == ActionState.None;
+    public bool IsFree => CurrentActionState == ActionState.Free;
 
     public bool TryEnterState(ActionState newState)
     {
@@ -37,7 +46,7 @@ public class StateMachine : MonoBehaviour
     {
         if (CurrentActionState == state)
         {
-            CurrentActionState = ActionState.None;
+            CurrentActionState = ActionState.Free;
         }
     }
 }

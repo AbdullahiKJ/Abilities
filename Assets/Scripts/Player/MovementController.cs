@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -24,6 +25,9 @@ public class MovementController : MonoBehaviour
     [Header("Dodge Settings")]
     public float dodgeDuration = 2f;
     public float dodgeDistance = 4f;
+
+    [Header("Zip settings")]
+    Tween zipTween;
 
 
     private void Awake()
@@ -54,9 +58,11 @@ public class MovementController : MonoBehaviour
 
     private void Update()
     {
-        // Move if allowed and the current state is not attacking
-        bool isAttacking = state.CurrentActionState != StateMachine.ActionState.Attacking;
-        if (canMove && isAttacking)
+        // Move if allowed and the current state is free or aiming
+        bool isValidState =
+            state.CurrentActionState == StateMachine.ActionState.Free ||
+            state.CurrentActionState == StateMachine.ActionState.Aiming;
+        if (canMove && isValidState)
             Move();
         ApplyGravity();
     }
@@ -115,8 +121,8 @@ public class MovementController : MonoBehaviour
         // Move the player to the position
         characterController.Move(direction * dodgeDistance);
 
-        // Temporarily disable movement
-        canMove = false;
+        // Temporarily disable movement by entering the dodge state
+        state.TryEnterState(StateMachine.ActionState.Dodging);
         Invoke(nameof(EnableMovement), dodgeDuration);
     }
 
@@ -124,6 +130,49 @@ public class MovementController : MonoBehaviour
     {
         vfx.StartDashVFX();
         moveSpeed = dashSpeed;
+    }
+
+    public void StartZip(Vector3 target, float duration, bool onSurface = false)
+    {
+        // Kill the current tween
+        zipTween?.Kill();
+
+        // todo: play animation
+
+        // todo: Enter the zip state
+
+        // todo: play vfx and hide mesh
+
+        // Start the movement tween 
+        Vector3 previousPosition = transform.position;
+        Vector3 tweenPosition = previousPosition;
+        zipTween = DOTween.To(
+            () => tweenPosition,
+            value =>
+            {
+                tweenPosition = value;
+
+                // Calculate the movement since the previous tween update.
+                Vector3 delta = tweenPosition - previousPosition;
+
+                // Move through the CharacterController.
+                characterController.Move(delta);
+
+                // Update the previous position
+                previousPosition = transform.position;
+            },
+            target,
+            duration
+        )
+        .SetEase(Ease.OutQuad)
+        .OnComplete(() => state.ExitState(StateMachine.ActionState.Zipping));
+
+        // todo: transition to the shift state if target is a surface
+        if (onSurface)
+            return;
+        // todo: otherwise, end vfx and show mesh
+        else
+            return;
     }
 
     private void CancelShift()
@@ -134,6 +183,9 @@ public class MovementController : MonoBehaviour
 
     private void EnableMovement()
     {
+        // Re-enable the can move flag
         canMove = true;
+        // Return to the free state
+        state.ExitState(StateMachine.ActionState.Dodging);
     }
 }
