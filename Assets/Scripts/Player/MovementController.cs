@@ -6,6 +6,7 @@ public class MovementController : MonoBehaviour
 {
     [Header("Movement")]
     public float regularSpeed = 6f;
+    public float aimSpeed = 4f;
     public float dashSpeed = 12f;
     private float moveSpeed;
     public float rotationSpeed = 10f;
@@ -130,6 +131,14 @@ public class MovementController : MonoBehaviour
     {
         vfx.StartDashVFX();
         moveSpeed = dashSpeed;
+    }
+
+    public void ToggleAimMovement(bool isAiming)
+    {
+        if (isAiming)
+            moveSpeed = aimSpeed;
+        else
+            moveSpeed = regularSpeed;
     }
 
     public void StartZip(Vector3 target, float duration, bool onSurface = false)

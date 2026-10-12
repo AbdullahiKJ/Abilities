@@ -11,6 +11,7 @@ public class ZipAbility : MonoBehaviour
     Camera cam;
     private MovementController movementController;
     private StateMachine state;
+    [SerializeField] AimRig aimRig;
 
     [Header("Targeting")]
     [SerializeField] float targetDistance = 30f;
@@ -76,6 +77,12 @@ public class ZipAbility : MonoBehaviour
         targetInstance.SetActive(true);
         rayInstance.SetActive(true);
 
+        // Change move speed
+        movementController.ToggleAimMovement(true);
+
+        // Start aiming with the arm rig
+        aimRig.StartAiming();
+
         UpdateAiming();
 
         // todo: start the aim animation
@@ -113,6 +120,9 @@ public class ZipAbility : MonoBehaviour
 
         // Update target position.
         targetInstance.transform.position = currentTargetPosition;
+
+        // Update the right aim
+        aimRig.UpdateAimPosition(currentTargetPosition);
 
         // Update target glow colour.
         UpdateTargetColour();
@@ -173,6 +183,13 @@ public class ZipAbility : MonoBehaviour
 
         // Pass the selected target to the movement controller.
         movementController.StartZip(currentTargetPosition, zipDuration);
+
+        // Change move speed
+        movementController.ToggleAimMovement(false);
+
+        // Stop aiming with the arm rig
+        aimRig.StopAiming();
+
         Debug.Log($"Zip to {currentTargetPosition}");
     }
 
@@ -181,6 +198,12 @@ public class ZipAbility : MonoBehaviour
         // Exit targeting mode without zipping.
         state.ExitState(StateMachine.ActionState.Aiming);
         hasValidTarget = false;
+
+        // Change move speed
+        movementController.ToggleAimMovement(false);
+
+        // Stop aiming with the arm rig
+        aimRig.StopAiming();
 
         HideTargetingVisuals();
     }
