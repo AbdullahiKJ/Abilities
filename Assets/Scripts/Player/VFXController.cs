@@ -15,8 +15,7 @@ public class VFXController : MonoBehaviour
 
     [Header("Base Character VFX")]
     [SerializeField] VisualEffect idleVFX;
-    [SerializeField] VisualEffect sphereVFX;
-    [SerializeField] float sphereVFXRadius = 0.2f;
+    [SerializeField] GameObject scorpionTail;
 
     [Header("Dash Settings")]
     GameObject dashPrefabChild;
@@ -37,20 +36,13 @@ public class VFXController : MonoBehaviour
         // Enable the base vfx game objects
         if (idleVFX)
             idleVFX.gameObject.SetActive(true);
-        if (sphereVFX)
-            sphereVFX.gameObject.SetActive(true);
+
+        // Hide the scorpion tail
+        scorpionTail.SetActive(false);
 
         // Play the idle vfx 
         if (idleVFX)
             idleVFX.Play();
-
-        if (sphereVFX)
-        {
-            // Stop the sphere vfx
-            sphereVFX.Stop();
-            // Set the float property on the sphere vfx
-            sphereVFX.SetFloat("radius", sphereVFXRadius);
-        }
 
         // Disable the propeller game object
         if (propeller)
@@ -84,14 +76,17 @@ public class VFXController : MonoBehaviour
 
     public void StartDashVFX()
     {
-        // Play the sphere vfx and stop the idle vfx
+        // Stop the idle vfx
         idleVFX.Stop();
-        sphereVFX.Play();
 
         // Hide the skinned mesh renderers
         // todo: smoothly fade away before hiding
         surfaceRenderer.enabled = false;
         jointRenderer.enabled = false;
+
+        // Show the scorpion tail
+        // todo: create vfx to transition from player to tail
+        scorpionTail.SetActive(true);
 
         // Instantiate the dash prefab and assign it's properties
         dashPrefabInstance = Instantiate(dashPrefab, transform.position, Quaternion.identity);
@@ -101,7 +96,7 @@ public class VFXController : MonoBehaviour
 
         // Reparent the target game object to the sphere vfx
         dashPrefabChild = dashPrefabInstance.transform.GetChild(0).gameObject;
-        dashPrefabChild.transform.SetParent(sphereVFX.transform, false);
+        dashPrefabChild.transform.SetParent(scorpionTail.transform, false);
         dashPrefabChild.transform.localPosition = Vector3.zero;
     }
 
@@ -125,9 +120,11 @@ public class VFXController : MonoBehaviour
             surfaceRenderer.enabled = true;
             jointRenderer.enabled = true;
 
-            // Stop the sphere vfx and play the idle vfx
+            // Play the idle vfx
             idleVFX.Play();
-            sphereVFX.Stop();
+
+            // Hide the scorpion tail
+            scorpionTail.gameObject.SetActive(false);
 
             // Destroy the existing dash prefab instance and child
             if (dashPrefabInstance != null)

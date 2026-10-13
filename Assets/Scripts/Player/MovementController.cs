@@ -214,6 +214,12 @@ public class MovementController : MonoBehaviour
         moveSpeed = dashSpeed;
     }
 
+    private void CancelShift()
+    {
+        vfx.StopDashVFX();
+        moveSpeed = regularSpeed;
+    }
+
     public void ToggleAimMovement(bool isAiming)
     {
         if (isAiming)
@@ -263,12 +269,6 @@ public class MovementController : MonoBehaviour
         // todo: otherwise, end vfx and show mesh
         else
             return;
-    }
-
-    private void CancelShift()
-    {
-        vfx.StopDashVFX();
-        moveSpeed = regularSpeed;
     }
 
     private void HandleJumpStart()
