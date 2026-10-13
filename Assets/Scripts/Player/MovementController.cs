@@ -11,6 +11,11 @@ public class MovementController : MonoBehaviour
     private float moveSpeed;
     public float rotationSpeed = 10f;
 
+    [Header("Jump Settings")]
+    [SerializeField] float holdDuration = 2f;
+    [SerializeField] float minJumpHeight;
+    [SerializeField] float maxJumpHeight;
+
     // External scripts/objects
     private CharacterController characterController;
     private InputReader input;
@@ -20,8 +25,9 @@ public class MovementController : MonoBehaviour
 
     // Movement parameters
     private Vector3 velocity;
-    public float gravity = -9.81f;
+    [SerializeField] float gravity = -9.81f;
     bool canMove = true;
+    public Vector2 MoveInput => input.MoveInput;
 
     [Header("Dodge Settings")]
     public float dodgeDuration = 2f;
@@ -29,7 +35,36 @@ public class MovementController : MonoBehaviour
 
     [Header("Zip settings")]
     Tween zipTween;
+    public enum MovementMode
+    {
+        Normal,
 
+        Shift,
+        WallClimbing,
+        Hover
+    }
+    [Header("Player state")]
+    public MovementMode CurrentMovementMode { get; private set; } = MovementMode.Normal;
+    public bool IsGrounded => characterController.isGrounded;
+    public bool IsHovering => CurrentMovementMode == MovementMode.Hover;
+    public bool IsShifting => CurrentMovementMode == MovementMode.Shift;
+    public bool IsWallClimbing => CurrentMovementMode == MovementMode.WallClimbing;
+
+    [Header("Hover")]
+    [SerializeField] private float minimumHoverHeight = 3f;
+    [SerializeField] float hoverGravity = -1f;
+    [SerializeField] private float hoverMaxFallSpeed = 2f;
+    public float hoverMoveSpeed = 8f;
+
+    private enum PendingJumpType
+    {
+        None,
+        ChargedJump,
+        WallJump,
+        Hover,
+        ExitHover
+    }
+    private PendingJumpType pendingJump;
 
     private void Awake()
     {
@@ -48,6 +83,8 @@ public class MovementController : MonoBehaviour
     {
         input.ShiftPressed += TriggerShift;
         input.ShiftReleased += CancelShift;
+        input.JumpStarted += HandleJumpStart;
+        input.JumpReleased += HandleJumpRelease;
     }
 
     // unsubscribe to dodge and dash inputs
@@ -55,32 +92,64 @@ public class MovementController : MonoBehaviour
     {
         input.ShiftPressed -= TriggerShift;
         input.ShiftReleased -= CancelShift;
+        input.JumpStarted -= HandleJumpStart;
+        input.JumpReleased -= HandleJumpRelease;
     }
 
     private void Update()
     {
+        bool isZipping = state.CurrentActionState == StateMachine.ActionState.Zipping;
+
+        // Ignore movements and gravity if zipping
+        if (isZipping)
+            return;
+
         // Move if allowed and the current state is free or aiming
         bool isValidState =
             state.CurrentActionState == StateMachine.ActionState.Free ||
             state.CurrentActionState == StateMachine.ActionState.Aiming;
+
+        Vector3 horizontalVelocity = Vector3.zero;
+
         if (canMove && isValidState)
-            Move();
+            horizontalVelocity = CalculateMovement();
+
         ApplyGravity();
+
+        // Combine horizontal and vertical velocity.
+        Vector3 totalVelocity = horizontalVelocity + Vector3.up * velocity.y;
+
+        // Move the CharacterController ONCE.
+        characterController.Move(totalVelocity * Time.deltaTime);
+
+        // Exit the hover state upon landing
+        if (IsGrounded && IsHovering)
+            ExitHover();
     }
 
-    private void Move()
+    private Vector3 CalculateMovement()
     {
         Vector3 move = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
 
+        // Prevent diagonal movement from being faster.
+        move = Vector3.ClampMagnitude(move, 1f);
+
+        if (IsHovering)
+        {
+            // Don't rotate if hovering
+        }
         // Face the camera when aiming
-        if (input.AimInput == 1f)
+        else if (input.AimInput >= 0.99f)
         {
             Vector3 camForward = cam.transform.forward;
             camForward.y = 0f;
             camForward.Normalize();
 
-            Quaternion targetRot = Quaternion.LookRotation(camForward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            if (camForward.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(camForward);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            }
         }
         // Rotate towards the move direction otherwise
         else
@@ -93,17 +162,29 @@ public class MovementController : MonoBehaviour
             }
         }
 
-        characterController.Move(moveSpeed * Time.deltaTime * move);
+        return move * moveSpeed;
     }
 
     private void ApplyGravity()
     {
-        if (characterController.isGrounded && velocity.y < 0)
+        if (IsGrounded && velocity.y < 0)
         {
             velocity.y = -2f; // apply a small downward force to keep grounded
         }
+        else if (IsHovering)
+        {
+            velocity.y += hoverGravity * Time.deltaTime;
+            // Prevent falling faster than the hover limit.
+            velocity.y = Mathf.Max(
+                velocity.y,
+                -hoverMaxFallSpeed
+            );
+        }
+        else
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
 
-        velocity.y += gravity * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
     }
 
@@ -188,6 +269,136 @@ public class MovementController : MonoBehaviour
     {
         vfx.StopDashVFX();
         moveSpeed = regularSpeed;
+    }
+
+    private void HandleJumpStart()
+    {
+        pendingJump = PendingJumpType.None;
+
+        if (state.CurrentActionState == StateMachine.ActionState.Zipping)
+            return;
+
+        if (IsHovering)
+        {
+            pendingJump = PendingJumpType.ExitHover;
+            return;
+        }
+
+        if (IsShifting && IsWallClimbing)
+        {
+            pendingJump = PendingJumpType.WallJump;
+            return;
+        }
+
+        if (IsShifting && IsGrounded)
+        {
+            pendingJump = PendingJumpType.ChargedJump;
+            return;
+        }
+
+        if (!IsGrounded && IsHighAboveGround())
+        {
+            pendingJump = PendingJumpType.Hover;
+        }
+    }
+
+    private void HandleJumpRelease(float holdDuration)
+    {
+        // Actions such as zipping should take priority.
+        if (state.CurrentActionState == StateMachine.ActionState.Zipping)
+            return;
+
+        switch (pendingJump)
+        {
+            case PendingJumpType.ChargedJump:
+                if (IsGrounded)
+                    PerformChargedJump(holdDuration);
+                break;
+
+            case PendingJumpType.WallJump:
+                if (IsWallClimbing)
+                    PerformWallJump(holdDuration);
+                break;
+
+            case PendingJumpType.Hover:
+                if (!IsGrounded && IsHighAboveGround())
+                    EnterHover();
+                break;
+
+            case PendingJumpType.ExitHover:
+                ExitHover();
+                break;
+        }
+
+        pendingJump = PendingJumpType.None;
+    }
+
+    private void PerformChargedJump(float duration)
+    {
+
+    }
+
+    private void PerformWallJump(float duration)
+    {
+
+    }
+
+    private bool IsHighAboveGround()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+
+        return !Physics.Raycast(
+            origin,
+            Vector3.down,
+            minimumHoverHeight
+        );
+    }
+
+    private void EnterHover()
+    {
+        if (IsGrounded)
+            return;
+
+        SetMovementMode(MovementMode.Hover);
+
+        // Remove accumulated falling speed.
+        velocity.y = 0f;
+
+        // Change the movement speed
+        moveSpeed = hoverMoveSpeed;
+
+        // todo: play animation
+
+        // Play vfx
+        vfx.StartHoverVFX();
+    }
+
+    private void ExitHover()
+    {
+        if (!IsHovering)
+            return;
+
+        SetMovementMode(MovementMode.Normal);
+
+        // Change the movement speed
+        moveSpeed = regularSpeed;
+
+        // todo: play animation
+
+        // Play vfx
+        vfx.StopHoverVFX();
+    }
+
+    private void SetMovementMode(MovementMode newMode)
+    {
+        if (CurrentMovementMode == newMode)
+            return;
+
+        MovementMode previousMode = CurrentMovementMode;
+
+        CurrentMovementMode = newMode;
+
+        // Handle visual changes, movement settings, etc.
     }
 
     private void EnableMovement()

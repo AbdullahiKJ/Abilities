@@ -15,9 +15,13 @@ public class InputReader : MonoBehaviour
     private Tween aimTween;
     public float aimTransition = 0.2f;
     private bool aimCancelled;
+    public float JumpHoldDuration { get; private set; }
+    private float jumpStartTime;
+    private bool isJumpHeld;
 
     // Events other systems can subscribe to
-    public event System.Action JumpPressed;
+    public event System.Action JumpStarted;
+    public event System.Action<float> JumpReleased;
     public event System.Action PrimaryPressed;
     public event System.Action SecondaryPressed;
     public event System.Action ConstructPressed;
@@ -46,8 +50,11 @@ public class InputReader : MonoBehaviour
         controls.Player.Aim.performed += ctx => StartAim();
         controls.Player.Aim.canceled += ctx => ReleaseAim();
 
+        // Assign jump pressed and released events, as well as the hold duration
+        controls.Player.Jump.started += ctx => StartJumpHold();
+        controls.Player.Jump.canceled += ctx => ReleaseJumpHold();
+
         // Assign events to each input that can be subscribed to by other scripts
-        controls.Player.Jump.performed += ctx => JumpPressed?.Invoke();
         controls.Player.Primary.performed += ctx => PrimaryPressed?.Invoke();
         controls.Player.Secondary.performed += ctx => SecondaryPressed?.Invoke();
         controls.Player.Construct.performed += ctx => ConstructPressed?.Invoke();
@@ -71,6 +78,12 @@ public class InputReader : MonoBehaviour
         // Lock and hide the mouse
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void Update()
+    {
+        if (isJumpHeld)
+            JumpHoldDuration = Time.time - jumpStartTime;
     }
 
     private void HandleDodge()
@@ -125,6 +138,26 @@ public class InputReader : MonoBehaviour
             target,
             aimTransition
         );
+    }
+
+    private void StartJumpHold()
+    {
+        isJumpHeld = true;
+        jumpStartTime = Time.time;
+        JumpHoldDuration = 0f;
+
+        JumpStarted?.Invoke();
+    }
+
+    private void ReleaseJumpHold()
+    {
+        if (!isJumpHeld)
+            return;
+
+        JumpHoldDuration = Time.time - jumpStartTime;
+        isJumpHeld = false;
+
+        JumpReleased?.Invoke(JumpHoldDuration);
     }
 
     private void OnEnable()

@@ -29,6 +29,9 @@ public class VFXController : MonoBehaviour
     [Header("Weapon Formation")]
     [SerializeField] GameObject formationPrefab;
 
+    [Header("Hover Settings")]
+    [SerializeField] GameObject propeller;
+
     void Start()
     {
         // Enable the base vfx game objects
@@ -48,6 +51,10 @@ public class VFXController : MonoBehaviour
             // Set the float property on the sphere vfx
             sphereVFX.SetFloat("radius", sphereVFXRadius);
         }
+
+        // Disable the propeller game object
+        if (propeller)
+            propeller.SetActive(false);
     }
     public void CreateHitVFX(float lifetime, float radius, Vector3 entryPoint, Vector3 exitPoint)
     {
@@ -128,6 +135,34 @@ public class VFXController : MonoBehaviour
             if (dashPrefabChild != null)
                 Destroy(dashPrefabChild);
         });
+    }
+
+    public void StartHoverVFX()
+    {
+        // Stop the idle vfx
+        idleVFX.Stop();
+
+        // Hide the skinned mesh renderers
+        // todo: smoothly fade away before hiding
+        surfaceRenderer.enabled = false;
+        jointRenderer.enabled = false;
+
+        // Show the propeller mesh
+        propeller.SetActive(true);
+    }
+
+    public void StopHoverVFX()
+    {
+        // Hide the propeller mesh
+        propeller.SetActive(false);
+
+        // Show the skinned mesh renderers
+        // todo: smoothly fade away before hiding
+        surfaceRenderer.enabled = true;
+        jointRenderer.enabled = true;
+
+        // Play the idle vfx
+        idleVFX.Play();
     }
 
     public void PlayWeaponFormationVFX(Transform parent, WeaponData data)
