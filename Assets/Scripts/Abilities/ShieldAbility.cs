@@ -6,17 +6,16 @@ public class ShieldAbility : MonoBehaviour, IPlayerAbility
     [SerializeField] private float wallOffset = 2f;
     GameObject wallInstance;
     private Camera cam;
+    private StateMachine state;
 
     void Awake()
     {
         cam = Camera.main;
+        state = GetComponent<StateMachine>();
     }
     public bool CanActivate()
     {
-        if (wallInstance == null)
-            return true;
-        else
-            return false;
+        return state.CurrentActionState == StateMachine.ActionState.Free && wallInstance == null;
     }
 
     public void Activate()

@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
@@ -13,8 +14,9 @@ public class MovementController : MonoBehaviour
 
     [Header("Jump Settings")]
     [SerializeField] float holdDuration = 2f;
-    [SerializeField] float minJumpHeight;
-    [SerializeField] float maxJumpHeight;
+    [SerializeField] float minJumpForce;
+    [SerializeField] float maxJumpForce;
+    private bool isPreparingJump;
 
     // External scripts/objects
     private CharacterController characterController;
@@ -45,7 +47,7 @@ public class MovementController : MonoBehaviour
     }
     [Header("Player state")]
     public MovementMode CurrentMovementMode { get; private set; } = MovementMode.Normal;
-    public bool IsGrounded => characterController.isGrounded;
+    public bool IsGrounded => isGrounded;
     public bool IsHovering => CurrentMovementMode == MovementMode.Hover;
     public bool IsShifting => CurrentMovementMode == MovementMode.Shift;
     public bool IsWallClimbing => CurrentMovementMode == MovementMode.WallClimbing;
@@ -65,6 +67,12 @@ public class MovementController : MonoBehaviour
         ExitHover
     }
     private PendingJumpType pendingJump;
+
+    [Header("Ground Check")]
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float groundCheckDistance = 0.15f;
+    [SerializeField] private float groundCheckRadiusMultiplier = 0.9f;
+    private bool isGrounded;
 
     private void Awake()
     {
@@ -107,7 +115,8 @@ public class MovementController : MonoBehaviour
         // Move if allowed and the current state is free or aiming
         bool isValidState =
             state.CurrentActionState == StateMachine.ActionState.Free ||
-            state.CurrentActionState == StateMachine.ActionState.Aiming;
+            state.CurrentActionState == StateMachine.ActionState.Aiming ||
+            state.CurrentActionState == StateMachine.ActionState.MovementAbility;
 
         Vector3 horizontalVelocity = Vector3.zero;
 
@@ -121,6 +130,9 @@ public class MovementController : MonoBehaviour
 
         // Move the CharacterController ONCE.
         characterController.Move(totalVelocity * Time.deltaTime);
+
+        // Update grounded state after moving.
+        CheckGrounded();
 
         // Exit the hover state upon landing
         if (IsGrounded && IsHovering)
@@ -184,12 +196,14 @@ public class MovementController : MonoBehaviour
         {
             velocity.y += gravity * Time.deltaTime;
         }
-
-        characterController.Move(velocity * Time.deltaTime);
     }
 
     public void TriggerDodge()
     {
+        // Ignore if the player is not in the normal state
+        if (CurrentMovementMode != MovementMode.Normal)
+            return;
+
         // Determine the dash direction (dash backwards if there is no move input)
         Vector3 direction;
         if (input.MoveInput.magnitude > 0.05f)
@@ -210,14 +224,37 @@ public class MovementController : MonoBehaviour
 
     private void TriggerShift()
     {
-        vfx.StartDashVFX();
+        // Exit early if not grounded
+        if (!IsGrounded || isPreparingJump)
+        {
+            return;
+        }
+
+        // Prevent shift activation while the jump sequence is running
+        if (CurrentMovementMode != MovementMode.Normal)
+        {
+            return;
+        }
+
+        if (!state.TryEnterState(StateMachine.ActionState.MovementAbility))
+            return;
+
+        CurrentMovementMode = MovementMode.Shift;
         moveSpeed = dashSpeed;
+
+        vfx.StartDashVFX();
     }
 
     private void CancelShift()
     {
-        vfx.StopDashVFX();
+        if (!IsShifting || isPreparingJump)
+            return;
+        CurrentMovementMode = MovementMode.Normal;
         moveSpeed = regularSpeed;
+
+        state.ExitState(StateMachine.ActionState.MovementAbility);
+
+        vfx.StopDashVFX();
     }
 
     public void ToggleAimMovement(bool isAiming)
@@ -284,14 +321,16 @@ public class MovementController : MonoBehaviour
             return;
         }
 
-        if (IsShifting && IsWallClimbing)
+        if (IsWallClimbing)
         {
+            // todo: add charge indicator
             pendingJump = PendingJumpType.WallJump;
             return;
         }
 
-        if (IsShifting && IsGrounded)
+        if (IsShifting)
         {
+            // todo: add charge indicator
             pendingJump = PendingJumpType.ChargedJump;
             return;
         }
@@ -311,7 +350,7 @@ public class MovementController : MonoBehaviour
         switch (pendingJump)
         {
             case PendingJumpType.ChargedJump:
-                if (IsGrounded)
+                if (IsShifting)
                     PerformChargedJump(holdDuration);
                 break;
 
@@ -335,7 +374,30 @@ public class MovementController : MonoBehaviour
 
     private void PerformChargedJump(float duration)
     {
+        if (!IsShifting)
+            return;
 
+        float chargeRatio = Mathf.Clamp01(duration / holdDuration);
+
+        // Calculate jump velocity.
+        float jumpForce = Mathf.Lerp(
+            minJumpForce,
+            maxJumpForce,
+            chargeRatio
+        );
+
+        // Exit Shift mode.
+        CurrentMovementMode = MovementMode.Normal;
+        moveSpeed = regularSpeed;
+
+        state.ExitState(StateMachine.ActionState.MovementAbility);
+
+        // Apply the jump immediately.
+        velocity.y = jumpForce;
+
+        // Handle the visual transition.
+        vfx.StopDashVFX();
+        vfx.PlayJumpExplosion();
     }
 
     private void PerformWallJump(float duration)
@@ -407,5 +469,35 @@ public class MovementController : MonoBehaviour
         canMove = true;
         // Return to the free state
         state.ExitState(StateMachine.ActionState.Dodging);
+    }
+
+    private void CheckGrounded()
+    {
+        Vector3 center = transform.TransformPoint(characterController.center);
+
+        float radius = characterController.radius * groundCheckRadiusMultiplier;
+        float halfHeight = Mathf.Max(characterController.height * 0.5f, radius);
+
+        // Start at the centre of the capsule's lower hemisphere.
+        Vector3 origin = center + Vector3.down * (halfHeight - radius);
+
+        isGrounded = Physics.SphereCast(
+            origin,
+            radius,
+            Vector3.down,
+            out RaycastHit hit,
+            groundCheckDistance,
+            groundLayer,
+            QueryTriggerInteraction.Ignore
+        );
+
+        // Optional: reject surfaces that are too steep to stand on.
+        if (isGrounded)
+        {
+            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+
+            if (slopeAngle > characterController.slopeLimit)
+                isGrounded = false;
+        }
     }
 }

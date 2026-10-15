@@ -9,6 +9,7 @@ public class StateMachine : MonoBehaviour
         Dodging,
         Aiming,
         Zipping,
+        MovementAbility
     }
 
     // States       Movement    Attack      Dodge 
@@ -17,8 +18,12 @@ public class StateMachine : MonoBehaviour
     // Dodging      No          No          X
     // Aiming       Yes         No          No
     // Zipping      No          No          No
+    // Movement     Yes         No          No
 
     public ActionState CurrentActionState { get; private set; }
+    public bool CanAttack =>
+        CurrentActionState == ActionState.Free ||
+        CurrentActionState == ActionState.Attacking;
 
     private void Awake()
     {

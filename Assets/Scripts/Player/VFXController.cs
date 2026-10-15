@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -24,6 +25,9 @@ public class VFXController : MonoBehaviour
     [SerializeField] float reformDuration = 0.5f;
     [Tooltip("Proportion of the reform duration at which alpha starts decreasing")]
     [SerializeField] float alphaDelayProp = 0.75f;
+    [SerializeField] Vector3 defaultTailPos = new Vector3(0f, -0.15f, 0f);
+    [SerializeField] private float tailRetractDistance = 1f;
+    [SerializeField] private float tailRetractDuration = 0.2f;
 
     [Header("Weapon Formation")]
     [SerializeField] GameObject formationPrefab;
@@ -84,9 +88,10 @@ public class VFXController : MonoBehaviour
         surfaceRenderer.enabled = false;
         jointRenderer.enabled = false;
 
-        // Show the scorpion tail
+        // Show the scorpion tail and set it's position
         // todo: create vfx to transition from player to tail
         scorpionTail.SetActive(true);
+        scorpionTail.transform.localPosition = defaultTailPos;
 
         // Instantiate the dash prefab and assign it's properties
         dashPrefabInstance = Instantiate(dashPrefab, transform.position, Quaternion.identity);
@@ -132,6 +137,13 @@ public class VFXController : MonoBehaviour
             if (dashPrefabChild != null)
                 Destroy(dashPrefabChild);
         });
+    }
+
+    public void PlayJumpExplosion()
+    {
+        // Play the sand explosion.
+        // todo: implement the explosion
+        // sandExplosion.Play();
     }
 
     public void StartHoverVFX()

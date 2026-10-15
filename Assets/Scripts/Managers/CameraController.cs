@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] string camTargetName = "CameraTarget";
     [SerializeField] GameObject player;
     [SerializeField] CinemachineCamera[] cams;
+    private StateMachine state;
 
     void Start()
     {
@@ -21,6 +22,7 @@ public class CameraController : MonoBehaviour
 
         // Get the input reader script
         input = player.GetComponent<InputReader>();
+        state = player.GetComponent<StateMachine>();
 
         // Assign the look and follow target
         Transform target = player.transform.Find(camTargetName);
@@ -34,7 +36,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         // Update the aim cam priority
-        if (input.AimInput > 0.5f)
+        if (input.AimInput > 0.5f && state.CurrentActionState == StateMachine.ActionState.Aiming)
         {
             aimCam.Priority.Value = normalPriority + 1;
         }

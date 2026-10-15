@@ -56,6 +56,10 @@ public class CombatController : MonoBehaviour
 
     private void OnAttack(InputType inputType)
     {
+        // incompatible action states.
+        if (!state.CanAttack)
+            return;
+
         if (currentAttack == null)
         {
             StartAttack(inputType == InputType.Primary ? rootPrimaryAttack : rootSecondaryAttack); // first attack in combo
@@ -130,6 +134,9 @@ public class CombatController : MonoBehaviour
 
     private void StartAttack(AttackData attack)
     {
+        if (!state.CanAttack)
+            return;
+
         // Update player state
         state.SetAttacking(true);
 
