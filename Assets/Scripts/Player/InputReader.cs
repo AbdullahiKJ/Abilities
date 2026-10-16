@@ -26,7 +26,6 @@ public class InputReader : MonoBehaviour
     public event System.Action SecondaryPressed;
     public event System.Action ConstructPressed;
     public event System.Action ShiftPressed;
-    public event System.Action ShiftReleased;
     public event System.Action AimStarted;
     public event System.Action AimReleased;
     public event System.Action SpecialPressed;
@@ -61,9 +60,8 @@ public class InputReader : MonoBehaviour
         controls.Player.Dodge.performed += ctx => HandleDodge();
         controls.Player.Special.performed += ctx => SpecialPressed?.Invoke();
 
-        // Assign two events for pressing and releasing the dash input
+        // Assign an event for pressing the dash input
         controls.Player.Shift.performed += ctx => ShiftPressed?.Invoke();
-        controls.Player.Shift.canceled += ctx => ShiftReleased?.Invoke();
 
         // Assign the select construct input to an event and pass the value
         controls.Player.SelectConstruct.performed += ctx =>

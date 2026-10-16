@@ -20,6 +20,8 @@ public class MovementController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float wallJumpUpwardAmount = 0.35f;
     [SerializeField] private float wallJumpControlDelay = 0.2f;
     [SerializeField] private float wallJumpAirControl = 0.3f;
+    [SerializeField] private float wallReattachDelay = 0.3f;
+    private float wallReattachTimer;
     private Vector3 jumpHorizontalVelocity;
     private float jumpControlTimer;
 
@@ -58,6 +60,7 @@ public class MovementController : MonoBehaviour
     public bool IsHovering => CurrentMovementMode == MovementMode.Hover;
     public bool IsShifting => CurrentMovementMode == MovementMode.Shift;
     public bool IsWallClimbing => CurrentMovementMode == MovementMode.WallClimbing;
+    public bool IsShifted => IsShifting || IsWallClimbing;
 
     [Header("Wall Climbing")]
     [SerializeField] private LayerMask climbableLayer;
@@ -97,16 +100,6 @@ public class MovementController : MonoBehaviour
     [SerializeField] private float groundCheckRadiusMultiplier = 0.9f;
     private bool isGrounded;
 
-    [Header("Tail")]
-    [SerializeField] private Transform tail;
-    [SerializeField] private LayerMask surfaceLayer;
-    [SerializeField] private float surfaceDetectionDistance = 2f;
-    [SerializeField] private float tailSubmergeDepth = 0.15f;
-    [SerializeField] private float tailPositionSpeed = 15f;
-    [SerializeField] private float tailRotationSpeed = 12f;
-    private Vector3 tailOriginalLocalPosition;
-    private Quaternion tailOriginalLocalRotation;
-
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -118,16 +111,12 @@ public class MovementController : MonoBehaviour
 
         // Set move speed
         moveSpeed = regularSpeed;
-
-        tailOriginalLocalPosition = tail.localPosition;
-        tailOriginalLocalRotation = tail.localRotation;
     }
 
     // Subscribe to dodge and dash inputs
     private void OnEnable()
     {
-        input.ShiftPressed += TriggerShift;
-        input.ShiftReleased += CancelShift;
+        input.ShiftPressed += ToggleShift;
         input.JumpStarted += HandleJumpStart;
         input.JumpReleased += HandleJumpRelease;
     }
@@ -135,8 +124,7 @@ public class MovementController : MonoBehaviour
     // unsubscribe to dodge and dash inputs
     private void OnDisable()
     {
-        input.ShiftPressed -= TriggerShift;
-        input.ShiftReleased -= CancelShift;
+        input.ShiftPressed -= ToggleShift;
         input.JumpStarted -= HandleJumpStart;
         input.JumpReleased -= HandleJumpRelease;
     }
@@ -157,8 +145,18 @@ public class MovementController : MonoBehaviour
 
         Vector3 movement = Vector3.zero;
 
+        if (wallReattachTimer > 0f)
+        {
+            wallReattachTimer -= Time.deltaTime;
+        }
+
+        // Update the jump charge indicator
+        UpdateJumpCharge();
+
         // Detect walls while shifting.
-        if (IsShifting && TryDetectWall(out RaycastHit wallHit))
+        if (IsShifting &&
+            wallReattachTimer <= 0f &&
+            TryDetectWall(out RaycastHit wallHit))
         {
             EnterWallClimb(wallHit);
         }
@@ -185,7 +183,8 @@ public class MovementController : MonoBehaviour
                     else
                     {
                         Debug.Log("Exiting wall climb: wall lost");
-                        ExitSandMovement();
+                        ExitWallClimb();
+                        wallReattachTimer = wallReattachDelay;
                     }
 
                     return;
@@ -242,14 +241,6 @@ public class MovementController : MonoBehaviour
             ExitHover();
     }
 
-    private void LateUpdate()
-    {
-        if (IsShifting || IsWallClimbing)
-        {
-            AlignTailToSurface();
-        }
-    }
-
     private Vector3 CalculateMovement()
     {
         Vector3 move = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
@@ -257,7 +248,7 @@ public class MovementController : MonoBehaviour
         // Prevent diagonal movement from being faster.
         move = Vector3.ClampMagnitude(move, 1f);
 
-        if (IsHovering)
+        if (IsHovering || IsShifted)
         {
             // Don't rotate if hovering
         }
@@ -333,10 +324,17 @@ public class MovementController : MonoBehaviour
         Invoke(nameof(EnableMovement), dodgeDuration);
     }
 
-    private void TriggerShift()
+    private void ToggleShift()
     {
-        // Exit early if not grounded
-        if (!IsGrounded || isPreparingJump)
+        // If already shifted, return to normal.
+        if (IsShifted)
+        {
+            ExitSandMovement();
+            return;
+        }
+
+        // Exit early if preparing a jump
+        if (isPreparingJump)
         {
             return;
         }
@@ -347,6 +345,7 @@ public class MovementController : MonoBehaviour
             return;
         }
 
+        // Only enter the action state if it allows
         if (!state.TryEnterState(StateMachine.ActionState.MovementAbility))
             return;
 
@@ -354,21 +353,6 @@ public class MovementController : MonoBehaviour
         moveSpeed = dashSpeed;
 
         vfx.StartDashVFX();
-    }
-
-    private void CancelShift()
-    {
-        if ((!IsShifting && !IsWallClimbing) || isPreparingJump)
-            return;
-        CurrentMovementMode = MovementMode.Normal;
-        moveSpeed = regularSpeed;
-        velocity.y = -2f;
-
-        state.ExitState(StateMachine.ActionState.MovementAbility);
-
-        ResetTailTransform();
-
-        vfx.StopDashVFX();
     }
 
     public void ToggleAimMovement(bool isAiming)
@@ -437,15 +421,15 @@ public class MovementController : MonoBehaviour
 
         if (IsWallClimbing)
         {
-            // todo: add charge indicator
             pendingJump = PendingJumpType.WallJump;
+            vfx.StartJumpCharge();
             return;
         }
 
         if (IsShifting)
         {
-            // todo: add charge indicator
             pendingJump = PendingJumpType.ChargedJump;
+            vfx.StartJumpCharge();
             return;
         }
 
@@ -459,7 +443,11 @@ public class MovementController : MonoBehaviour
     {
         // Actions such as zipping should take priority.
         if (state.CurrentActionState == StateMachine.ActionState.Zipping)
+        {
+            vfx.StopJumpCharge();
+            pendingJump = PendingJumpType.None;
             return;
+        }
 
         switch (pendingJump)
         {
@@ -483,7 +471,23 @@ public class MovementController : MonoBehaviour
                 break;
         }
 
+        vfx.StopJumpCharge();
         pendingJump = PendingJumpType.None;
+    }
+
+    private void UpdateJumpCharge()
+    {
+        if (pendingJump != PendingJumpType.ChargedJump &&
+            pendingJump != PendingJumpType.WallJump)
+        {
+            return;
+        }
+
+        float chargePercent = Mathf.Clamp01(
+            input.JumpHoldDuration / holdDuration
+        );
+
+        vfx.UpdateJumpCharge(chargePercent);
     }
 
     private float CalculateJumpForce(float duration)
@@ -498,16 +502,23 @@ public class MovementController : MonoBehaviour
     }
 
     private void ExecuteChargedJump(
-    float duration,
-    Vector3 direction,
-    bool preserveHorizontalMomentum = false)
+        float duration,
+        Vector3 direction,
+        bool preserveHorizontalMomentum = false)
     {
         float jumpForce = CalculateJumpForce(duration);
 
         direction.Normalize();
 
-        // Exit sand movement.
-        ExitSandMovement();
+        // Leave wall-climbing mode without leaving sand form.
+        if (IsWallClimbing)
+        {
+            CurrentMovementMode = MovementMode.Shift;
+            moveSpeed = dashSpeed;
+            wallLostTimer = 0f;
+
+            wallReattachTimer = wallReattachDelay;
+        }
 
         // Apply vertical jump velocity.
         velocity.y = direction.y * jumpForce;
@@ -559,7 +570,8 @@ public class MovementController : MonoBehaviour
 
         ExecuteChargedJump(
             duration,
-            Vector3.up
+            jumpDirection,
+            preserveHorizontalMomentum: true
         );
     }
 
@@ -604,32 +616,34 @@ public class MovementController : MonoBehaviour
         if (!IsWallClimbing)
             return;
 
-        CheckGrounded();
-
-        if (!IsGrounded)
-        {
-            ExitSandMovement();
-            return;
-        }
-
         CurrentMovementMode = MovementMode.Shift;
         moveSpeed = dashSpeed;
-        velocity.y = -2f;
+        wallLostTimer = 0f;
 
-        ResetTailTransform();
+        // Only reset vertical velocity when grounded.
+        if (IsGrounded)
+        {
+            velocity.y = -2f;
+        }
 
         Debug.Log("Exited Wall Climb");
     }
 
     private void ExitSandMovement()
     {
-        if (!IsShifting && !IsWallClimbing)
+        if (!IsShifted)
             return;
+
+        // Cancel any jump that is still charging.
+        if (pendingJump == PendingJumpType.ChargedJump ||
+            pendingJump == PendingJumpType.WallJump)
+        {
+            vfx.StopJumpCharge();
+            pendingJump = PendingJumpType.None;
+        }
 
         CurrentMovementMode = MovementMode.Normal;
         moveSpeed = regularSpeed;
-
-        ResetTailTransform();
 
         state.ExitState(StateMachine.ActionState.MovementAbility);
 
@@ -657,94 +671,6 @@ public class MovementController : MonoBehaviour
         movement += -wallNormal * wallStickSpeed / wallClimbSpeed;
 
         return movement * wallClimbSpeed;
-    }
-
-    private void AlignTailToSurface()
-    {
-        Vector3 surfaceNormal = IsWallClimbing
-            ? wallNormal
-            : Vector3.up;
-
-        Vector3 castOrigin = tail.parent.TransformPoint(
-            tailOriginalLocalPosition
-        ) + surfaceNormal * 1f;
-
-        Vector3 castDirection = -surfaceNormal;
-
-        if (!Physics.SphereCast(
-            castOrigin,
-            0.1f,
-            castDirection,
-            out RaycastHit hit,
-            surfaceDetectionDistance,
-            surfaceLayer,
-            QueryTriggerInteraction.Ignore))
-        {
-            return;
-        }
-
-        surfaceNormal = hit.normal;
-
-        // Place the tail slightly beneath the surface.
-        Vector3 targetPosition =
-            hit.point - surfaceNormal * tailSubmergeDepth;
-
-        tail.position = Vector3.Lerp(
-            tail.position,
-            targetPosition,
-            Mathf.Clamp01(tailPositionSpeed * Time.deltaTime)
-        );
-
-        // Get movement direction relative to the camera.
-        Vector3 moveDirection = Quaternion.Euler(
-            0f,
-            cam.transform.eulerAngles.y,
-            0f
-        ) * new Vector3(
-            input.MoveInput.x,
-            0f,
-            input.MoveInput.y
-        );
-
-        if (IsWallClimbing)
-        {
-            Vector3 wallRight = Vector3.Cross(
-                Vector3.up,
-                wallNormal
-            ).normalized;
-
-            if (Vector3.Dot(wallRight, cam.transform.right) < 0f)
-                wallRight = -wallRight;
-
-            moveDirection =
-                wallRight * input.MoveInput.x +
-                Vector3.up * input.MoveInput.y;
-        }
-
-        Vector3 surfaceForward = Vector3.ProjectOnPlane(
-            moveDirection,
-            surfaceNormal
-        );
-
-        if (surfaceForward.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(
-                surfaceForward.normalized,
-                surfaceNormal
-            );
-
-            tail.rotation = Quaternion.Slerp(
-                tail.rotation,
-                targetRotation,
-                Mathf.Clamp01(tailRotationSpeed * Time.deltaTime)
-            );
-        }
-    }
-
-    private void ResetTailTransform()
-    {
-        tail.localPosition = tailOriginalLocalPosition;
-        tail.localRotation = tailOriginalLocalRotation;
     }
 
     private bool IsWallStillValid()
@@ -883,14 +809,7 @@ public class MovementController : MonoBehaviour
 
         CheckGrounded();
 
-        if (IsGrounded)
-        {
-            ExitWallClimb();
-        }
-        else
-        {
-            ExitSandMovement();
-        }
+        ExitWallClimb();
     }
 
     private bool IsHighAboveGround()

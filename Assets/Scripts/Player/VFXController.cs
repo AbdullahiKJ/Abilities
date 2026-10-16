@@ -1,4 +1,3 @@
-using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -16,7 +15,7 @@ public class VFXController : MonoBehaviour
 
     [Header("Base Character VFX")]
     [SerializeField] VisualEffect idleVFX;
-    [SerializeField] GameObject scorpionTail;
+    [SerializeField] VisualEffect shpereVFX;
 
     [Header("Dash Settings")]
     GameObject dashPrefabChild;
@@ -25,9 +24,6 @@ public class VFXController : MonoBehaviour
     [SerializeField] float reformDuration = 0.5f;
     [Tooltip("Proportion of the reform duration at which alpha starts decreasing")]
     [SerializeField] float alphaDelayProp = 0.75f;
-    [SerializeField] Vector3 defaultTailPos = new Vector3(0f, -0.15f, 0f);
-    [SerializeField] private float tailRetractDistance = 1f;
-    [SerializeField] private float tailRetractDuration = 0.2f;
 
     [Header("Weapon Formation")]
     [SerializeField] GameObject formationPrefab;
@@ -35,18 +31,40 @@ public class VFXController : MonoBehaviour
     [Header("Hover Settings")]
     [SerializeField] GameObject propeller;
 
+    [Header("Jump Charge")]
+    [SerializeField] private VisualEffect sandVFX;
+
+    [SerializeField] private float normalRadius;
+    [SerializeField] private float chargedRadius = 2f;
+
+    [SerializeField] private Color normalColor1;
+    [SerializeField] private Color normalColor2;
+
+    [SerializeField] private Color chargedColor1 = Color.red;
+    [SerializeField] private Color chargedColor2 = Color.magenta;
+
+    private static readonly int RadiusID = Shader.PropertyToID("radius");
+    private static readonly int Color1ID = Shader.PropertyToID("minColor");
+    private static readonly int Color2ID = Shader.PropertyToID("maxColor");
+
+    private Tween chargeTween;
+    private float currentCharge;
+
     void Start()
     {
         // Enable the base vfx game objects
         if (idleVFX)
             idleVFX.gameObject.SetActive(true);
-
-        // Hide the scorpion tail
-        scorpionTail.SetActive(false);
+        if (shpereVFX)
+            shpereVFX.gameObject.SetActive(true);
 
         // Play the idle vfx 
         if (idleVFX)
             idleVFX.Play();
+
+        // Stop the sphere vfx
+        if (shpereVFX)
+            shpereVFX.Stop();
 
         // Disable the propeller game object
         if (propeller)
@@ -83,15 +101,13 @@ public class VFXController : MonoBehaviour
         // Stop the idle vfx
         idleVFX.Stop();
 
+        // Start the sphere vfx
+        shpereVFX.Play();
+
         // Hide the skinned mesh renderers
         // todo: smoothly fade away before hiding
         surfaceRenderer.enabled = false;
         jointRenderer.enabled = false;
-
-        // Show the scorpion tail and set it's position
-        // todo: create vfx to transition from player to tail
-        scorpionTail.SetActive(true);
-        scorpionTail.transform.localPosition = defaultTailPos;
 
         // Instantiate the dash prefab and assign it's properties
         dashPrefabInstance = Instantiate(dashPrefab, transform.position, Quaternion.identity);
@@ -101,7 +117,7 @@ public class VFXController : MonoBehaviour
 
         // Reparent the target game object to the sphere vfx
         dashPrefabChild = dashPrefabInstance.transform.GetChild(0).gameObject;
-        dashPrefabChild.transform.SetParent(scorpionTail.transform, false);
+        dashPrefabChild.transform.SetParent(shpereVFX.gameObject.transform, false);
         dashPrefabChild.transform.localPosition = Vector3.zero;
     }
 
@@ -128,8 +144,8 @@ public class VFXController : MonoBehaviour
             // Play the idle vfx
             idleVFX.Play();
 
-            // Hide the scorpion tail
-            scorpionTail.gameObject.SetActive(false);
+            // Stop the sphere vfx
+            shpereVFX.Stop();
 
             // Destroy the existing dash prefab instance and child
             if (dashPrefabInstance != null)
@@ -137,6 +153,57 @@ public class VFXController : MonoBehaviour
             if (dashPrefabChild != null)
                 Destroy(dashPrefabChild);
         });
+    }
+
+    public void StartJumpCharge()
+    {
+        chargeTween?.Kill();
+
+        currentCharge = 0f;
+        UpdateJumpCharge(0f);
+    }
+
+    public void UpdateJumpCharge(float chargePercent)
+    {
+        currentCharge = Mathf.Clamp01(chargePercent);
+
+        // Increase VFX Graph radius.
+        float radius = Mathf.Lerp(
+            normalRadius,
+            chargedRadius,
+            currentCharge
+        );
+
+        sandVFX.SetFloat("radius", radius);
+
+        // Transition Shader Graph colours.
+        Color color1 = Color.Lerp(
+            normalColor1,
+            chargedColor1,
+            currentCharge
+        );
+
+        Color color2 = Color.Lerp(
+            normalColor2,
+            chargedColor2,
+            currentCharge
+        );
+
+        sandVFX.SetFloat(RadiusID, radius);
+        sandVFX.SetVector4(Color1ID, color1);
+        sandVFX.SetVector4(Color2ID, color2);
+    }
+
+    public void StopJumpCharge()
+    {
+        chargeTween?.Kill();
+
+        chargeTween = DOTween.To(
+            () => currentCharge,
+            value => UpdateJumpCharge(value),
+            0f,
+            0.2f
+        );
     }
 
     public void PlayJumpExplosion()
