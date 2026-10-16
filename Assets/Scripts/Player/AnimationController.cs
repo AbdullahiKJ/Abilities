@@ -18,6 +18,9 @@ public class AnimationController : MonoBehaviour
     public string isAiming = "IsAiming";
     public string isAttacking = "IsAttacking";
     public string shoot = "Shoot";
+    public string jump = "Jump";
+    public string verticalSpeed = "VerticalSpeed";
+    public string isGrounded = "IsGrounded";
 
     // Parameter hashes
     private int moveInputHash;
@@ -26,6 +29,9 @@ public class AnimationController : MonoBehaviour
     private int isAimingHash;
     private int isAttackingHash;
     private int shootHash;
+    private int jumpHash;
+    private int verticalSpeedHash;
+    private int isGroundedHash;
 
     private void Awake()
     {
@@ -42,6 +48,11 @@ public class AnimationController : MonoBehaviour
     {
         UpdateLocomotion();
         UpdateAttackState();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateJumpState();
     }
 
     private void UpdateLocomotion()
@@ -62,10 +73,32 @@ public class AnimationController : MonoBehaviour
         animator.SetBool(isAttackingHash, state.CurrentActionState == StateMachine.ActionState.Attacking);
     }
 
+    private void UpdateJumpState()
+    {
+        if (movement == null)
+            return;
+
+        animator.SetBool(
+            isGroundedHash,
+            movement.IsGrounded
+        );
+
+        animator.SetFloat(
+            verticalSpeedHash,
+            movement.VerticalSpeed
+        );
+    }
+
     // These are called by CombatController and other scripts for animation events
     public void PlayShootAnim()
     {
         animator.SetTrigger(shootHash);
+    }
+
+    public void PlayJumpAnim()
+    {
+        animator.SetBool(isGroundedHash, false);
+        animator.SetTrigger(jumpHash);
     }
 
     // Create parameter hashes and check if they exist within the animator
@@ -80,6 +113,9 @@ public class AnimationController : MonoBehaviour
         isAimingHash = Animator.StringToHash(isAiming);
         isAttackingHash = Animator.StringToHash(isAttacking);
         shootHash = Animator.StringToHash(shoot);
+        jumpHash = Animator.StringToHash(jump);
+        verticalSpeedHash = Animator.StringToHash(verticalSpeed);
+        isGroundedHash = Animator.StringToHash(isGrounded);
 
         // Debug missing parameters
         if (!parameterNames.Contains(moveInput))
@@ -94,5 +130,11 @@ public class AnimationController : MonoBehaviour
             Debug.LogWarning($"Animator missing parameter: {isAttacking} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(shoot))
             Debug.LogWarning($"Animator missing parameter: {shoot} on {this.gameObject.name}", this);
+        if (!parameterNames.Contains(jump))
+            Debug.LogWarning($"Animator missing parameter: {jump} on {this.gameObject.name}", this);
+        if (!parameterNames.Contains(verticalSpeed))
+            Debug.LogWarning($"Animator missing parameter: {verticalSpeed} on {this.gameObject.name}", this);
+        if (!parameterNames.Contains(isGrounded))
+            Debug.LogWarning($"Animator missing parameter: {isGrounded} on {this.gameObject.name}", this);
     }
 }

@@ -29,9 +29,11 @@ public class MovementController : MonoBehaviour
     private Camera cam;
     private VFXController vfx;
     private StateMachine state;
+    private AnimationController anim;
 
     // Movement parameters
     private Vector3 velocity;
+    public float VerticalSpeed => characterController.velocity.y;
     [SerializeField] float gravity = -9.81f;
     bool canMove = true;
     public Vector2 MoveInput => input.MoveInput;
@@ -112,6 +114,7 @@ public class MovementController : MonoBehaviour
         cam = Camera.main;
         vfx = GetComponent<VFXController>();
         state = GetComponent<StateMachine>();
+        anim = GetComponent<AnimationController>();
 
         // Set move speed
         moveSpeed = regularSpeed;
@@ -523,12 +526,36 @@ public class MovementController : MonoBehaviour
 
         // Handle the visual transition.
         vfx.PlayJumpExplosion();
+
+        // Play the jump start animation
+        anim.PlayJumpAnim();
     }
 
     private void PerformChargedJump(float duration)
     {
         if (!IsShifting)
             return;
+
+        // Get the player's current movement direction.
+        Vector3 moveDirection =
+            Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) *
+            new Vector3(input.MoveInput.x, 0f, input.MoveInput.y);
+
+        // Prevent diagonal input from affecting the direction.
+        moveDirection = moveDirection.normalized;
+
+        // If there's no movement input, jump straight up.
+        if (moveDirection.sqrMagnitude < 0.01f)
+        {
+            moveDirection = Vector3.up;
+        }
+
+        // Calculate the direction halfway between movement and upward.
+        Vector3 jumpDirection = Vector3.Slerp(
+            moveDirection,
+            Vector3.up,
+            0.5f
+        ).normalized;
 
         ExecuteChargedJump(
             duration,
@@ -546,8 +573,9 @@ public class MovementController : MonoBehaviour
             Vector3.up * wallJumpUpwardAmount
         ).normalized;
 
+        // Always perform the maximum jump force
         ExecuteChargedJump(
-            duration,
+            holdDuration,
             direction,
             preserveHorizontalMomentum: true
         );
