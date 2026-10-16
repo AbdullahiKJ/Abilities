@@ -16,6 +16,12 @@ public class MovementController : MonoBehaviour
     [SerializeField] float minJumpForce;
     [SerializeField] float maxJumpForce;
     private bool isPreparingJump;
+    // Wall jump settings
+    [SerializeField, Range(0f, 1f)] private float wallJumpUpwardAmount = 0.35f;
+    [SerializeField] private float wallJumpControlDelay = 0.2f;
+    [SerializeField] private float wallJumpAirControl = 0.3f;
+    private Vector3 jumpHorizontalVelocity;
+    private float jumpControlTimer;
 
     // External scripts/objects
     private CharacterController characterController;
@@ -206,6 +212,18 @@ public class MovementController : MonoBehaviour
             movement = CalculateMovement();
 
         ApplyGravity();
+
+        // Preserve horizontal wall jump momentum briefly.
+        if (jumpControlTimer > 0f)
+        {
+            jumpControlTimer -= Time.deltaTime;
+
+            movement = jumpHorizontalVelocity + movement * wallJumpAirControl;
+        }
+        else
+        {
+            jumpHorizontalVelocity = Vector3.zero;
+        }
 
         // Combine horizontal and vertical velocity.
         Vector3 totalVelocity = movement + Vector3.up * velocity.y;
@@ -465,37 +483,74 @@ public class MovementController : MonoBehaviour
         pendingJump = PendingJumpType.None;
     }
 
+    private float CalculateJumpForce(float duration)
+    {
+        float chargeRatio = Mathf.Clamp01(duration / holdDuration);
+
+        return Mathf.Lerp(
+            minJumpForce,
+            maxJumpForce,
+            chargeRatio
+        );
+    }
+
+    private void ExecuteChargedJump(
+    float duration,
+    Vector3 direction,
+    bool preserveHorizontalMomentum = false)
+    {
+        float jumpForce = CalculateJumpForce(duration);
+
+        direction.Normalize();
+
+        // Exit sand movement.
+        ExitSandMovement();
+
+        // Apply vertical jump velocity.
+        velocity.y = direction.y * jumpForce;
+
+        // Apply horizontal jump velocity.
+        jumpHorizontalVelocity = new Vector3(
+            direction.x,
+            0f,
+            direction.z
+        ) * jumpForce;
+
+        // Temporarily preserve wall jump momentum.
+        jumpControlTimer = preserveHorizontalMomentum
+            ? wallJumpControlDelay
+            : 0f;
+
+        // Handle the visual transition.
+        vfx.PlayJumpExplosion();
+    }
+
     private void PerformChargedJump(float duration)
     {
         if (!IsShifting)
             return;
 
-        float chargeRatio = Mathf.Clamp01(duration / holdDuration);
-
-        // Calculate jump velocity.
-        float jumpForce = Mathf.Lerp(
-            minJumpForce,
-            maxJumpForce,
-            chargeRatio
+        ExecuteChargedJump(
+            duration,
+            Vector3.up
         );
-
-        // Exit Shift mode.
-        CurrentMovementMode = MovementMode.Normal;
-        moveSpeed = regularSpeed;
-
-        state.ExitState(StateMachine.ActionState.MovementAbility);
-
-        // Apply the jump immediately.
-        velocity.y = jumpForce;
-
-        // Handle the visual transition.
-        vfx.StopDashVFX();
-        vfx.PlayJumpExplosion();
     }
 
     private void PerformWallJump(float duration)
     {
+        if (!IsWallClimbing)
+            return;
 
+        Vector3 direction = (
+            wallNormal +
+            Vector3.up * wallJumpUpwardAmount
+        ).normalized;
+
+        ExecuteChargedJump(
+            duration,
+            direction,
+            preserveHorizontalMomentum: true
+        );
     }
 
     private void EnterWallClimb(RaycastHit hit)

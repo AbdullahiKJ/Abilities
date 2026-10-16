@@ -14,10 +14,12 @@ public class Propeller : MonoBehaviour
     [SerializeField] private float rotationSpeed = 720f;
 
     private Quaternion initialRotation;
+    private Transform cameraTransform;
 
     private void Awake()
     {
         initialRotation = transform.localRotation;
+        cameraTransform = Camera.main.transform;
     }
 
     private void LateUpdate()
@@ -28,13 +30,47 @@ public class Propeller : MonoBehaviour
 
     private void UpdateTilt()
     {
+        if (!movement.IsHovering)
+        {
+            transform.localRotation = Quaternion.Slerp(
+                transform.localRotation,
+                initialRotation,
+                tiltSmoothSpeed * Time.deltaTime
+            );
+
+            return;
+        }
+
         Vector2 moveInput = movement.MoveInput;
 
-        float pitch = moveInput.y * maxTiltAngle;
-        float roll = -moveInput.x * maxTiltAngle;
+        // Calculate movement direction relative to the camera.
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        Vector3 worldMoveDirection =
+            cameraForward * moveInput.y +
+            cameraRight * moveInput.x;
+
+        worldMoveDirection = Vector3.ClampMagnitude(
+            worldMoveDirection,
+            1f
+        );
+
+        // Convert world movement into the propeller parent's local space.
+        Vector3 localMoveDirection =
+            transform.parent.InverseTransformDirection(worldMoveDirection);
+
+        float pitch = localMoveDirection.z * maxTiltAngle;
+        float roll = -localMoveDirection.x * maxTiltAngle;
 
         Quaternion targetRotation =
-            initialRotation * Quaternion.Euler(pitch, roll, 0f);
+            initialRotation * Quaternion.Euler(pitch, 0f, roll);
 
         transform.localRotation = Quaternion.Slerp(
             transform.localRotation,
