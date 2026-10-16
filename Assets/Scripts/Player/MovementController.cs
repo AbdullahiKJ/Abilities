@@ -1,4 +1,3 @@
-using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
@@ -52,6 +51,22 @@ public class MovementController : MonoBehaviour
     public bool IsShifting => CurrentMovementMode == MovementMode.Shift;
     public bool IsWallClimbing => CurrentMovementMode == MovementMode.WallClimbing;
 
+    [Header("Wall Climbing")]
+    [SerializeField] private LayerMask climbableLayer;
+    [SerializeField] private Transform wallDetectionPoint;
+    [SerializeField] private float wallCastRadius = 0.15f;
+    [SerializeField] private float wallDetectionDistance = 1f;
+    [SerializeField] private float wallClimbSpeed = 8f;
+    [SerializeField] private float wallStickSpeed = 2f;
+    private Vector3 wallNormal;
+    [SerializeField] private float wallLostGraceTime = 0.15f;
+    private float wallLostTimer;
+
+    [Header("Wall Top")]
+    [SerializeField] private float ledgeForwardDistance = 0.8f;
+    [SerializeField] private float ledgeProbeHeight = 1.5f;
+    [SerializeField] private float ledgeCastDistance = 3f;
+
     [Header("Hover")]
     [SerializeField] private float minimumHoverHeight = 3f;
     [SerializeField] float hoverGravity = -1f;
@@ -74,6 +89,16 @@ public class MovementController : MonoBehaviour
     [SerializeField] private float groundCheckRadiusMultiplier = 0.9f;
     private bool isGrounded;
 
+    [Header("Tail")]
+    [SerializeField] private Transform tail;
+    [SerializeField] private LayerMask surfaceLayer;
+    [SerializeField] private float surfaceDetectionDistance = 2f;
+    [SerializeField] private float tailSubmergeDepth = 0.15f;
+    [SerializeField] private float tailPositionSpeed = 15f;
+    [SerializeField] private float tailRotationSpeed = 12f;
+    private Vector3 tailOriginalLocalPosition;
+    private Quaternion tailOriginalLocalRotation;
+
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -84,6 +109,9 @@ public class MovementController : MonoBehaviour
 
         // Set move speed
         moveSpeed = regularSpeed;
+
+        tailOriginalLocalPosition = tail.localPosition;
+        tailOriginalLocalRotation = tail.localRotation;
     }
 
     // Subscribe to dodge and dash inputs
@@ -118,15 +146,69 @@ public class MovementController : MonoBehaviour
             state.CurrentActionState == StateMachine.ActionState.Aiming ||
             state.CurrentActionState == StateMachine.ActionState.MovementAbility;
 
-        Vector3 horizontalVelocity = Vector3.zero;
+        Vector3 movement = Vector3.zero;
+
+        // Detect walls while shifting.
+        if (IsShifting && TryDetectWall(out RaycastHit wallHit))
+        {
+            EnterWallClimb(wallHit);
+        }
+
+        if (IsWallClimbing)
+        {
+            bool wallDetected = IsWallStillValid();
+
+            if (wallDetected)
+            {
+                wallLostTimer = 0f;
+            }
+            else
+            {
+                wallLostTimer += Time.deltaTime;
+
+                if (wallLostTimer >= wallLostGraceTime)
+                {
+                    if (input.MoveInput.y > 0.1f &&
+                        TryDetectWallTop(out Vector3 targetPosition))
+                    {
+                        TransitionToWallTop(targetPosition);
+                    }
+                    else
+                    {
+                        Debug.Log("Exiting wall climb: wall lost");
+                        ExitSandMovement();
+                    }
+
+                    return;
+                }
+            }
+
+            if (canMove && isValidState)
+                movement = CalculateWallMovement();
+
+            // No gravity while climbing.
+            velocity.y = 0f;
+
+            characterController.Move(movement * Time.deltaTime);
+
+            CheckGrounded();
+
+            // Transition back to ground Shift when descending.
+            if (input.MoveInput.y < -0.1f && IsGrounded)
+            {
+                ExitWallClimb();
+            }
+
+            return;
+        }
 
         if (canMove && isValidState)
-            horizontalVelocity = CalculateMovement();
+            movement = CalculateMovement();
 
         ApplyGravity();
 
         // Combine horizontal and vertical velocity.
-        Vector3 totalVelocity = horizontalVelocity + Vector3.up * velocity.y;
+        Vector3 totalVelocity = movement + Vector3.up * velocity.y;
 
         // Move the CharacterController ONCE.
         characterController.Move(totalVelocity * Time.deltaTime);
@@ -137,6 +219,14 @@ public class MovementController : MonoBehaviour
         // Exit the hover state upon landing
         if (IsGrounded && IsHovering)
             ExitHover();
+    }
+
+    private void LateUpdate()
+    {
+        if (IsShifting || IsWallClimbing)
+        {
+            AlignTailToSurface();
+        }
     }
 
     private Vector3 CalculateMovement()
@@ -247,12 +337,15 @@ public class MovementController : MonoBehaviour
 
     private void CancelShift()
     {
-        if (!IsShifting || isPreparingJump)
+        if ((!IsShifting && !IsWallClimbing) || isPreparingJump)
             return;
         CurrentMovementMode = MovementMode.Normal;
         moveSpeed = regularSpeed;
+        velocity.y = -2f;
 
         state.ExitState(StateMachine.ActionState.MovementAbility);
+
+        ResetTailTransform();
 
         vfx.StopDashVFX();
     }
@@ -405,6 +498,318 @@ public class MovementController : MonoBehaviour
 
     }
 
+    private void EnterWallClimb(RaycastHit hit)
+    {
+        if (!IsShifting)
+            return;
+
+        wallNormal = hit.normal;
+        wallLostTimer = 0f;
+
+        CurrentMovementMode = MovementMode.WallClimbing;
+
+        moveSpeed = wallClimbSpeed;
+
+        // Prevent existing falling velocity from carrying into wall climbing.
+        velocity.y = 0f;
+
+        Debug.Log("Entered Wall Climb");
+    }
+
+    private void ExitWallClimb()
+    {
+        if (!IsWallClimbing)
+            return;
+
+        CheckGrounded();
+
+        if (!IsGrounded)
+        {
+            ExitSandMovement();
+            return;
+        }
+
+        CurrentMovementMode = MovementMode.Shift;
+        moveSpeed = dashSpeed;
+        velocity.y = -2f;
+
+        ResetTailTransform();
+
+        Debug.Log("Exited Wall Climb");
+    }
+
+    private void ExitSandMovement()
+    {
+        if (!IsShifting && !IsWallClimbing)
+            return;
+
+        CurrentMovementMode = MovementMode.Normal;
+        moveSpeed = regularSpeed;
+
+        ResetTailTransform();
+
+        state.ExitState(StateMachine.ActionState.MovementAbility);
+
+        vfx.StopDashVFX();
+    }
+
+    private Vector3 CalculateWallMovement()
+    {
+        Vector2 moveInput = input.MoveInput;
+
+        // Horizontal direction along the wall.
+        Vector3 wallRight = Vector3.Cross(Vector3.up, wallNormal).normalized;
+
+        // Keep horizontal movement consistent with camera orientation.
+        if (Vector3.Dot(wallRight, cam.transform.right) < 0f)
+            wallRight = -wallRight;
+
+        Vector3 movement =
+            wallRight * moveInput.x +
+            Vector3.up * moveInput.y;
+
+        movement = Vector3.ClampMagnitude(movement, 1f);
+
+        // Apply a small force toward the wall to maintain contact.
+        movement += -wallNormal * wallStickSpeed / wallClimbSpeed;
+
+        return movement * wallClimbSpeed;
+    }
+
+    private void AlignTailToSurface()
+    {
+        Vector3 surfaceNormal = IsWallClimbing
+            ? wallNormal
+            : Vector3.up;
+
+        Vector3 castOrigin = tail.parent.TransformPoint(
+            tailOriginalLocalPosition
+        ) + surfaceNormal * 1f;
+
+        Vector3 castDirection = -surfaceNormal;
+
+        if (!Physics.SphereCast(
+            castOrigin,
+            0.1f,
+            castDirection,
+            out RaycastHit hit,
+            surfaceDetectionDistance,
+            surfaceLayer,
+            QueryTriggerInteraction.Ignore))
+        {
+            return;
+        }
+
+        surfaceNormal = hit.normal;
+
+        // Place the tail slightly beneath the surface.
+        Vector3 targetPosition =
+            hit.point - surfaceNormal * tailSubmergeDepth;
+
+        tail.position = Vector3.Lerp(
+            tail.position,
+            targetPosition,
+            Mathf.Clamp01(tailPositionSpeed * Time.deltaTime)
+        );
+
+        // Get movement direction relative to the camera.
+        Vector3 moveDirection = Quaternion.Euler(
+            0f,
+            cam.transform.eulerAngles.y,
+            0f
+        ) * new Vector3(
+            input.MoveInput.x,
+            0f,
+            input.MoveInput.y
+        );
+
+        if (IsWallClimbing)
+        {
+            Vector3 wallRight = Vector3.Cross(
+                Vector3.up,
+                wallNormal
+            ).normalized;
+
+            if (Vector3.Dot(wallRight, cam.transform.right) < 0f)
+                wallRight = -wallRight;
+
+            moveDirection =
+                wallRight * input.MoveInput.x +
+                Vector3.up * input.MoveInput.y;
+        }
+
+        Vector3 surfaceForward = Vector3.ProjectOnPlane(
+            moveDirection,
+            surfaceNormal
+        );
+
+        if (surfaceForward.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(
+                surfaceForward.normalized,
+                surfaceNormal
+            );
+
+            tail.rotation = Quaternion.Slerp(
+                tail.rotation,
+                targetRotation,
+                Mathf.Clamp01(tailRotationSpeed * Time.deltaTime)
+            );
+        }
+    }
+
+    private void ResetTailTransform()
+    {
+        tail.localPosition = tailOriginalLocalPosition;
+        tail.localRotation = tailOriginalLocalRotation;
+    }
+
+    private bool IsWallStillValid()
+    {
+        Vector3 origin = wallDetectionPoint.position;
+
+        float detectionDistance = characterController.radius + wallDetectionDistance;
+
+        // First check for walls when the detection sphere
+        // is already overlapping the surface.
+        Collider[] overlaps = Physics.OverlapSphere(
+            origin,
+            wallCastRadius,
+            climbableLayer,
+            QueryTriggerInteraction.Ignore
+        );
+
+        foreach (Collider col in overlaps)
+        {
+            Vector3 closestPoint = col.ClosestPoint(origin);
+
+            Vector3 direction = origin - closestPoint;
+
+            // When the point is inside the collider, ClosestPoint
+            // may return the original point.
+            if (direction.sqrMagnitude < 0.0001f)
+            {
+                return true;
+            }
+
+            Vector3 normal = direction.normalized;
+
+            if (Mathf.Abs(normal.y) < 0.2f &&
+                Vector3.Dot(normal, wallNormal) > 0.5f)
+            {
+                wallNormal = normal;
+                return true;
+            }
+        }
+
+        // Otherwise, check for a wall in front of the sphere.
+        if (Physics.SphereCast(
+            origin,
+            wallCastRadius,
+            -wallNormal,
+            out RaycastHit hit,
+            detectionDistance,
+            climbableLayer,
+            QueryTriggerInteraction.Ignore))
+        {
+            if (Mathf.Abs(hit.normal.y) < 0.2f)
+            {
+                wallNormal = hit.normal;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryDetectWall(out RaycastHit hit)
+    {
+        Vector3 moveDirection =
+            Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) *
+            new Vector3(input.MoveInput.x, 0f, input.MoveInput.y);
+
+        moveDirection.y = 0f;
+
+        if (moveDirection.sqrMagnitude < 0.01f)
+        {
+            hit = default;
+            return false;
+        }
+
+        moveDirection.Normalize();
+
+        return Physics.SphereCast(
+            wallDetectionPoint.position,
+            wallCastRadius,
+            moveDirection,
+            out hit,
+            characterController.radius + wallDetectionDistance,
+            climbableLayer,
+            QueryTriggerInteraction.Ignore
+        )
+        && Mathf.Abs(hit.normal.y) < 0.2f;
+    }
+
+    private bool TryDetectWallTop(out Vector3 targetPosition)
+    {
+        targetPosition = Vector3.zero;
+
+        Vector3 intoWall = -wallNormal;
+
+        Vector3 origin =
+            transform.position +
+            Vector3.up * ledgeProbeHeight +
+            intoWall * ledgeForwardDistance;
+
+        if (!Physics.SphereCast(
+            origin,
+            wallCastRadius,
+            Vector3.down,
+            out RaycastHit hit,
+            ledgeCastDistance,
+            groundLayer,
+            QueryTriggerInteraction.Ignore))
+        {
+            return false;
+        }
+
+        float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+
+        if (slopeAngle > characterController.slopeLimit)
+            return false;
+
+        // Assumes transform.position is at the player's feet.
+        targetPosition = hit.point + Vector3.up * 0.05f;
+
+        return true;
+    }
+
+    private void TransitionToWallTop(Vector3 targetPosition)
+    {
+        // Move upward first so the capsule clears the ledge.
+        Vector3 verticalDelta = Vector3.up *
+            Mathf.Max(0f, targetPosition.y - transform.position.y);
+
+        characterController.Move(verticalDelta);
+
+        // Then move horizontally onto the upper surface.
+        Vector3 horizontalDelta = targetPosition - transform.position;
+        horizontalDelta.y = 0f;
+
+        characterController.Move(horizontalDelta);
+
+        CheckGrounded();
+
+        if (IsGrounded)
+        {
+            ExitWallClimb();
+        }
+        else
+        {
+            ExitSandMovement();
+        }
+    }
+
     private bool IsHighAboveGround()
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
@@ -498,6 +903,29 @@ public class MovementController : MonoBehaviour
 
             if (slopeAngle > characterController.slopeLimit)
                 isGrounded = false;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (wallDetectionPoint == null)
+            return;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(
+            wallDetectionPoint.position,
+            wallCastRadius
+        );
+
+        if (Application.isPlaying && IsWallClimbing)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(
+                wallDetectionPoint.position,
+                wallDetectionPoint.position
+                    - wallNormal *
+                    (characterController.radius + wallDetectionDistance)
+            );
         }
     }
 }
