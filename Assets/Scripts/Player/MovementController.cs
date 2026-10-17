@@ -46,6 +46,8 @@ public class MovementController : MonoBehaviour
 
     [Header("Zip settings")]
     Tween zipTween;
+    private bool zipTargetIsWall;
+    private Vector3 zipTargetWallNormal;
     public enum MovementMode
     {
         Normal,
@@ -363,8 +365,15 @@ public class MovementController : MonoBehaviour
             moveSpeed = regularSpeed;
     }
 
-    public void StartZip(Vector3 target, float duration, bool onSurface = false)
+    public void StartZip(
+        Vector3 target,
+        float duration,
+        bool isClimbableWall,
+        Vector3 targetWallNormal)
     {
+        zipTargetIsWall = isClimbableWall;
+        zipTargetWallNormal = targetWallNormal;
+
         // Kill the current tween
         zipTween?.Kill();
 
@@ -396,14 +405,20 @@ public class MovementController : MonoBehaviour
             duration
         )
         .SetEase(Ease.OutQuad)
-        .OnComplete(() => state.ExitState(StateMachine.ActionState.Zipping));
+        .OnComplete(() => FinishZip());
+    }
 
-        // todo: transition to the shift state if target is a surface
-        if (onSurface)
-            return;
-        // todo: otherwise, end vfx and show mesh
-        else
-            return;
+    private void FinishZip()
+    {
+        state.ExitState(StateMachine.ActionState.Zipping);
+
+        if (zipTargetIsWall)
+        {
+            EnterWallClimbFromZip(zipTargetWallNormal);
+        }
+
+        zipTargetIsWall = false;
+        zipTargetWallNormal = Vector3.zero;
     }
 
     private void HandleJumpStart()
@@ -609,6 +624,27 @@ public class MovementController : MonoBehaviour
         velocity.y = 0f;
 
         Debug.Log("Entered Wall Climb");
+    }
+
+    private void EnterWallClimbFromZip(Vector3 normal)
+    {
+        if (!state.TryEnterState(StateMachine.ActionState.MovementAbility))
+            return;
+
+        if (!IsShifted)
+        {
+            vfx.StartDashVFX();
+        }
+
+        CurrentMovementMode = MovementMode.WallClimbing;
+        moveSpeed = dashSpeed;
+
+        wallNormal = normal.normalized;
+        wallLostTimer = 0f;
+
+        velocity.y = 0f;
+
+        Debug.Log("Entered wall climbing from zip");
     }
 
     private void ExitWallClimb()

@@ -16,7 +16,7 @@ public class ZipAbility : MonoBehaviour
     [Header("Targeting")]
     [SerializeField] float targetDistance = 30f;
     [SerializeField] float zipDuration = 1.5f;
-    [SerializeField] LayerMask sandLayer;
+    [SerializeField] LayerMask targetableLayer;
 
     [Header("Target Colours")]
     [ColorUsage(true, true)]
@@ -38,6 +38,11 @@ public class ZipAbility : MonoBehaviour
     private bool hasValidTarget;
 
     private Vector3 currentTargetPosition;
+
+    [Header("Wall Climbing")]
+    [SerializeField] private LayerMask climbableWallLayer;
+    private bool targetIsClimbableWall;
+    private Vector3 targetWallNormal;
 
     void Awake()
     {
@@ -101,18 +106,30 @@ public class ZipAbility : MonoBehaviour
             ray,
             out RaycastHit hit,
             targetDistance,
-            sandLayer
+            targetableLayer
         );
 
         if (hitSurface)
         {
-            // Target the surface.
+            // Target the surface hit
             currentTargetPosition = hit.point;
+
+            // Check whether the hit object is on the climbable wall layer.
+            targetIsClimbableWall =
+                (climbableWallLayer.value & (1 << hit.collider.gameObject.layer)) != 0;
+
+            // Keep the surface normal for wall climbing.
+            targetWallNormal = targetIsClimbableWall
+                ? hit.normal
+                : Vector3.zero;
         }
         else
         {
-            // Target a point in the air.
+            // Target a point in the air 
             currentTargetPosition = ray.GetPoint(targetDistance);
+
+            targetIsClimbableWall = false;
+            targetWallNormal = Vector3.zero;
         }
 
         // Both surface and air targets are valid.
@@ -182,7 +199,7 @@ public class ZipAbility : MonoBehaviour
             return;
 
         // Pass the selected target to the movement controller.
-        movementController.StartZip(currentTargetPosition, zipDuration);
+        movementController.StartZip(currentTargetPosition, zipDuration, targetIsClimbableWall, targetWallNormal);
 
         // Change move speed
         movementController.ToggleAimMovement(false);
