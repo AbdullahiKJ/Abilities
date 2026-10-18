@@ -35,7 +35,9 @@ public class MovementController : MonoBehaviour
 
     // Movement parameters
     private Vector3 velocity;
-    public float VerticalSpeed => characterController.velocity.y;
+    private float animationVerticalSpeed;
+    private Vector3 previousPosition;
+    public float VerticalSpeed => animationVerticalSpeed;
     [SerializeField] float gravity = -9.81f;
     bool canMove = true;
     public Vector2 MoveInput => input.MoveInput;
@@ -98,8 +100,8 @@ public class MovementController : MonoBehaviour
 
     [Header("Ground Check")]
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float groundCheckDistance = 0.15f;
-    [SerializeField] private float groundCheckRadiusMultiplier = 0.9f;
+    [SerializeField] private Vector3 groundCheckOffset = new Vector3(0f, 0.1f, 0f);
+    [SerializeField] private float groundCheckRadius = 0.3f;
     private bool isGrounded;
 
     private void Awake()
@@ -113,6 +115,8 @@ public class MovementController : MonoBehaviour
 
         // Set move speed
         moveSpeed = regularSpeed;
+
+        previousPosition = transform.position;
     }
 
     // Subscribe to dodge and dash inputs
@@ -243,6 +247,27 @@ public class MovementController : MonoBehaviour
             ExitHover();
     }
 
+    private void LateUpdate()
+    {
+        Vector3 currentPosition = transform.position;
+
+        if (Time.deltaTime > 0f)
+        {
+            animationVerticalSpeed = (currentPosition.y - previousPosition.y) / Time.deltaTime;
+        }
+
+        previousPosition = currentPosition;
+
+        // Prevent falling animations while grounded,
+        // wall climbing, or zipping.
+        if (IsGrounded ||
+            IsWallClimbing ||
+            state.CurrentActionState == StateMachine.ActionState.Zipping)
+        {
+            animationVerticalSpeed = 0f;
+        }
+    }
+
     private Vector3 CalculateMovement()
     {
         Vector3 move = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f) * new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
@@ -283,11 +308,18 @@ public class MovementController : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (IsGrounded && velocity.y < 0)
+        if (IsGrounded)
         {
-            velocity.y = -2f; // apply a small downward force to keep grounded
+            // Keep a small downward force while grounded.
+            if (velocity.y < 0f)
+            {
+                velocity.y = -1f;
+            }
+
+            return;
         }
-        else if (IsHovering)
+
+        if (IsHovering)
         {
             velocity.y += hoverGravity * Time.deltaTime;
             // Prevent falling faster than the hover limit.
@@ -843,6 +875,9 @@ public class MovementController : MonoBehaviour
 
         characterController.Move(horizontalDelta);
 
+        // Reset vertical velocity after climbing onto the ledge.
+        velocity.y = 0f;
+
         CheckGrounded();
 
         ExitWallClimb();
@@ -916,54 +951,30 @@ public class MovementController : MonoBehaviour
 
     private void CheckGrounded()
     {
+        Vector3 spherePosition = transform.TransformPoint(groundCheckOffset);
         Vector3 center = transform.TransformPoint(characterController.center);
 
-        float radius = characterController.radius * groundCheckRadiusMultiplier;
-        float halfHeight = Mathf.Max(characterController.height * 0.5f, radius);
-
-        // Start at the centre of the capsule's lower hemisphere.
-        Vector3 origin = center + Vector3.down * (halfHeight - radius);
-
-        isGrounded = Physics.SphereCast(
-            origin,
-            radius,
-            Vector3.down,
-            out RaycastHit hit,
-            groundCheckDistance,
+        isGrounded = Physics.CheckSphere(
+            spherePosition,
+            groundCheckRadius,
             groundLayer,
             QueryTriggerInteraction.Ignore
         );
-
-        // Optional: reject surfaces that are too steep to stand on.
-        if (isGrounded)
-        {
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-
-            if (slopeAngle > characterController.slopeLimit)
-                isGrounded = false;
-        }
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (wallDetectionPoint == null)
-            return;
+        Vector3 spherePosition =
+            transform.TransformPoint(groundCheckOffset);
 
-        Gizmos.color = Color.yellow;
+        // Green when grounded, red when airborne.
+        Gizmos.color = Application.isPlaying && isGrounded
+            ? Color.green
+            : Color.red;
+
         Gizmos.DrawWireSphere(
-            wallDetectionPoint.position,
-            wallCastRadius
+            spherePosition,
+            groundCheckRadius
         );
-
-        if (Application.isPlaying && IsWallClimbing)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(
-                wallDetectionPoint.position,
-                wallDetectionPoint.position
-                    - wallNormal *
-                    (characterController.radius + wallDetectionDistance)
-            );
-        }
     }
 }
