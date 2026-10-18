@@ -2847,8 +2847,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundCheckDistance: 0.15
-  groundCheckRadiusMultiplier: 0.9
+  groundCheckOffset: {x: 0, y: 0, z: 0}
+  groundCheckRadius: 0.4
 --- !u!114 &1393632218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3085,12 +3085,15 @@ MonoBehaviour:
   aimRig: {fileID: 924180886}
   targetDistance: 25
   zipDuration: 0.75
-  sandLayer:
+  targetableLayer:
     serializedVersion: 2
-    m_Bits: 887
+    m_Bits: 1088
   validColour: {r: 0.06407963, g: 4.27155, b: 4.528302, a: 1}
   invalidColour: {r: 1, g: 0, b: 0, a: 1}
   glowProperty: _GlowColor
+  climbableWallLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!114 &1393632227
 MonoBehaviour:
   m_ObjectHideFlags: 0
