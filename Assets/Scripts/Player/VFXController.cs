@@ -101,7 +101,8 @@ public class VFXController : MonoBehaviour
         // Stop the idle vfx
         idleVFX.Stop();
 
-        // Start the sphere vfx
+        // Enable and start the sphere vfx
+        shpereVFX.gameObject.SetActive(true);
         shpereVFX.Play();
 
         // Hide the skinned mesh renderers
@@ -144,8 +145,9 @@ public class VFXController : MonoBehaviour
             // Play the idle vfx
             idleVFX.Play();
 
-            // Stop the sphere vfx
+            // Stop the sphere vfx and disable the game object
             shpereVFX.Stop();
+            shpereVFX.gameObject.SetActive(false);
 
             // Destroy the existing dash prefab instance and child
             if (dashPrefabInstance != null)
