@@ -19,7 +19,7 @@ public class AnimationController : MonoBehaviour
     public string isAttacking = "IsAttacking";
     public string shoot = "Shoot";
     public string jump = "Jump";
-    public string verticalSpeed = "VerticalSpeed";
+    public string isFalling = "IsFalling";
     public string isGrounded = "IsGrounded";
 
     // Parameter hashes
@@ -30,7 +30,7 @@ public class AnimationController : MonoBehaviour
     private int isAttackingHash;
     private int shootHash;
     private int jumpHash;
-    private int verticalSpeedHash;
+    private int isFallingHash;
     private int isGroundedHash;
 
     private void Awake()
@@ -83,9 +83,9 @@ public class AnimationController : MonoBehaviour
             movement.IsGrounded
         );
 
-        animator.SetFloat(
-            verticalSpeedHash,
-            movement.VerticalSpeed
+        animator.SetBool(
+            isFallingHash,
+            movement.IsFalling
         );
     }
 
@@ -114,7 +114,7 @@ public class AnimationController : MonoBehaviour
         isAttackingHash = Animator.StringToHash(isAttacking);
         shootHash = Animator.StringToHash(shoot);
         jumpHash = Animator.StringToHash(jump);
-        verticalSpeedHash = Animator.StringToHash(verticalSpeed);
+        isFallingHash = Animator.StringToHash(isFalling);
         isGroundedHash = Animator.StringToHash(isGrounded);
 
         // Debug missing parameters
@@ -132,8 +132,8 @@ public class AnimationController : MonoBehaviour
             Debug.LogWarning($"Animator missing parameter: {shoot} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(jump))
             Debug.LogWarning($"Animator missing parameter: {jump} on {this.gameObject.name}", this);
-        if (!parameterNames.Contains(verticalSpeed))
-            Debug.LogWarning($"Animator missing parameter: {verticalSpeed} on {this.gameObject.name}", this);
+        if (!parameterNames.Contains(isFalling))
+            Debug.LogWarning($"Animator missing parameter: {isFalling} on {this.gameObject.name}", this);
         if (!parameterNames.Contains(isGrounded))
             Debug.LogWarning($"Animator missing parameter: {isGrounded} on {this.gameObject.name}", this);
     }

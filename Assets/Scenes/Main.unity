@@ -2773,7 +2773,7 @@ MonoBehaviour:
   isAttacking: IsAttacking
   shoot: Shoot
   jump: Jump
-  verticalSpeed: VerticalSpeed
+  isFalling: IsFalling
   isGrounded: IsGrounded
 --- !u!114 &1393632213
 MonoBehaviour:
@@ -2821,6 +2821,8 @@ MonoBehaviour:
   holdDuration: 1.5
   minJumpForce: 7
   maxJumpForce: 15
+  fallAnimationDelay: 0.1
+  minimumFallHeight: 0.5
   wallJumpUpwardAmount: 1
   wallJumpControlDelay: 1
   wallJumpAirControl: 0.3
@@ -2831,6 +2833,9 @@ MonoBehaviour:
   climbableLayer:
     serializedVersion: 2
     m_Bits: 1024
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
   wallDetectionPoint: {fileID: 610758822}
   wallCastRadius: 0.15
   wallDetectionDistance: 1
@@ -2844,11 +2849,6 @@ MonoBehaviour:
   hoverGravity: -1
   hoverMaxFallSpeed: 2
   hoverMoveSpeed: 8
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  groundCheckOffset: {x: 0, y: 0, z: 0}
-  groundCheckRadius: 0.4
 --- !u!114 &1393632218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2944,7 +2944,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 50
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
