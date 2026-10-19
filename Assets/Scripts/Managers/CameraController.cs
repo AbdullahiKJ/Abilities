@@ -13,6 +13,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] GameObject player;
     [SerializeField] CinemachineCamera[] cams;
     private StateMachine state;
+    private CinemachineOrbitalFollow normalOrbit;
+    private CinemachineOrbitalFollow aimOrbit;
 
     void Start()
     {
@@ -31,16 +33,43 @@ public class CameraController : MonoBehaviour
             cam.Follow = target;
             cam.LookAt = target;
         }
+
+        // Get the camera orbital follows
+        normalOrbit = normalCam.GetComponent<CinemachineOrbitalFollow>();
+        aimOrbit = aimCam.GetComponent<CinemachineOrbitalFollow>();
     }
 
     void Update()
     {
-        // Update the aim cam priority
-        if (input.AimInput > 0.5f && state.CurrentActionState == StateMachine.ActionState.Aiming)
+        bool shouldAim =
+            input.AimInput > 0.5f &&
+            state.CurrentActionState == StateMachine.ActionState.Aiming;
+
+        if (shouldAim && !IsAiming)
         {
+            SyncAimCamera();
+
             aimCam.Priority.Value = normalPriority + 1;
+            IsAiming = true;
         }
-        else
+        else if (!shouldAim && IsAiming)
+        {
+            SyncNormalCamera();
+
             aimCam.Priority.Value = aimPriority;
+            IsAiming = false;
+        }
+    }
+
+    private void SyncAimCamera()
+    {
+        aimOrbit.HorizontalAxis.Value = normalOrbit.HorizontalAxis.Value;
+        aimOrbit.VerticalAxis.Value = normalOrbit.VerticalAxis.Value;
+    }
+
+    private void SyncNormalCamera()
+    {
+        normalOrbit.HorizontalAxis.Value = aimOrbit.HorizontalAxis.Value;
+        normalOrbit.VerticalAxis.Value = aimOrbit.VerticalAxis.Value;
     }
 }
