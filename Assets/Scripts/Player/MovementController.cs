@@ -35,6 +35,7 @@ public class MovementController : MonoBehaviour
     private VFXController vfx;
     private StateMachine state;
     private AnimationController anim;
+    [SerializeField] CameraController cameraController;
 
     // Movement parameters
     private Vector3 velocity;
@@ -389,11 +390,11 @@ public class MovementController : MonoBehaviour
         // Kill the current tween
         zipTween?.Kill();
 
-        // todo: play animation
+        // Play vfx
+        vfx.StartZipVFX();
 
-        // todo: Enter the zip state
-
-        // todo: play vfx and hide mesh
+        // Start the camera zoom out
+        cameraController.PlayZipCameraEffect(duration);
 
         // Start the movement tween 
         Vector3 previousPosition = transform.position;
@@ -423,6 +424,9 @@ public class MovementController : MonoBehaviour
     private void FinishZip()
     {
         state.ExitState(StateMachine.ActionState.Zipping);
+
+        // Stop the zip vfx
+        vfx.StopZipVFX();
 
         if (zipTargetIsWall)
         {

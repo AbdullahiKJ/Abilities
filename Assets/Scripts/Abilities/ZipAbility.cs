@@ -89,8 +89,6 @@ public class ZipAbility : MonoBehaviour
         aimRig.StartAiming();
 
         UpdateAiming();
-
-        // todo: start the aim animation
     }
 
     public void UpdateAiming()

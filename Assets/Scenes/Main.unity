@@ -405,6 +405,10 @@ MonoBehaviour:
   cams:
   - {fileID: 506593872}
   - {fileID: 1312425544}
+  zipZoomMultiplier: 8
+  zoomOutFraction: 0.1
+  zoomHoldFraction: 0.8
+  zoomInFraction: 0.1
 --- !u!1 &343523860
 GameObject:
   m_ObjectHideFlags: 0
@@ -2617,13 +2621,13 @@ MonoBehaviour:
   Orbits:
     Top:
       Radius: 2
-      Height: 0.8
+      Height: 1.25
     Center:
       Radius: 1.8
       Height: 0.3
     Bottom:
       Radius: 1.6
-      Height: -0.2
+      Height: -0.85
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
@@ -2870,6 +2874,7 @@ MonoBehaviour:
   wallJumpControlDelay: 1
   wallJumpAirControl: 0.3
   wallReattachDelay: 0.3
+  cameraController: {fileID: 330585549}
   gravity: -9.81
   dodgeDuration: 2
   dodgeDistance: 4
@@ -3026,8 +3031,13 @@ MonoBehaviour:
   jointRenderer: {fileID: 1409781896404852078}
   idleVFX: {fileID: 1335123093}
   shpereVFX: {fileID: 2070773856}
-  reformDuration: 0.5
-  alphaDelayProp: 0.75
+  zipReformDuration: 0.5
+  zipAlphaDelayProp: 0.75
+  zipAttractionForce: 100
+  zipInitialVelocity: 20
+  zipBaseIntensity: 100
+  dashReformDuration: 0.5
+  dashAlphaDelayProp: 0.75
   formationPrefab: {fileID: 7120900692316331681, guid: 91a9aba09e8f54a349c61822737a3bd8, type: 3}
   propeller: {fileID: 919132148932354495}
   sandVFX: {fileID: 2070773856}
