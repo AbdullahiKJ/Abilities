@@ -3031,13 +3031,13 @@ MonoBehaviour:
   jointRenderer: {fileID: 1409781896404852078}
   idleVFX: {fileID: 1335123093}
   shpereVFX: {fileID: 2070773856}
-  zipReformDuration: 0.5
-  zipAlphaDelayProp: 0.75
   zipAttractionForce: 100
   zipInitialVelocity: 20
   zipBaseIntensity: 100
   dashReformDuration: 0.5
   dashAlphaDelayProp: 0.75
+  dashAttractionForce: 30
+  dashBaseIntensity: 30
   formationPrefab: {fileID: 7120900692316331681, guid: 91a9aba09e8f54a349c61822737a3bd8, type: 3}
   propeller: {fileID: 919132148932354495}
   sandVFX: {fileID: 2070773856}

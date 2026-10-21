@@ -23,11 +23,13 @@ public class VFXController : MonoBehaviour
     [SerializeField] float zipBaseIntensity = 100f;
 
     [Header("Dash Settings")]
-    GameObject dashPrefabInstance;
     [Tooltip("Duration of the reform effect after dashing")]
     [SerializeField] float dashReformDuration = 0.5f;
     [Tooltip("Proportion of the reform duration at which alpha starts decreasing")]
     [SerializeField] float dashAlphaDelayProp = 0.75f;
+    [SerializeField] float dashAttractionForce = 30f;
+    [SerializeField] float dashBaseIntensity = 30f;
+    GameObject dashPrefabInstance;
 
     [Header("Weapon Formation")]
     [SerializeField] GameObject formationPrefab;
@@ -121,7 +123,7 @@ public class VFXController : MonoBehaviour
         vfx.SetSkinnedMeshRenderer("skinnedMesh", surfaceRenderer);
     }
 
-    private void InitialiseDashProperties()
+    private void InitialiseDashProperties(bool isDash)
     {
         // Stop the idle vfx
         idleVFX.Stop();
@@ -131,8 +133,12 @@ public class VFXController : MonoBehaviour
         surfaceRenderer.enabled = false;
         jointRenderer.enabled = false;
 
+        // Destroy any existing dash prefab instances
+        if (dashPrefabInstance != null)
+            Destroy(dashPrefabInstance);
+
         // Instantiate the dash prefab and assign it's properties
-        dashPrefabInstance = Instantiate(dashPrefab, this.transform);
+        dashPrefabInstance = Instantiate(dashPrefab, isDash ? shpereVFX.transform : this.transform);
         dashVFX = dashPrefabInstance.GetComponent<VisualEffect>();
         dashVFX.SetSkinnedMeshRenderer("skinnedMesh", surfaceRenderer);
         dashVFX.SetFloat("alphaReformDelay", dashAlphaDelayProp);
@@ -141,17 +147,21 @@ public class VFXController : MonoBehaviour
         isUsingDash = true;
     }
 
-    private void ResetDashProperties(bool playSphere)
+    private void ResetDashProperties(bool playSphere, bool hitWall)
     {
         // Exit early if the dash prefab instance doesn't exist
         if (dashPrefabInstance == null)
             return;
 
+        // Exit early if the zip target is a wall
+        if (hitWall)
+            return;
+
         // Increase the reform amount over time
-        VisualEffect vfx = dashPrefabInstance.GetComponent<VisualEffect>();
+        dashVFX = dashPrefabInstance.GetComponent<VisualEffect>();
         DOTween.To(
-            () => vfx.GetFloat("reformAmount"),
-            (x) => vfx.SetFloat("reformAmount", x),
+            () => dashVFX.GetFloat("reformAmount"),
+            (x) => dashVFX.SetFloat("reformAmount", x),
             1f,
             dashReformDuration
         ).OnComplete(() =>
@@ -183,7 +193,7 @@ public class VFXController : MonoBehaviour
     public void StartDashVFX()
     {
         // Initialise the dash vfx
-        InitialiseDashProperties();
+        InitialiseDashProperties(true);
 
         // Enable and start the sphere vfx
         shpereVFX.gameObject.SetActive(true);
@@ -192,13 +202,13 @@ public class VFXController : MonoBehaviour
 
     public void StopDashVFX()
     {
-        ResetDashProperties(true);
+        ResetDashProperties(true, false);
     }
 
     public void StartZipVFX()
     {
         // Initialise the dash vfx
-        InitialiseDashProperties();
+        InitialiseDashProperties(false);
 
         // Assign additional properties for the zip vfx
         dashVFX.SetFloat("attractionForce", zipAttractionForce);
@@ -206,9 +216,24 @@ public class VFXController : MonoBehaviour
         dashVFX.SetFloat("baseIntensity", zipBaseIntensity);
     }
 
-    public void StopZipVFX()
+    public void StopZipVFX(bool hitWall)
     {
-        ResetDashProperties(false);
+        ResetDashProperties(false, hitWall);
+
+        if (hitWall)
+        {
+            // Enable the sphere vfx if the zip target is a wall
+            shpereVFX.gameObject.SetActive(true);
+            shpereVFX.Play();
+
+            // Reparent the dash vfx to the sphere and reset its local position
+            dashPrefabInstance.transform.SetParent(shpereVFX.transform);
+            dashPrefabInstance.transform.localPosition = Vector3.zero;
+
+            // Reset the vfx parameters
+            dashVFX.SetFloat("attractionForce", dashAttractionForce);
+            dashVFX.SetFloat("baseIntensity", dashBaseIntensity);
+        }
     }
 
     public void StartJumpCharge()

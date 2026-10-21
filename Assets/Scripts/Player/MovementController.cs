@@ -426,7 +426,7 @@ public class MovementController : MonoBehaviour
         state.ExitState(StateMachine.ActionState.Zipping);
 
         // Stop the zip vfx
-        vfx.StopZipVFX();
+        vfx.StopZipVFX(zipTargetIsWall);
 
         if (zipTargetIsWall)
         {
@@ -651,11 +651,6 @@ public class MovementController : MonoBehaviour
     {
         if (!state.TryEnterState(StateMachine.ActionState.MovementAbility))
             return;
-
-        if (!IsShifted)
-        {
-            vfx.StartDashVFX();
-        }
 
         CurrentMovementMode = MovementMode.WallClimbing;
         moveSpeed = dashSpeed;
