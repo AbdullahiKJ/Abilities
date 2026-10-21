@@ -18,18 +18,11 @@ public class VFXController : MonoBehaviour
     [SerializeField] VisualEffect shpereVFX;
 
     [Header("Zip Settings")]
-    GameObject zipPrefabChild;
-    GameObject zipPrefabInstance;
-    [Tooltip("Duration of the reform effect after dashing")]
-    [SerializeField] float zipReformDuration = 0.5f;
-    [Tooltip("Proportion of the reform duration at which alpha starts decreasing")]
-    [SerializeField] float zipAlphaDelayProp = 0.75f;
     [SerializeField] float zipAttractionForce = 100f;
     [SerializeField] float zipInitialVelocity = 20f;
     [SerializeField] float zipBaseIntensity = 100f;
 
     [Header("Dash Settings")]
-    GameObject dashPrefabChild;
     GameObject dashPrefabInstance;
     [Tooltip("Duration of the reform effect after dashing")]
     [SerializeField] float dashReformDuration = 0.5f;
@@ -128,14 +121,10 @@ public class VFXController : MonoBehaviour
         vfx.SetSkinnedMeshRenderer("skinnedMesh", surfaceRenderer);
     }
 
-    public void StartDashVFX()
+    private void InitialiseDashProperties()
     {
         // Stop the idle vfx
         idleVFX.Stop();
-
-        // Enable and start the sphere vfx
-        shpereVFX.gameObject.SetActive(true);
-        shpereVFX.Play();
 
         // Hide the skinned mesh renderers
         // todo: smoothly fade away before hiding
@@ -148,16 +137,11 @@ public class VFXController : MonoBehaviour
         dashVFX.SetSkinnedMeshRenderer("skinnedMesh", surfaceRenderer);
         dashVFX.SetFloat("alphaReformDelay", dashAlphaDelayProp);
 
-        // Reparent the target game object to the sphere vfx
-        dashPrefabChild = dashPrefabInstance.transform.GetChild(0).gameObject;
-        dashPrefabChild.transform.SetParent(shpereVFX.gameObject.transform, false);
-        dashPrefabChild.transform.localPosition = Vector3.zero;
-
         // Update the is using dash flag
         isUsingDash = true;
     }
 
-    public void StopDashVFX()
+    private void ResetDashProperties(bool playSphere)
     {
         // Exit early if the dash prefab instance doesn't exist
         if (dashPrefabInstance == null)
@@ -180,81 +164,51 @@ public class VFXController : MonoBehaviour
             // Play the idle vfx
             idleVFX.Play();
 
-            // Stop the sphere vfx and disable the game object
-            shpereVFX.Stop();
-            shpereVFX.gameObject.SetActive(false);
+            if (playSphere)
+            {
+                // Stop the sphere vfx and disable the game object
+                shpereVFX.Stop();
+                shpereVFX.gameObject.SetActive(false);
+            }
 
-            // Destroy the existing dash prefab instance and child
+            // Destroy the existing dash prefab instance
             if (dashPrefabInstance != null)
                 Destroy(dashPrefabInstance);
-            if (dashPrefabChild != null)
-                Destroy(dashPrefabChild);
 
             // Update the is using dash flag
             isUsingDash = false;
         });
+    }
+
+    public void StartDashVFX()
+    {
+        // Initialise the dash vfx
+        InitialiseDashProperties();
+
+        // Enable and start the sphere vfx
+        shpereVFX.gameObject.SetActive(true);
+        shpereVFX.Play();
+    }
+
+    public void StopDashVFX()
+    {
+        ResetDashProperties(true);
     }
 
     public void StartZipVFX()
     {
-        // Stop the idle vfx
-        idleVFX.Stop();
+        // Initialise the dash vfx
+        InitialiseDashProperties();
 
-        // Hide the skinned mesh renderers
-        // todo: smoothly fade away before hiding
-        surfaceRenderer.enabled = false;
-        jointRenderer.enabled = false;
-
-        // Instantiate the zip prefab and assign it's properties
-        zipPrefabInstance = Instantiate(dashPrefab, this.transform);
-        dashVFX = zipPrefabInstance.GetComponent<VisualEffect>();
-        dashVFX.SetSkinnedMeshRenderer("skinnedMesh", surfaceRenderer);
-        dashVFX.SetFloat("alphaReformDelay", zipAlphaDelayProp);
+        // Assign additional properties for the zip vfx
         dashVFX.SetFloat("attractionForce", zipAttractionForce);
         dashVFX.SetFloat("initialVelocity", zipInitialVelocity);
         dashVFX.SetFloat("baseIntensity", zipBaseIntensity);
-
-        // Reparent the target game object to the sphere vfx
-        zipPrefabChild = zipPrefabInstance.transform.GetChild(0).gameObject;
-        zipPrefabChild.transform.SetParent(this.transform, false);
-        zipPrefabChild.transform.localPosition = Vector3.zero;
-
-        // Update the is using dash flag
-        isUsingDash = true;
     }
 
     public void StopZipVFX()
     {
-        // Exit early if the zip prefab instance doesn't exist
-        if (zipPrefabInstance == null)
-            return;
-
-        // Increase the reform amount over time
-        VisualEffect vfx = zipPrefabInstance.GetComponent<VisualEffect>();
-        DOTween.To(
-            () => vfx.GetFloat("reformAmount"),
-            (x) => vfx.SetFloat("reformAmount", x),
-            1f,
-            zipReformDuration
-        ).OnComplete(() =>
-        {
-            // Show the skinned mesh renderers
-            // todo: smoothly fade in
-            surfaceRenderer.enabled = true;
-            jointRenderer.enabled = true;
-
-            // Play the idle vfx
-            idleVFX.Play();
-
-            // Destroy the existing zip prefab instance and child
-            if (zipPrefabInstance != null)
-                Destroy(zipPrefabInstance);
-            if (zipPrefabChild != null)
-                Destroy(zipPrefabChild);
-
-            // Update the is using dash flag
-            isUsingDash = false;
-        });
+        ResetDashProperties(false);
     }
 
     public void StartJumpCharge()
