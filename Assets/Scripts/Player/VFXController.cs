@@ -16,6 +16,17 @@ public class VFXController : MonoBehaviour
     [Header("Base Character VFX")]
     [SerializeField] VisualEffect idleVFX;
     [SerializeField] VisualEffect shpereVFX;
+    [SerializeField] VisualEffect sandVFX;
+
+    [Header("Sand Hit Settings")]
+    private static readonly int HitEntryID = Shader.PropertyToID("HitEntry");
+    private static readonly int HitExitID = Shader.PropertyToID("HitExit");
+    private static readonly int HitDirectionID = Shader.PropertyToID("HitDirection");
+    private static readonly int HitRadiusID = Shader.PropertyToID("HitRadius");
+    private static readonly int ForwardImpulseID = Shader.PropertyToID("ForwardImpulse");
+    private static readonly int RadialImpulseID = Shader.PropertyToID("RadialImpulse");
+    private static readonly int RandomImpulseID = Shader.PropertyToID("RandomImpulse");
+    private uint sandHitID;
 
     [Header("Zip Settings")]
     [SerializeField] float zipAttractionForce = 100f;
@@ -38,8 +49,6 @@ public class VFXController : MonoBehaviour
     [SerializeField] GameObject propeller;
 
     [Header("Jump Charge")]
-    [SerializeField] private VisualEffect sandVFX;
-
     [SerializeField] private float normalRadius;
     [SerializeField] private float chargedRadius = 2f;
 
@@ -97,17 +106,23 @@ public class VFXController : MonoBehaviour
         }
     }
 
-    public void CreateHitVFX(float lifetime, float radius, Vector3 entryPoint, Vector3 exitPoint)
+    public void PlaySandHit(SandHitData hit)
     {
-        // Instantiate the vfx prefab and assign graph properties
-        GameObject prefab = Instantiate(hitPrefab, Vector3.zero, Quaternion.identity);
-        Destroy(prefab, lifetime);
-        VisualEffect vfx = prefab.GetComponent<VisualEffect>();
+        if (sandVFX == null)
+            return;
 
-        vfx.SetFloat("lifetime", lifetime);
-        vfx.SetFloat("radius", radius);
-        vfx.SetVector3("capsuleStart", entryPoint);
-        vfx.SetVector3("capsuleEnd", exitPoint);
+        sandVFX.SetVector3(HitEntryID, hit.Entry);
+        sandVFX.SetVector3(HitExitID, hit.Exit);
+        sandVFX.SetVector3(HitDirectionID, hit.Direction);
+
+        sandVFX.SetFloat(HitRadiusID, hit.Radius);
+        sandVFX.SetFloat(ForwardImpulseID, hit.ForwardImpulse);
+        sandVFX.SetFloat(RadialImpulseID, hit.RadialImpulse);
+        sandVFX.SetFloat(RandomImpulseID, hit.RandomImpulse);
+
+        sandHitID++;
+
+        sandVFX.SetUInt("HitID", sandHitID);
     }
 
     public void CreateDodgeVFX(float dodgeDuration, Vector3 direction, float dodgeDistance)
@@ -255,7 +270,7 @@ public class VFXController : MonoBehaviour
             currentCharge
         );
 
-        sandVFX.SetFloat("radius", radius);
+        shpereVFX.SetFloat("radius", radius);
 
         // Transition Shader Graph colours.
         Color color1 = Color.Lerp(
@@ -270,9 +285,9 @@ public class VFXController : MonoBehaviour
             currentCharge
         );
 
-        sandVFX.SetFloat(RadiusID, radius);
-        sandVFX.SetVector4(Color1ID, color1);
-        sandVFX.SetVector4(Color2ID, color2);
+        shpereVFX.SetFloat(RadiusID, radius);
+        shpereVFX.SetVector4(Color1ID, color1);
+        shpereVFX.SetVector4(Color2ID, color2);
     }
 
     public void StopJumpCharge()

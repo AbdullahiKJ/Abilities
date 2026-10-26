@@ -24,13 +24,16 @@ public class EnemyProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Replace this with your player's damage system.
-        // For example:
-        //
+        // todo: get this working properly
         // if (collision.gameObject.TryGetComponent(
-        //     out PlayerHealth health))
+        //     out HitDetection sandHit))
         // {
-        //     health.TakeDamage(damage);
+        //     Vector3 hitPoint = collision.GetContact(0).point;
+
+        //     sandHit.RegisterProjectileHit(
+        //         hitPoint,
+        //         rb.linearVelocity
+        //     );
         // }
 
         Destroy(gameObject);
