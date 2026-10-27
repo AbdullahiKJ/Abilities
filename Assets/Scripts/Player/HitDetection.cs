@@ -9,6 +9,10 @@ public class HitDetection : MonoBehaviour
     [SerializeField] private float projectileRadialImpulse = 5f;
     [SerializeField] private float projectileRandomImpulse = 2f;
 
+    [Header("Recovery Settings")]
+    [SerializeField] private float minRecoveryTime = 2f;
+    [SerializeField] private float maxRecoveryTime = 2f;
+
     [Header("References")]
     private VFXController vfxController;
 
@@ -38,40 +42,11 @@ public class HitDetection : MonoBehaviour
             projectileRadius,
             projectileForwardImpulse,
             projectileRadialImpulse,
-            projectileRandomImpulse
+            projectileRandomImpulse,
+            minRecoveryTime,
+            maxRecoveryTime
         );
 
         vfxController.PlaySandHit(hitData);
-    }
-}
-
-public readonly struct SandHitData
-{
-    public readonly Vector3 Entry;
-    public readonly Vector3 Exit;
-    public readonly Vector3 Direction;
-
-    public readonly float Radius;
-    public readonly float ForwardImpulse;
-    public readonly float RadialImpulse;
-    public readonly float RandomImpulse;
-
-    public SandHitData(
-        Vector3 entry,
-        Vector3 exit,
-        Vector3 direction,
-        float radius,
-        float forwardImpulse,
-        float radialImpulse,
-        float randomImpulse)
-    {
-        Entry = entry;
-        Exit = exit;
-        Direction = direction.normalized;
-
-        Radius = radius;
-        ForwardImpulse = forwardImpulse;
-        RadialImpulse = radialImpulse;
-        RandomImpulse = randomImpulse;
     }
 }

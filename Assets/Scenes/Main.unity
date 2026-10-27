@@ -3136,6 +3136,8 @@ MonoBehaviour:
   projectileForwardImpulse: 8
   projectileRadialImpulse: 5
   projectileRandomImpulse: 2
+  minRecoveryTime: 2
+  maxRecoveryTime: 2
 --- !u!114 &1393632223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4311,6 +4313,8 @@ MonoBehaviour:
   projectileForwardImpulse: 8
   projectileRadialImpulse: 5
   projectileRandomImpulse: 2
+  minRecoveryTime: 2
+  maxRecoveryTime: 2
 --- !u!1 &2042687638
 GameObject:
   m_ObjectHideFlags: 0
@@ -5124,6 +5128,8 @@ GameObject:
   - component: {fileID: 1393632228}
   - component: {fileID: 1393632227}
   - component: {fileID: 1393632226}
+  - component: {fileID: 919132148401446531}
+  - component: {fileID: 919132148401446532}
   m_Layer: 7
   m_Name: SandPlayer
   m_TagString: Untagged
@@ -5131,6 +5137,40 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &919132148401446531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148401446529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 797e0da8cc1d846ae8e0588bd60472d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SandParticleController
+  particleCount: 10000
+  springStrength: 60
+  damping: 12
+  displacedDrag: 2
+  recoveryDistance: 0.03
+  skinnedMeshRenderer: {fileID: 5822821945827981299}
+--- !u!114 &919132148401446532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148401446529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32eba9d5fe79543da84300f27138d6c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SandParticleRenderer
+  particleMaterial: {fileID: 2100000, guid: 60f3c252ae82f4c25bea7253e208986f, type: 2}
+  particleMesh: {fileID: 289301614986012343, guid: 8d1cce3d181304578882c20b373171e4, type: 3}
+  minParticleSize: 0.005
+  maxParticleSize: 0.015
 --- !u!1 &919132148932354495
 GameObject:
   m_ObjectHideFlags: 0
@@ -5562,7 +5602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8788328574371885424, guid: c608258b1e0ee46d28221387d691b607, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

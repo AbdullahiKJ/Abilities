@@ -3,11 +3,24 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyProjectile : MonoBehaviour
 {
+    [Header("General Settings")]
     [SerializeField] private float speed = 15f;
     [SerializeField] private float lifetime = 5f;
     [SerializeField] private float damage = 10f;
 
+    [Header("Projectile Impacts")]
+    [SerializeField] private float projectilePenetrationDepth = 0.5f;
+    [SerializeField] private float projectileRadius = 0.3f;
+    [SerializeField] private float projectileForwardImpulse = 8f;
+    [SerializeField] private float projectileRadialImpulse = 5f;
+    [SerializeField] private float projectileRandomImpulse = 2f;
+
+    [Header("Recovery Settings")]
+    [SerializeField] private float minRecoveryTime = 1f;
+    [SerializeField] private float maxRecoveryTime = 2f;
+
     private Rigidbody rb;
+    private Vector3 moveDirection;
 
     private void Awake()
     {
@@ -18,6 +31,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         rb.useGravity = false;
         rb.linearVelocity = transform.forward * speed;
+        moveDirection = transform.forward;
 
         Destroy(gameObject, lifetime);
     }
@@ -25,6 +39,7 @@ public class EnemyProjectile : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // todo: get this working properly
+        // Vfx based hit detection system
         // if (collision.gameObject.TryGetComponent(
         //     out HitDetection sandHit))
         // {
@@ -35,6 +50,30 @@ public class EnemyProjectile : MonoBehaviour
         //         rb.linearVelocity
         //     );
         // }
+
+        // Burst/Jobs based hit detection system
+        if (collision.gameObject.TryGetComponent(
+            out SandParticleController controller))
+        {
+            Vector3 entry = collision.GetContact(0).point;
+
+            // Approximate penetration through the body.
+            Vector3 exit = entry + moveDirection * projectilePenetrationDepth;
+
+            SandHitData hitData = new SandHitData(
+                entry,
+                exit,
+                moveDirection,
+                projectileRadius,
+                projectileForwardImpulse,
+                projectileRadialImpulse,
+                projectileRandomImpulse,
+                minRecoveryTime,
+                maxRecoveryTime
+            );
+
+            controller.RegisterHit(hitData);
+        }
 
         Destroy(gameObject);
     }

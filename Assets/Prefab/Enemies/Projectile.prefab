@@ -76,6 +76,13 @@ MonoBehaviour:
   speed: 20
   lifetime: 5
   damage: 10
+  projectilePenetrationDepth: 0.5
+  projectileRadius: 0.3
+  projectileForwardImpulse: 8
+  projectileRadialImpulse: 5
+  projectileRandomImpulse: 2
+  minRecoveryTime: 0.5
+  maxRecoveryTime: 1.5
 --- !u!1 &2759380968387731822
 GameObject:
   m_ObjectHideFlags: 0
