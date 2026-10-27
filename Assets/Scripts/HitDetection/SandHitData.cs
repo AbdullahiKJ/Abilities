@@ -49,3 +49,21 @@ public readonly struct SandHitData
         RadiusSq = radius * radius;
     }
 }
+
+public struct SandWeaponHitData
+{
+    public float3 previousBase;
+    public float3 previousTip;
+    public float3 currentBase;
+    public float3 currentTip;
+
+    public float radius;
+    public float forwardImpactMultiplier;
+    public float radialImpactMultiplier;
+
+    public float minRecoveryTime;
+    public float maxRecoveryTime;
+
+    // Time between the previous and current blade samples.
+    public float deltaTime;
+}

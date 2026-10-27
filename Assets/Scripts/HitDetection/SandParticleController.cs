@@ -20,6 +20,7 @@ public class SandParticleController : MonoBehaviour
     private NativeArray<float3> previousMeshTargets;
 
     private readonly List<SandHitData> pendingHits = new();
+    private readonly List<SandWeaponHitData> pendingWeaponHits = new();
 
     // Particle mesh settings
     private NativeArray<float3> vertices;
@@ -59,6 +60,8 @@ public class SandParticleController : MonoBehaviour
             Allocator.Persistent
         );
 
+        var recoveryRandom = new Unity.Mathematics.Random(123u);
+
         for (int i = 0; i < particleCount; i++)
         {
             particles[i] = new SandParticle
@@ -66,7 +69,8 @@ public class SandParticleController : MonoBehaviour
                 position = float3.zero,
                 velocity = float3.zero,
                 recoveryTimer = 0f,
-                state = SandParticleState.Attached
+                state = SandParticleState.Attached,
+                randomValue = recoveryRandom.NextFloat()
             };
         }
 
@@ -118,6 +122,14 @@ public class SandParticleController : MonoBehaviour
         pendingHits.Add(hit);
     }
 
+    public void RegisterWeaponHit(SandWeaponHitData hit)
+    {
+        if (hit.radius <= 0f || hit.deltaTime <= 0f)
+            return;
+
+        pendingWeaponHits.Add(hit);
+    }
+
     private void LateUpdate()
     {
         // Bake the mesh and update the vertices
@@ -154,6 +166,17 @@ public class SandParticleController : MonoBehaviour
         }
 
         pendingHits.Clear();
+
+        foreach (SandWeaponHitData hit in pendingWeaponHits)
+        {
+            hitHandle = new SandWeaponHitJob
+            {
+                particles = particles,
+                hit = hit
+            }.Schedule(particles.Length, 64, hitHandle);
+        }
+
+        pendingWeaponHits.Clear();
 
         // Combine the mesh target and hit jobs
         JobHandle handle = JobHandle.CombineDependencies(

@@ -8,21 +8,13 @@ public struct SandWeaponHitJob : IJobParallelFor
 {
     public NativeArray<SandParticle> particles;
 
-    public float3 previousBase;
-    public float3 previousTip;
-
-    public float3 currentBase;
-    public float3 currentTip;
-
-    public float radius;
-
-    public float forwardImpactMultiplier;
-    public float radialImpactMultiplier;
-
-    public float deltaTime;
+    public SandWeaponHitData hit;
 
     public void Execute(int index)
     {
+        if (hit.radius <= 0f || hit.deltaTime <= 0f)
+            return;
+
         SandParticle particle = particles[index];
 
         const int sampleCount = 5;
@@ -38,15 +30,15 @@ public struct SandWeaponHitJob : IJobParallelFor
 
             float3 previous =
                 math.lerp(
-                    previousBase,
-                    previousTip,
+                    hit.previousBase,
+                    hit.previousTip,
                     bladeT
                 );
 
             float3 current =
                 math.lerp(
-                    currentBase,
-                    currentTip,
+                    hit.currentBase,
+                    hit.currentTip,
                     bladeT
                 );
 
@@ -80,13 +72,13 @@ public struct SandWeaponHitJob : IJobParallelFor
         }
 
         // Particle wasn't inside any blade sweep.
-        if (closestDistanceSq > radius * radius)
+        if (closestDistanceSq > hit.radius * hit.radius)
             return;
 
         // How close was the particle to the centre of the weapon's path
         float distance = math.sqrt(closestDistanceSq);
 
-        float normalizedDistance = math.saturate(distance / radius);
+        float normalizedDistance = math.saturate(distance / hit.radius);
 
         float strength = 1f - normalizedDistance;
         strength *= strength;
@@ -94,15 +86,15 @@ public struct SandWeaponHitJob : IJobParallelFor
         // Velocity of the closest part of the blade.
         float speed =
             math.length(bestMovement)
-            / math.max(deltaTime, 0.0001f);
+            / math.max(hit.deltaTime, 0.0001f);
 
         float3 weaponDirection = math.normalizesafe(bestMovement);
 
         float3 radialDirection = math.normalizesafe(bestOffset);
 
-        float forwardImpulse = speed * forwardImpactMultiplier;
+        float forwardImpulse = speed * hit.forwardImpactMultiplier;
 
-        float radialImpulse = speed * radialImpactMultiplier;
+        float radialImpulse = speed * hit.radialImpactMultiplier;
 
         float3 impulse =
               weaponDirection
