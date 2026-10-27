@@ -17,6 +17,7 @@ public class SandParticleController : MonoBehaviour
 
     private NativeArray<SandParticle> particles;
     private NativeArray<float3> meshTargets;
+    private NativeArray<float3> previousMeshTargets;
 
     private readonly List<SandHitData> pendingHits = new();
 
@@ -47,6 +48,11 @@ public class SandParticleController : MonoBehaviour
         );
 
         meshTargets = new NativeArray<float3>(
+            particleCount,
+            Allocator.Persistent
+        );
+
+        previousMeshTargets = new NativeArray<float3>(
             particleCount,
             Allocator.Persistent
         );
@@ -155,6 +161,7 @@ public class SandParticleController : MonoBehaviour
         {
             particles = particles,
             meshTargets = meshTargets,
+            previousMeshTargets = previousMeshTargets,
 
             deltaTime = Time.deltaTime,
             springStrength = springStrength,
@@ -194,6 +201,8 @@ public class SandParticleController : MonoBehaviour
             particles.Dispose();
         if (meshTargets.IsCreated)
             meshTargets.Dispose();
+        if (previousMeshTargets.IsCreated)
+            previousMeshTargets.Dispose();
 
         if (vertices.IsCreated)
             vertices.Dispose();

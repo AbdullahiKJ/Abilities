@@ -9,6 +9,7 @@ public struct SandParticleUpdateJob : IJobParallelFor
     public NativeArray<SandParticle> particles;
 
     [ReadOnly] public NativeArray<float3> meshTargets;
+    public NativeArray<float3> previousMeshTargets;
 
     public float deltaTime;
     public float springStrength;
@@ -20,6 +21,9 @@ public struct SandParticleUpdateJob : IJobParallelFor
     {
         SandParticle particle = particles[index];
         float3 target = meshTargets[index];
+
+        float3 targetDelta = target - previousMeshTargets[index];
+        previousMeshTargets[index] = target;
 
         switch (particle.state)
         {
@@ -46,6 +50,10 @@ public struct SandParticleUpdateJob : IJobParallelFor
 
             case SandParticleState.Recovering:
                 {
+                    // Follow the animated target's movement directly.
+                    particle.position += targetDelta;
+
+                    // Recover the remaining displacement relative to that target.
                     float3 offset = target - particle.position;
 
                     float3 acceleration =
