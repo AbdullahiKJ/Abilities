@@ -5130,6 +5130,7 @@ GameObject:
   - component: {fileID: 1393632226}
   - component: {fileID: 919132148401446531}
   - component: {fileID: 919132148401446532}
+  - component: {fileID: 919132148401446533}
   m_Layer: 7
   m_Name: SandPlayer
   m_TagString: Untagged
@@ -5171,6 +5172,22 @@ MonoBehaviour:
   particleMesh: {fileID: 289301614986012343, guid: 8d1cce3d181304578882c20b373171e4, type: 3}
   minParticleSize: 0.005
   maxParticleSize: 0.015
+--- !u!114 &919132148401446533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148401446529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11efc85ad34424df0908fee869000247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SandSurfaceMask
+  resolution: 256
+  maskUVChannel: 0
+  stampRadiusPixels: 3
+  maskProperty: _DisplacementMask
 --- !u!1 &919132148932354495
 GameObject:
   m_ObjectHideFlags: 0
@@ -6807,7 +6824,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -4565884009001823619, guid: b25702d0788c54add8b486e6825b54ed, type: 3}
+  - {fileID: 2100000, guid: 4f161ebfc3c6f4a79b07217300a88563, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

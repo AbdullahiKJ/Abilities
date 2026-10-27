@@ -36,11 +36,13 @@ public class SandParticleController : MonoBehaviour
 
     // Script References
     private SandParticleRenderer particleRenderer;
+    private SandSurfaceMask surfaceMask;
 
     private void Awake()
     {
-        // Get the particle renderer script
+        // Get script references
         particleRenderer = GetComponent<SandParticleRenderer>();
+        surfaceMask = GetComponent<SandSurfaceMask>();
 
         particles = new NativeArray<SandParticle>(
             particleCount,
@@ -89,7 +91,9 @@ public class SandParticleController : MonoBehaviour
             particleCount,
             Allocator.Persistent
         );
+
         InitializeSurfacePoints();
+        surfaceMask.Initialize(skinnedMeshRenderer, triangles, surfacePoints);
 
         bakedVertices = new List<Vector3>(sourceMesh.vertexCount);
 
@@ -192,7 +196,8 @@ public class SandParticleController : MonoBehaviour
         handle.Complete();
 
         // Render particles
-        particleRenderer.Render(matrices);
+        surfaceMask.UpdateMask(particles);
+        particleRenderer.Render(matrices, particles);
     }
 
     private void OnDestroy()
