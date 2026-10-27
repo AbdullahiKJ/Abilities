@@ -76,6 +76,9 @@ MonoBehaviour:
   speed: 20
   lifetime: 5
   damage: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
   projectilePenetrationDepth: 0.5
   projectileRadius: 0.3
   projectileForwardImpulse: 8

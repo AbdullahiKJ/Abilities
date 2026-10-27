@@ -7,6 +7,7 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private float speed = 15f;
     [SerializeField] private float lifetime = 5f;
     [SerializeField] private float damage = 10f;
+    [SerializeField] private LayerMask playerLayer;
 
     [Header("Projectile Impacts")]
     [SerializeField] private float projectilePenetrationDepth = 0.5f;
@@ -75,6 +76,26 @@ public class EnemyProjectile : MonoBehaviour
             controller.RegisterHit(hitData);
         }
 
-        Destroy(gameObject);
+        // Only destroy the particle if it hits a non-player game object
+        bool isPlayer = (playerLayer.value & (1 << collision.collider.gameObject.layer)) != 0;
+
+        if (isPlayer)
+        {
+            // The sand hit has already been registered above.
+            Physics.IgnoreCollision(
+                collision.thisCollider, // Projectile collider
+                collision.collider,      // Player collider
+                true
+            );
+
+            // Restore movement after the initial collision response.
+            rb.linearVelocity = moveDirection * speed;
+            rb.angularVelocity = Vector3.zero;
+        }
+        else
+        {
+            // todo: play hit vfx
+            Destroy(gameObject);
+        }
     }
 }
