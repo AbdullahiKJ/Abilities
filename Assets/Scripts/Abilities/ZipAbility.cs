@@ -17,8 +17,12 @@ public class ZipAbility : MonoBehaviour
     [SerializeField] float targetDistance = 30f;
     [SerializeField] float zipDuration = 1.5f;
     [SerializeField] LayerMask targetableLayer;
+    [SerializeField] LayerMask obstacleLayer;
 
     [Header("Target Colours")]
+    [ColorUsage(true, true)]
+    [SerializeField] private Color baseColour = Color.blue;
+
     [ColorUsage(true, true)]
     [SerializeField] private Color validColour = Color.blue;
 
@@ -36,6 +40,7 @@ public class ZipAbility : MonoBehaviour
     private int glowPropertyID;
 
     private bool hasValidTarget;
+    private bool hitSurface;
 
     private Vector3 currentTargetPosition;
 
@@ -100,38 +105,43 @@ public class ZipAbility : MonoBehaviour
         );
 
         // Try to find a surface
-        bool hitSurface = Physics.Raycast(
+        hitSurface = Physics.Raycast(
             ray,
             out RaycastHit hit,
             targetDistance,
-            targetableLayer
+            obstacleLayer,
+            QueryTriggerInteraction.Ignore
         );
+
+        targetIsClimbableWall = false;
+        targetWallNormal = Vector3.zero;
 
         if (hitSurface)
         {
             // Target the surface hit
             currentTargetPosition = hit.point;
 
-            // Check whether the hit object is on the climbable wall layer.
-            targetIsClimbableWall =
-                (climbableWallLayer.value & (1 << hit.collider.gameObject.layer)) != 0;
+            int hitLayerMask = 1 << hit.collider.gameObject.layer;
 
-            // Keep the surface normal for wall climbing.
-            targetWallNormal = targetIsClimbableWall
-                ? hit.normal
-                : Vector3.zero;
+            // Check if the hit surface is valid
+            hasValidTarget = (targetableLayer.value & hitLayerMask) != 0;
+
+            // Check if the target is a climbable wall
+            targetIsClimbableWall =
+                hasValidTarget &&
+                (climbableWallLayer.value & hitLayerMask) != 0;
+
+            if (targetIsClimbableWall)
+                targetWallNormal = hit.normal;
         }
         else
         {
             // Target a point in the air 
             currentTargetPosition = ray.GetPoint(targetDistance);
 
-            targetIsClimbableWall = false;
-            targetWallNormal = Vector3.zero;
+            // Air zipping is allowed.
+            hasValidTarget = true;
         }
-
-        // Both surface and air targets are valid.
-        hasValidTarget = true;
 
         // Update target position.
         targetInstance.transform.position = currentTargetPosition;
@@ -151,14 +161,17 @@ public class ZipAbility : MonoBehaviour
         if (targetRenderer == null)
             return;
 
-        Color colour = hasValidTarget
-            ? validColour
-            : invalidColour;
+        Color colour;
+
+        if (!hitSurface)
+            colour = baseColour;
+        else if (hasValidTarget)
+            colour = validColour;
+        else
+            colour = invalidColour;
 
         targetRenderer.GetPropertyBlock(propertyBlock);
-
         propertyBlock.SetColor(glowPropertyID, colour);
-
         targetRenderer.SetPropertyBlock(propertyBlock);
     }
 
@@ -186,7 +199,7 @@ public class ZipAbility : MonoBehaviour
         // Exit the aim state if there is no valid target
         if (!hasValidTarget)
         {
-            state.ExitState(StateMachine.ActionState.Aiming);
+            CancelAiming();
             return;
         }
 
