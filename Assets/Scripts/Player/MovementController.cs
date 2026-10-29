@@ -98,6 +98,10 @@ public class MovementController : MonoBehaviour
     [SerializeField] private float hoverMaxFallSpeed = 2f;
     public float hoverMoveSpeed = 8f;
 
+    [Header("External Movement")]
+    [SerializeField, Min(0f)] private float knockbackDrag = 8f;
+    private Vector3 knockbackVelocity;
+
     private enum PendingJumpType
     {
         None,
@@ -234,7 +238,10 @@ public class MovementController : MonoBehaviour
         }
 
         // Combine horizontal and vertical velocity.
-        Vector3 totalVelocity = movement + Vector3.up * velocity.y;
+        Vector3 totalVelocity = movement + Vector3.up * velocity.y + knockbackVelocity;
+
+        // Reduce the knockback velocity
+        knockbackVelocity *= Mathf.Exp(-knockbackDrag * Time.deltaTime);
 
         // Move the CharacterController
         characterController.Move(totalVelocity * Time.deltaTime);
@@ -313,6 +320,14 @@ public class MovementController : MonoBehaviour
         {
             velocity.y += gravity * Time.deltaTime;
         }
+    }
+
+    public void ApplyKnockback(Vector3 velocity)
+    {
+        // Exit movement modes (shift, wall climb and hover)
+        ExitHover();
+        ExitSandMovement();
+        knockbackVelocity += velocity;
     }
 
     public void TriggerDodge()

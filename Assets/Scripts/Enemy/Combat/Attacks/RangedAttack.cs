@@ -6,6 +6,8 @@ public class RangedAttack : EnemyAttack
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
 
+    [SerializeField] private EnemyAnimationController animationController;
+
     public override bool CanAttack(Transform target)
     {
         // Perform the shared range and cooldown checks.
@@ -21,16 +23,25 @@ public class RangedAttack : EnemyAttack
 
     public override void ExecuteAttack(Transform target)
     {
-        Vector3 direction = (
-            target.position - projectileSpawnPoint.position
-        ).normalized;
+        currentTarget = target;
+        animationController.PlayAttack(animationIndex);
+    }
 
-        Quaternion rotation = Quaternion.LookRotation(direction);
+    // Called via animation events
+    public void ReleaseProjectile()
+    {
+        if (!IsAttacking || currentTarget == null)
+            return;
+
+        Vector3 direction = currentTarget.position - projectileSpawnPoint.position;
+
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
 
         Instantiate(
             projectilePrefab,
             projectileSpawnPoint.position,
-            rotation
+            Quaternion.LookRotation(direction)
         );
     }
 }

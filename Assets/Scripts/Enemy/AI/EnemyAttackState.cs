@@ -11,6 +11,8 @@ public class EnemyAttackState : EnemyState
 
     public override void Enter()
     {
+        // Start the in range animation
+        enemy.Animation.SetInRange(true);
     }
 
     public override void Tick(float deltaTime)
@@ -26,10 +28,12 @@ public class EnemyAttackState : EnemyState
             deltaTime
         );
 
-        enemy.Attack.TryAttack(enemy.Target);
+        enemy.Combat.TryAttack(enemy.Target);
     }
 
     public override void Exit()
     {
+        // Stop the in range animation
+        enemy.Animation.SetInRange(false);
     }
 }
