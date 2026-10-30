@@ -1220,7 +1220,7 @@ MonoBehaviour:
   animationIndex: 1
   debugColour1: {r: 1, g: 0, b: 0, a: 1}
   debugColour2: {r: 0, g: 0, b: 0, a: 1}
-  projectilePrefab: {fileID: 931187970618928998, guid: ecbecf44a1a9a4fa7b3f54182c322e47, type: 3}
+  projectilePrefab: {fileID: 6354686006975832417, guid: 262b4554356b64e8ba42ffcc07385081, type: 3}
   projectileSpawnPoint: {fileID: 6205717528884411968}
   animationController: {fileID: 4786307746998640248}
 --- !u!114 &8411475733378185973

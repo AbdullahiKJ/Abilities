@@ -20,16 +20,26 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private float minRecoveryTime = 1f;
     [SerializeField] private float maxRecoveryTime = 2f;
 
+    [Header("Prefabs")]
+    [SerializeField] GameObject castPrefab;
+    [SerializeField] GameObject hitPrefab;
+
     private Rigidbody rb;
     private Vector3 moveDirection;
+    private Vector3 spawnPos;
 
     private void Awake()
     {
+        spawnPos = transform.position;
         rb = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
+        // Create the cast prefab instance if one exists
+        if (castPrefab != null)
+            Instantiate(castPrefab, spawnPos, transform.rotation);
+
         rb.useGravity = false;
         rb.linearVelocity = transform.forward * speed;
         moveDirection = transform.forward;
@@ -94,7 +104,10 @@ public class EnemyProjectile : MonoBehaviour
         }
         else
         {
-            // todo: play hit vfx
+            // Play hit vfx if it exists
+            if (hitPrefab != null)
+                Instantiate(hitPrefab, spawnPos, transform.rotation);
+
             Destroy(gameObject);
         }
     }

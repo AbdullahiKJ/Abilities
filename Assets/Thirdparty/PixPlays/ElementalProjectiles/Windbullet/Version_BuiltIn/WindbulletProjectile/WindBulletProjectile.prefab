@@ -9799,6 +9799,8 @@ GameObject:
   - component: {fileID: 1940866779908760624}
   - component: {fileID: 4675708942941017707}
   - component: {fileID: 6809880747103385932}
+  - component: {fileID: 9056950199259540147}
+  - component: {fileID: 3892356329280207091}
   m_Layer: 0
   m_Name: WindBulletProjectile
   m_TagString: Untagged
@@ -14686,6 +14688,60 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+--- !u!54 &9056950199259540147
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6354686006975832417}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &3892356329280207091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6354686006975832417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dba84fbf75664365b5362d1088a9a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectile
+  speed: 20
+  lifetime: 5
+  damage: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  projectilePenetrationDepth: 0.5
+  projectileRadius: 0.3
+  projectileForwardImpulse: 8
+  projectileRadialImpulse: 5
+  projectileRandomImpulse: 2
+  minRecoveryTime: 0.5
+  maxRecoveryTime: 1.5
+  castPrefab: {fileID: 432350906011875738, guid: 6b9e9392ea32bab40baef03bfb83c757, type: 3}
+  hitPrefab: {fileID: 3362559094653938668, guid: 6d9be190363175c47a89407642a9a0b9, type: 3}
 --- !u!1 &7962495910853818648
 GameObject:
   m_ObjectHideFlags: 0
