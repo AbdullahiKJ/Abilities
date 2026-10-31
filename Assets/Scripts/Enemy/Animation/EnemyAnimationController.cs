@@ -54,10 +54,13 @@ public class EnemyAnimationController : MonoBehaviour
     }
     public void PlayHit()
     {
+        animator.ResetTrigger(attackHash);
         animator.SetTrigger(hitHash);
     }
     public void PlayDeath()
     {
+        animator.ResetTrigger(attackHash);
+        animator.ResetTrigger(hitHash);
         animator.SetTrigger(deathHash);
     }
 }

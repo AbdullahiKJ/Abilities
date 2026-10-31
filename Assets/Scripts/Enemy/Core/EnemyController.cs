@@ -59,6 +59,8 @@ public class EnemyController : MonoBehaviour
     public EnemyCircleState CircleState { get; private set; }
     public EnemyRetreatState RetreatState { get; private set; }
     public EnemyPatrolState PatrolState { get; private set; }
+    public EnemyHitState HitState { get; private set; }
+    public EnemyDeadState DeadState { get; private set; }
 
     private void Awake()
     {
@@ -77,11 +79,15 @@ public class EnemyController : MonoBehaviour
         CircleState = new EnemyCircleState(this, StateMachine);
         RetreatState = new EnemyRetreatState(this, StateMachine);
         PatrolState = new EnemyPatrolState(this, StateMachine);
+        HitState = new EnemyHitState(this, StateMachine);
+        DeadState = new EnemyDeadState(this, StateMachine);
     }
 
     private void Start()
     {
         Combat.AttackFinished += HandleAttackFinished;
+        Health.Damaged += HandleDamaged;
+        Health.Died += HandleDied;
 
         // Assign the enemy to it's encounter manager
         Encounter?.Register(this);
@@ -109,6 +115,22 @@ public class EnemyController : MonoBehaviour
         encounter?.ReleaseAttackPermission(this);
     }
 
+    private void HandleDamaged(float amount)
+    {
+        // Health invokes Damaged before Died.
+        // A lethal hit should go straight to death, without playing Hit.
+        if (!Health.IsAlive)
+            return;
+
+        HitState.ResetDuration();
+        StateMachine.ChangeState(HitState);
+    }
+
+    private void HandleDied()
+    {
+        StateMachine.ChangeState(DeadState);
+    }
+
     private void InitialiseWeapons()
     {
         SandParticleController particleController;
@@ -125,6 +147,13 @@ public class EnemyController : MonoBehaviour
 
     public void OpenHitWindow()
     {
+        if (!Health.IsAlive ||
+            StateMachine.CurrentState != MeleeAttackState ||
+            !Combat.IsAttacking)
+        {
+            return;
+        }
+
         foreach (EnemyWeapon weapon in weapons)
         {
             weapon.OpenHitWindow();
@@ -149,6 +178,12 @@ public class EnemyController : MonoBehaviour
     {
         if (Combat != null)
             Combat.AttackFinished -= HandleAttackFinished;
+
+        if (Health != null)
+        {
+            Health.Damaged -= HandleDamaged;
+            Health.Died -= HandleDied;
+        }
 
         if (Encounter != null)
             encounter.Unregister(this);
