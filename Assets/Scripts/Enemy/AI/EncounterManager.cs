@@ -113,9 +113,8 @@ public class EncounterManager : MonoBehaviour
             && enemy.isActiveAndEnabled
             && enemy.Combat != null
             && enemy.Combat.isActiveAndEnabled
-            && enemy.Target == player;
-
-        // todo: add is alive to this check
+            && enemy.Target == player
+            && enemy.Health.IsAlive;
     }
 
     public bool HasAttackPermission(EnemyController enemy)

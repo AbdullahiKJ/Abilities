@@ -7453,6 +7453,7 @@ GameObject:
   - component: {fileID: 919132148401446531}
   - component: {fileID: 919132148401446532}
   - component: {fileID: 919132148401446533}
+  - component: {fileID: 919132148401446534}
   m_Layer: 7
   m_Name: SandPlayer
   m_TagString: Untagged
@@ -7510,6 +7511,19 @@ MonoBehaviour:
   maskUVChannel: 0
   stampRadiusPixels: 3
   maskProperty: _DisplacementMask
+--- !u!114 &919132148401446534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148401446529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5336919a4edb24fb384e005224a400aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  currentHealth: 100
 --- !u!1 &919132148932354495
 GameObject:
   m_ObjectHideFlags: 0
@@ -7861,7 +7875,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5165606842397917515, guid: 080e8d3bc027642a9b22786d795a7d46, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 71.97
+      value: 47.07
       objectReference: {fileID: 0}
     - target: {fileID: 5165606842397917515, guid: 080e8d3bc027642a9b22786d795a7d46, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7869,7 +7883,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5165606842397917515, guid: 080e8d3bc027642a9b22786d795a7d46, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -279.58722
+      value: -278.39
       objectReference: {fileID: 0}
     - target: {fileID: 5165606842397917515, guid: 080e8d3bc027642a9b22786d795a7d46, type: 3}
       propertyPath: m_LocalRotation.w

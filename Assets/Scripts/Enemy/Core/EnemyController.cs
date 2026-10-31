@@ -48,6 +48,7 @@ public class EnemyController : MonoBehaviour
     public EnemyRotation Rotation { get; private set; }
     public EnemyNavigation Navigation { get; private set; }
     public EnemyAnimationController Animation { get; private set; }
+    public Health Health { get; private set; }
 
     public EncounterManager Encounter => encounter;
 
@@ -67,6 +68,7 @@ public class EnemyController : MonoBehaviour
         Rotation = GetComponent<EnemyRotation>();
         Navigation = GetComponent<EnemyNavigation>();
         Animation = GetComponent<EnemyAnimationController>();
+        Health = GetComponent<Health>();
 
         IdleState = new EnemyIdleState(this, StateMachine);
         RangedAttackState = new EnemyRangedAttackState(this, StateMachine);

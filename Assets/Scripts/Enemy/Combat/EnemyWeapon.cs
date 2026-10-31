@@ -7,6 +7,7 @@ public class EnemyWeapon : MonoBehaviour
     [Header("Testing Settings")]
     [SerializeField] private SandParticleController targetController;
     [SerializeField] private bool hitWindowActive = true; // Enable for editor testing.
+    private bool damageApplied;
 
     [Header("General Settings")]
     [SerializeField] private float damage = 10f;
@@ -58,11 +59,65 @@ public class EnemyWeapon : MonoBehaviour
 
                 deltaTime = Time.deltaTime
             });
+
+            // Detect the player and apply damage
+            ApplyDamage();
         }
 
-        // Update the previois positions AFTER submitting the sweep.
+        // Update the previous positions AFTER submitting the sweep.
         previousWeaponBase = currentBase;
         previousWeaponTip = currentTip;
+    }
+
+    private void ApplyDamage()
+    {
+        int sampleCount = 5;
+        if (damageApplied)
+            return;
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            float bladeT = i / (float)(sampleCount - 1);
+
+            // Get the current and previous positions for each sample along the blade
+            Vector3 previous =
+                math.lerp(
+                    previousWeaponBase,
+                    previousWeaponTip,
+                    bladeT
+                );
+
+            Vector3 current =
+                math.lerp(
+                    weaponBase.position,
+                    weaponTip.position,
+                    bladeT
+                );
+
+            Vector3 direction = current - previous;
+            float distance = direction.magnitude;
+
+            // Perform a sphere cast between these two positions
+            if (distance > 0.00001f &&
+                Physics.SphereCast(
+                    origin: previous,
+                    radius: radius,
+                    direction: direction,
+                    hitInfo: out RaycastHit hit,
+                    maxDistance: distance,
+                    layerMask: playerLayer.value,
+                    queryTriggerInteraction: QueryTriggerInteraction.Ignore))
+            {
+                // Get the health component and apply damage
+                Health health = hit.collider.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.TakeDamage(damage);
+                    damageApplied = true;
+                    return;
+                }
+            }
+        }
     }
 
     public void SetTarget(SandParticleController target)
@@ -72,6 +127,8 @@ public class EnemyWeapon : MonoBehaviour
 
     public void BeginHitWindow()
     {
+        damageApplied = false;
+
         // Prevent a sweep from an old blade position.
         previousWeaponBase = weaponBase.position;
         previousWeaponTip = weaponTip.position;

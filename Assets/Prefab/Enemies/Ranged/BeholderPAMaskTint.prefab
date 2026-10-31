@@ -1035,8 +1035,8 @@ GameObject:
   - component: {fileID: 5165606842397917515}
   - component: {fileID: 7999205408381929981}
   - component: {fileID: 5407235507428713208}
-  - component: {fileID: 8042797053214118759}
   - component: {fileID: 9077500459597160353}
+  - component: {fileID: 2585652187700841875}
   - component: {fileID: 7874402287398826396}
   - component: {fileID: 6866775780401429167}
   - component: {fileID: 4786307746998640248}
@@ -1102,18 +1102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780b18102c25443f9a7a9a5fde7af4be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStateMachine
---- !u!114 &8042797053214118759
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6077668676503879031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5987bc1450bb484fbbbf0d50e3efc03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
 --- !u!114 &9077500459597160353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1126,6 +1114,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d19d4cfb9d56940e1870688e873a977b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetection
+--- !u!114 &2585652187700841875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077668676503879031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5336919a4edb24fb384e005224a400aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  currentHealth: 50
 --- !u!114 &7874402287398826396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1139,9 +1140,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   player: {fileID: 0}
+  weapons: []
   engagementRange: 20
   encounter: {fileID: 0}
+  minRetreatDistance: 0
+  maxRetreatDistance: 0
+  circleDuration: 0
+  holdDuration: 0
   debugColour: {r: 0, g: 1, b: 0, a: 1}
+  behaviour: 0
 --- !u!114 &6866775780401429167
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1337,9 +1337,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7695038878699845317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5987bc1450bb484fbbbf0d50e3efc03, type: 3}
+  m_Script: {fileID: 11500000, guid: 5336919a4edb24fb384e005224a400aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  currentHealth: 100
 --- !u!114 &-2679331755586677711
 MonoBehaviour:
   m_ObjectHideFlags: 0

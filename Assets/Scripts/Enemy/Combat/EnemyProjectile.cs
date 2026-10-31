@@ -86,6 +86,12 @@ public class EnemyProjectile : MonoBehaviour
             controller.RegisterHit(hitData);
         }
 
+        // Deal damage to the player
+        if (collision.gameObject.TryGetComponent(out Health health))
+        {
+            health.TakeDamage(damage);
+        }
+
         // Only destroy the particle if it hits a non-player game object
         bool isPlayer = (playerLayer.value & (1 << collision.collider.gameObject.layer)) != 0;
 
