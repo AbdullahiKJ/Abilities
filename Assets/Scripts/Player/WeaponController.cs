@@ -29,6 +29,8 @@ public class WeaponController : MonoBehaviour
     private readonly Dictionary<GameObject, Tween> weaponTweens = new();
     private VFXController vfxController;
 
+    private readonly Dictionary<GameObject, PlayerWeapon> weaponScripts = new();
+
     void Awake()
     {
         // Instantiate all weapon prefabs
@@ -37,6 +39,13 @@ public class WeaponController : MonoBehaviour
         longswordInstance = Instantiate(longswordPrefab, rightHandSocket);
         shieldInstance = Instantiate(shieldPrefab, leftHandSocket);
         spearInstance = Instantiate(spearPrefab, rightHandSocket);
+
+        // Cache the player weapon scripts
+        CacheWeapon(swordLeftInstance);
+        CacheWeapon(swordRightInstance);
+        CacheWeapon(longswordInstance);
+        CacheWeapon(shieldInstance);
+        CacheWeapon(spearInstance);
 
         // Set all weapon instances to inactive
         SetWeaponStates(false);
@@ -60,6 +69,13 @@ public class WeaponController : MonoBehaviour
 
         // Set the active weapon instance
         Equip(data);
+
+        // Pass the attack damage to the player weapon script
+        foreach (GameObject weapon in currentWeapons)
+        {
+            if (weaponScripts.TryGetValue(weapon, out PlayerWeapon script))
+                script.PrepareAttack(attackData.damage);
+        }
 
         // todo: finish or remove this later
         // Play VFX
@@ -159,7 +175,25 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    void KillWeaponTweens(GameObject weapon)
+    public void OpenHitWindow()
+    {
+        foreach (GameObject weapon in currentWeapons)
+        {
+            if (weaponScripts.TryGetValue(weapon, out PlayerWeapon script))
+                script.OpenHitWindow();
+        }
+    }
+
+    public void CloseHitWindow()
+    {
+        foreach (GameObject weapon in currentWeapons)
+        {
+            if (weaponScripts.TryGetValue(weapon, out PlayerWeapon script))
+                script.CloseHitWindow();
+        }
+    }
+
+    private void KillWeaponTweens(GameObject weapon)
     {
         if (weaponTweens.TryGetValue(weapon, out Tween existingTween))
         {
@@ -169,6 +203,8 @@ public class WeaponController : MonoBehaviour
 
     private void Equip(WeaponData data)
     {
+        CloseHitWindow();
+
         // Clear the current weapons list
         currentWeapons.Clear();
 
@@ -203,7 +239,7 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    void SetWeaponStates(bool active)
+    private void SetWeaponStates(bool active)
     {
         swordLeftInstance.SetActive(active);
         swordRightInstance.SetActive(active);
@@ -212,7 +248,13 @@ public class WeaponController : MonoBehaviour
         spearInstance.SetActive(active);
     }
 
-    List<Transform> GetWeaponPos(WeaponData data)
+    private void CacheWeapon(GameObject weapon)
+    {
+        if (weapon.TryGetComponent(out PlayerWeapon script))
+            weaponScripts.Add(weapon, script);
+    }
+
+    private List<Transform> GetWeaponPos(WeaponData data)
     {
         List<Transform> weaponTrans = new List<Transform>();
         switch (data.name)

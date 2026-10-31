@@ -86,6 +86,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6378264994095670116, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
   m_PrefabInstance: {fileID: 8571819432054650593}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &3355132420184703105 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6375667102890194528, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
+  m_PrefabInstance: {fileID: 8571819432054650593}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5367980660429038026 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4362824360153732907, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
+  m_PrefabInstance: {fileID: 8571819432054650593}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9177647086184989667
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,8 +186,35 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3346489448895993221}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4969405421008623418}
   m_SourcePrefab: {fileID: 100100000, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+--- !u!1 &8330784888210439858 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}
+  m_PrefabInstance: {fileID: 9177647086184989667}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4969405421008623418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8330784888210439858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c419f6d243d49489756e627852defe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWeapon
+  hitWindowActive: 0
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  hitRadius: 0.22
+  weaponBase: {fileID: 5367980660429038026}
+  weaponTip: {fileID: 3355132420184703105}
 --- !u!4 &8707485695973385224 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6b7b2b6a23d1f4197afbcecf840e1da9, type: 3}

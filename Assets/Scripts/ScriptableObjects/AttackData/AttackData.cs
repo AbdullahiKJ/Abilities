@@ -11,6 +11,10 @@ public class AttackData : ScriptableObject
     public float comboWindowOpen = 0.6f;
     public float comboWindowClose = 0.9f;
 
+    [Header("Damage")]
+    [Min(0f)]
+    public float damage = 10f;
+
     [Header("Cancel")]
     public bool canBeInterrupted;
 

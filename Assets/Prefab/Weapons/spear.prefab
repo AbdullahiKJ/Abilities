@@ -125,9 +125,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
+--- !u!4 &2748722176650889496 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4362824360153732907, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
+  m_PrefabInstance: {fileID: 1922669677065117235}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4767790098915802455 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6378264994095670116, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
+  m_PrefabInstance: {fileID: 1922669677065117235}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4815573481322735699 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6375667102890194528, guid: f58af38914b0042ff9288b9a2b666dd4, type: 3}
   m_PrefabInstance: {fileID: 1922669677065117235}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2102336511699912912
@@ -204,8 +214,35 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2b27e7f98dc5a4bba8409fbd5e422df5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6152947309104501572}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2b27e7f98dc5a4bba8409fbd5e422df5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5544315242850983954}
   m_SourcePrefab: {fileID: 100100000, guid: 2b27e7f98dc5a4bba8409fbd5e422df5, type: 3}
+--- !u!1 &1291853847571477889 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2b27e7f98dc5a4bba8409fbd5e422df5, type: 3}
+  m_PrefabInstance: {fileID: 2102336511699912912}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5544315242850983954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291853847571477889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c419f6d243d49489756e627852defe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWeapon
+  hitWindowActive: 0
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  hitRadius: 0.2
+  weaponBase: {fileID: 2748722176650889496}
+  weaponTip: {fileID: 4815573481322735699}
 --- !u!4 &1920299902463143739 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2b27e7f98dc5a4bba8409fbd5e422df5, type: 3}

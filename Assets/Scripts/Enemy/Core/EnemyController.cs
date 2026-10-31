@@ -123,6 +123,22 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public void OpenHitWindow()
+    {
+        foreach (EnemyWeapon weapon in weapons)
+        {
+            weapon.OpenHitWindow();
+        }
+    }
+
+    public void CloseHitWindow()
+    {
+        foreach (EnemyWeapon weapon in weapons)
+        {
+            weapon.CloseHitWindow();
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = debugColour;

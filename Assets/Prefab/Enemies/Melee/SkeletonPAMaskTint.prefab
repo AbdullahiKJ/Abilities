@@ -1245,7 +1245,7 @@ GameObject:
   - component: {fileID: -3903465512080677254}
   - component: {fileID: -2575692915548282098}
   - component: {fileID: 7737206045748867135}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SkeletonPAMaskTint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

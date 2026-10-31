@@ -1,7 +1,6 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class EnemyWeapon : MonoBehaviour
 {
     [Header("Testing Settings")]
@@ -109,7 +108,7 @@ public class EnemyWeapon : MonoBehaviour
                     queryTriggerInteraction: QueryTriggerInteraction.Ignore))
             {
                 // Get the health component and apply damage
-                Health health = hit.collider.GetComponent<Health>();
+                Health health = hit.collider.GetComponentInParent<Health>();
                 if (health != null)
                 {
                     health.TakeDamage(damage);
@@ -125,7 +124,7 @@ public class EnemyWeapon : MonoBehaviour
         targetController = target;
     }
 
-    public void BeginHitWindow()
+    public void OpenHitWindow()
     {
         damageApplied = false;
 
@@ -136,7 +135,7 @@ public class EnemyWeapon : MonoBehaviour
         hitWindowActive = true;
     }
 
-    public void EndHitWindow()
+    public void CloseHitWindow()
     {
         hitWindowActive = false;
     }
@@ -147,7 +146,7 @@ public class EnemyWeapon : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            float t = (float)i / count;
+            float t = (float)i / (count - 1);
             Vector3 position = math.lerp(weaponBase.position, weaponTip.position, t);
             Gizmos.DrawWireSphere(position, radius);
         }
