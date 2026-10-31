@@ -9,6 +9,8 @@ public class EnemyAnimationController : MonoBehaviour
     [SerializeField] private string hitProperty = "Hit";
     [SerializeField] private string deathProperty = "Death";
     [SerializeField] private string moveProperty = "MoveSpeed";
+    [SerializeField] private string moveXProperty = "MoveX";
+    [SerializeField] private string moveYProperty = "MoveY";
 
     private int attackHash;
     private int attackLevelHash;
@@ -16,6 +18,8 @@ public class EnemyAnimationController : MonoBehaviour
     private int hitHash;
     private int deathHash;
     private int moveHash;
+    private int moveXHash;
+    private int moveYHash;
 
     private Animator animator;
 
@@ -28,11 +32,16 @@ public class EnemyAnimationController : MonoBehaviour
         hitHash = Animator.StringToHash(hitProperty);
         deathHash = Animator.StringToHash(deathProperty);
         moveHash = Animator.StringToHash(moveProperty);
+        moveXHash = Animator.StringToHash(moveXProperty);
+        moveYHash = Animator.StringToHash(moveYProperty);
     }
 
-    public void SetMovementSpeed(float speed)
+    public void SetMovement(Vector3 direction)
     {
-        animator.SetFloat(moveHash, speed);
+        float magnitude = direction.magnitude;
+        animator.SetFloat(moveHash, magnitude);
+        animator.SetFloat(moveXHash, direction.x);
+        animator.SetFloat(moveYHash, direction.z);
     }
     public void SetInRange(bool inRange)
     {

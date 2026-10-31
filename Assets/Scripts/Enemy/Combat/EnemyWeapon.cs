@@ -65,6 +65,11 @@ public class EnemyWeapon : MonoBehaviour
         previousWeaponTip = currentTip;
     }
 
+    public void SetTarget(SandParticleController target)
+    {
+        targetController = target;
+    }
+
     public void BeginHitWindow()
     {
         // Prevent a sweep from an old blade position.

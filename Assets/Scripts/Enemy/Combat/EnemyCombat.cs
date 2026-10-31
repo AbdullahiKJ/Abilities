@@ -8,6 +8,8 @@ public class EnemyCombat : MonoBehaviour
     public EnemyAttack ActiveAttack { get; private set; }
     public bool IsAttacking => ActiveAttack != null;
 
+    public event System.Action AttackFinished;
+
     public bool TryAttack(Transform target)
     {
         if (target == null || IsAttacking)
@@ -40,14 +42,35 @@ public class EnemyCombat : MonoBehaviour
     {
         attack.Finished -= OnAttackFinished;
 
-        if (ActiveAttack == attack)
-            ActiveAttack = null;
+        if (ActiveAttack != attack)
+            return;
+
+        ActiveAttack = null;
+        AttackFinished?.Invoke();
     }
 
     public void InterruptAttack()
     {
         if (ActiveAttack != null)
             ActiveAttack.CancelAttack();
+    }
+
+    public bool HasAvailableAttack(Transform target)
+    {
+        if (target == null || IsAttacking)
+            return false;
+
+        foreach (EnemyAttack attack in attacks)
+        {
+            if (attack != null
+               && attack.isActiveAndEnabled
+               && attack.CanAttack(target))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnDisable()

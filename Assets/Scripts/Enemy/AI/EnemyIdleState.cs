@@ -9,13 +9,15 @@ public class EnemyIdleState : EnemyState
 
     public override void Enter()
     {
+        // Set the in range animation property
+        enemy.Animation.SetInRange(false);
     }
 
     public override void Tick(float deltaTime)
     {
         if (enemy.IsPlayerInRange())
         {
-            stateMachine.ChangeState(enemy.AttackState);
+            stateMachine.ChangeState(enemy.RangedAttackState);
         }
 
         enemy.Rotation?.Scan(deltaTime);

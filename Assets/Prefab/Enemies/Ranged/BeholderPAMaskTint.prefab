@@ -1036,7 +1036,6 @@ GameObject:
   - component: {fileID: 7999205408381929981}
   - component: {fileID: 5407235507428713208}
   - component: {fileID: 8042797053214118759}
-  - component: {fileID: 8865977830894205936}
   - component: {fileID: 9077500459597160353}
   - component: {fileID: 7874402287398826396}
   - component: {fileID: 6866775780401429167}
@@ -1115,18 +1114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5987bc1450bb484fbbbf0d50e3efc03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
---- !u!114 &8865977830894205936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6077668676503879031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5e4cde09f10141ebbd7a5f298d2492e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
 --- !u!114 &9077500459597160353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1153,6 +1140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   player: {fileID: 0}
   engagementRange: 20
+  encounter: {fileID: 0}
   debugColour: {r: 0, g: 1, b: 0, a: 1}
 --- !u!114 &6866775780401429167
 MonoBehaviour:
@@ -1187,6 +1175,8 @@ MonoBehaviour:
   hitProperty: Hit
   deathProperty: Death
   moveProperty: MoveSpeed
+  moveXProperty: MoveX
+  moveYProperty: MoveY
 --- !u!114 &6317928854305966119
 MonoBehaviour:
   m_ObjectHideFlags: 0
