@@ -56,7 +56,7 @@ public class WeaponController : MonoBehaviour
     public void BeginWeaponAnimation(WeaponData data, AttackData attackData)
     {
         // Create terrain deformation
-        if (attackData.createDepression)
+        if (deformationManager != null && attackData.createDepression)
             deformationManager.CreateDepression(transform.position, attackData.radius, attackData.depth, attackData.duration);
 
         // Kill all tweens before starting a new attack

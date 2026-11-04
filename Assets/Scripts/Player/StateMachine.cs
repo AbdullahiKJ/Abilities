@@ -32,7 +32,15 @@ public class StateMachine : MonoBehaviour
 
     public void SetAttacking(bool attacking)
     {
-        CurrentActionState = attacking ? ActionState.Attacking : ActionState.Free;
+        if (attacking)
+        {
+            if (CanAttack)
+                CurrentActionState = ActionState.Attacking;
+        }
+        else
+        {
+            ExitState(ActionState.Attacking);
+        }
     }
 
     public bool IsFree => CurrentActionState == ActionState.Free;

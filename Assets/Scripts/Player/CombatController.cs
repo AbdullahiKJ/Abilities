@@ -6,6 +6,7 @@ public class CombatController : MonoBehaviour
     private StateMachine state;
     private Animator animator;
     private WeaponController weapon;
+    private MovementController movement;
 
     [Header("Combo Settings")]
     [SerializeField] AttackData rootPrimaryAttack;
@@ -23,6 +24,7 @@ public class CombatController : MonoBehaviour
         state = GetComponent<StateMachine>();
         animator = GetComponent<Animator>();
         weapon = GetComponent<WeaponController>();
+        movement = GetComponent<MovementController>();
     }
 
     void Update()
@@ -56,6 +58,11 @@ public class CombatController : MonoBehaviour
 
     private void OnAttack(InputType inputType)
     {
+        if (movement.CurrentMovementMode != MovementController.MovementMode.Normal)
+        {
+            return;
+        }
+
         // incompatible action states.
         if (!state.CanAttack)
             return;
@@ -134,6 +141,11 @@ public class CombatController : MonoBehaviour
 
     private void StartAttack(AttackData attack)
     {
+        if (movement.CurrentMovementMode != MovementController.MovementMode.Normal)
+        {
+            return;
+        }
+
         if (!state.CanAttack)
             return;
 

@@ -20,6 +20,9 @@ public class Propeller : MonoBehaviour
     {
         initialRotation = transform.localRotation;
         cameraTransform = Camera.main.transform;
+
+        if (movement == null)
+            movement = GetComponentInParent<MovementController>();
     }
 
     private void LateUpdate()
